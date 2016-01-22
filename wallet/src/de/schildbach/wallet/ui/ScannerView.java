@@ -33,7 +33,7 @@ import android.view.View;
 
 import com.google.zxing.ResultPoint;
 
-import de.schildbach.wallet_test.R;
+import org.hopestarter.wallet_test.R;
 
 /**
  * @author Andreas Schildbach

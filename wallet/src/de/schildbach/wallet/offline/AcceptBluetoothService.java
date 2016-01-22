@@ -39,7 +39,7 @@ import android.text.format.DateUtils;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.util.CrashReporter;
 import de.schildbach.wallet.util.Toast;
-import de.schildbach.wallet_test.R;
+import org.hopestarter.wallet_test.R;
 
 /**
  * @author Andreas Schildbach

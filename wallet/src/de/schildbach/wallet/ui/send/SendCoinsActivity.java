@@ -25,7 +25,7 @@ import android.view.MenuItem;
 import de.schildbach.wallet.data.PaymentIntent;
 import de.schildbach.wallet.ui.AbstractBindServiceActivity;
 import de.schildbach.wallet.ui.HelpDialogFragment;
-import de.schildbach.wallet_test.R;
+import org.hopestarter.wallet_test.R;
 
 /**
  * @author Andreas Schildbach

@@ -33,7 +33,7 @@ import android.text.format.DateUtils;
 import com.google.common.base.Strings;
 
 import de.schildbach.wallet.ExchangeRatesProvider.ExchangeRate;
-import de.schildbach.wallet_test.R;
+import org.hopestarter.wallet_test.R;
 
 /**
  * @author Andreas Schildbach

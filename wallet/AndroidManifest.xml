@@ -63,7 +63,7 @@
 			android:configChanges="keyboard|keyboardHidden"
 			android:exported="true"
 			android:launchMode="singleTask"
-			android:theme="@style/My.Theme" />
+			android:theme="@style/AppTheme" />
 
 		<activity-alias
 			android:name="de.schildbach.wallet.WalletActivity"
@@ -87,7 +87,7 @@
 			android:configChanges="keyboard|keyboardHidden"
 			android:label="@string/send_coins_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity"
+			android:theme="@style/AppTheme.ChildActivity"
 			android:windowSoftInputMode="adjustResize" >
 			<intent-filter android:label="@string/send_coins_activity_title" >
 				<action android:name="android.intent.action.VIEW" />
@@ -129,35 +129,35 @@
 			android:configChanges="keyboard|keyboardHidden"
 			android:label="@string/request_coins_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity"
+			android:theme="@style/AppTheme.ChildActivity"
 			android:windowSoftInputMode="adjustResize" />
 		<activity
 			android:name="de.schildbach.wallet.ui.AddressBookActivity"
 			android:configChanges="keyboard|keyboardHidden"
 			android:label="@string/address_book_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity" />
+			android:theme="@style/AppTheme.ChildActivity" />
 		<activity
 			android:name="de.schildbach.wallet.ui.ExchangeRatesActivity"
 			android:configChanges="keyboard|keyboardHidden"
 			android:label="@string/exchange_rates_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity" />
+			android:theme="@style/AppTheme.ChildActivity" />
 		<activity
 			android:name="de.schildbach.wallet.ui.NetworkMonitorActivity"
 			android:configChanges="keyboard|keyboardHidden"
 			android:label="@string/network_monitor_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity" />
+			android:theme="@style/AppTheme.ChildActivity" />
 		<activity
 			android:name="de.schildbach.wallet.ui.preference.PreferenceActivity"
 			android:label="@string/preferences_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity" />
+			android:theme="@style/AppTheme.ChildActivity" />
 		<activity
 			android:name="de.schildbach.wallet.ui.RestoreWalletActivity"
 			android:configChanges="orientation|keyboard|keyboardHidden"
-			android:theme="@style/My.Theme.Dialog" >
+			android:theme="@style/AppTheme.Dialog" >
 			<intent-filter android:label="@string/import_keys_intent_filter_action" >
 				<action android:name="android.intent.action.VIEW" />
 
@@ -171,14 +171,14 @@
 			android:configChanges="orientation|keyboard|keyboardHidden"
 			android:screenOrientation="landscape"
 			android:stateNotNeeded="true"
-			android:theme="@style/My.Theme.Fullscreen"
+			android:theme="@style/AppTheme.Fullscreen"
 			android:windowSoftInputMode="stateAlwaysHidden" />
 		<activity
 			android:name="de.schildbach.wallet.ui.send.SweepWalletActivity"
 			android:configChanges="keyboard|keyboardHidden"
 			android:label="@string/sweep_wallet_activity_title"
 			android:screenOrientation="behind"
-			android:theme="@style/My.Theme.ChildActivity"
+			android:theme="@style/AppTheme.ChildActivity"
 			android:windowSoftInputMode="adjustResize" />
 
 		<provider

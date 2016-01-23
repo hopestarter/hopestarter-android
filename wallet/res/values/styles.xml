@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="AppTheme" parent="AppTheme.Base" />
-
-	<style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-		<item name="android:actionBarStyle">@style/AppTheme.Widget.ActionBar</item>
-		<item name="android:actionModeStyle">@style/AppTheme.Widget.ActionMode</item>
-		<item name="android:actionMenuTextColor">@color/fg_network</item>
-		<item name="android:actionButtonStyle">@style/AppTheme.Widget.ActionButton</item>
-		<item name="android:actionOverflowButtonStyle">@style/AppTheme.Widget.ActionButton.Overflow</item>
-		<item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
-		<item name="android:editTextStyle">@style/AppTheme.Widget.EditText</item>
-		<item name="android:autoCompleteTextViewStyle">@style/AppTheme.Widget.AutoCompleteTextView</item>
-		<item name="android:checkboxStyle">@style/AppTheme.Widget.CompoundButton.CheckBox</item>
-		<item name="android:spinnerStyle">@style/AppTheme.Widget.Spinner</item>
+	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+		<item name="colorPrimary">@color/white</item>
+		<item name="colorPrimaryDark">@color/grey</item>
+		<item name="android:background">@color/white</item>
+		<item name="colorAccent">@color/turquoise</item>
+		<item name="navigationIcon">@drawable/back_icon</item>
+		<item name="actionMenuTextColor">@color/turquoise</item>
+		<item name="actionMenuTextAppearance">@style/AppTheme.ActionMenuTextAppearance</item>
 	</style>
 
+	<style name="AppTheme.ActionMenuTextAppearance" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu">
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="Widget.CardContent" parent="android:Widget">
+		<item name="android:paddingLeft">16dp</item>
+		<item name="android:paddingRight">16dp</item>
+		<item name="android:paddingTop">24dp</item>
+		<item name="android:paddingBottom">24dp</item>
+		<item name="android:orientation">vertical</item>
+	</style>
+
+	<!-- OLD STYLES -->
 	<style name="AppTheme.ChildActivity" parent="@style/AppTheme">
 		<item name="android:actionBarStyle">@style/AppTheme.Widget.ActionBar.ChildActivity</item>
 		<item name="android:homeAsUpIndicator">@drawable/action_bar_up_indicator</item>
 	</style>
-
-	<style name="AppTheme.Fullscreen" parent="Theme.AppCompat.Light.NoActionBar" />
 
 	<style name="AppTheme.Dialog" parent="@android:style/Theme.Holo.Light.Dialog" />
 
@@ -114,5 +120,5 @@
 		<item name="android:textColor">@color/fg_significant</item>
 		<item name="android:textSize">@dimen/font_size_normal</item>
 	</style>
-
+	<!-- END OLD STYLES -->
 </resources>

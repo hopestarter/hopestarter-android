@@ -8,7 +8,7 @@
 
 	<Button
 		android:id="@+id/wallet_actions_request"
-		style="@style/My.Widget.Button.Borderless"
+		style="@style/AppTheme.Widget.Button.Borderless"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_send_flipped_white_24dp"
@@ -26,7 +26,7 @@
 
 	<Button
 		android:id="@+id/wallet_actions_send"
-		style="@style/My.Widget.Button.Borderless"
+		style="@style/AppTheme.Widget.Button.Borderless"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:drawableRight="@drawable/ic_send_white_24dp"
@@ -39,7 +39,7 @@
 
 	<ImageButton
 		android:id="@+id/wallet_actions_send_qr"
-		style="@style/My.Widget.Button.Borderless"
+		style="@style/AppTheme.Widget.Button.Borderless"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:contentDescription="@string/button_scan"

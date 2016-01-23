@@ -5,7 +5,7 @@
 
 	<LinearLayout
 		android:id="@+id/wallet_balance"
-		style="@style/My.Widget.Button.Borderless.Unpadded"
+		style="@style/AppTheme.Widget.Button.Borderless.Unpadded"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center"

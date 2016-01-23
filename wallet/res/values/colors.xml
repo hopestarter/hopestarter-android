@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<color name="white">#FFFFFF</color>
+	<color name="black">#4A4A4A</color>
+	<color name="grey">#CDCDCD</color>
+	<color name="turquoise">#3DB4CC</color>
+	<color name="turquoise_deep">#2E8799</color>
+	<color name="turquoise_dark">#224052</color>
 
+	<!-- old colors -->
 	<!-- foreground -->
 	<color name="fg_significant">#ff000000</color>
 	<color name="fg_less_significant">#ff666666</color>
@@ -31,5 +38,5 @@
 	<color name="scan_dot">#ff6600</color>
 	<color name="scan_result_view">#b0000000</color>
 	<color name="scan_result_dots">#c099cc00</color>
-
+	<!-- end old colors -->
 </resources>

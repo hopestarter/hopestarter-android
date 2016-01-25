@@ -4,11 +4,15 @@
 	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 		<item name="colorPrimary">@color/white</item>
 		<item name="colorPrimaryDark">@color/grey</item>
-		<item name="android:background">@color/white</item>
+		<!--<item name="android:background">@color/white</item>-->
 		<item name="colorAccent">@color/turquoise</item>
 		<item name="navigationIcon">@drawable/back_icon</item>
 		<item name="actionMenuTextColor">@color/turquoise</item>
 		<item name="actionMenuTextAppearance">@style/AppTheme.ActionMenuTextAppearance</item>
+	</style>
+
+	<style name="AppTheme.OpaqueLayout">
+		<item name="android:background">@color/white</item>
 	</style>
 
 	<style name="AppTheme.ActionMenuTextAppearance" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu">

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<SurfaceView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/surface_view"/>-->
+
+    <org.hopestarter.ui.view.CameraPreview
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/camera_preview"/>
+
+    <ImageButton
+        android:layout_width="65dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/flip_camera_icon"
+        android:background="@drawable/translucent_round_rectangle"
+        android:id="@+id/flip_btn"/>
+
+    <ImageButton
+        android:layout_width="65dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/use_flash_icon"
+        android:background="@drawable/translucent_round_rectangle"
+        android:id="@+id/flash_btn"/>
+
+</RelativeLayout>

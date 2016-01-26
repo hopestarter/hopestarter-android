@@ -1,15 +1,16 @@
 package org.hopestarter.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
-import android.os.Environment;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import org.hopestarter.ui.view.CameraPreview;
 import org.hopestarter.wallet_test.R;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,22 +31,61 @@ import java.util.List;
  */
 @SuppressWarnings("deprecation")
 public class CameraFragment extends Fragment implements Camera.PictureCallback {
+    public interface CameraFragmentCallback {
+        void onPictureTaken(Uri pictureUri);
+    }
+
     private static final String TAG = "CameraFragment";
-    private static final int CONFIRM_REQ_CODE = 0;
-    public static final String ARG_TITLE = "ARG_TITLE";
-    private boolean mSurfaceAvailable;
     private boolean mFrontCameraSelected;
     private Camera mCamera;
-    private SurfaceView mSurfaceView;
+    private Camera.CameraInfo mCameraInfo;
     private CameraPreview mCameraPreview;
-    private boolean mFlashAvailable;
     private List<String> mFlashModesSupported;
     private int mCurrentFlashMode;
     private ViewGroup mRootView;
+    private CameraFragmentCallback mCallback;
+    private OrientationEventListener mOrientationListener;
+    private int mLastOrientation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!(getActivity() instanceof CameraFragmentCallback)) {
+            throw new RuntimeException("Host activity must implement CameraFragmentCallback interface");
+        }
+
+        mCallback = (CameraFragmentCallback)getActivity();
+
+        mOrientationListener = new OrientationEventListener(getActivity()) {
+
+            @Override
+            public void onOrientationChanged(int orientation) {
+                mLastOrientation = normalize(orientation);
+            }
+
+            private int normalize(int degrees) {
+                if (degrees > 315 || degrees <= 45) {
+                    return 0;
+                }
+
+                if (degrees > 45 && degrees <= 135) {
+                    return 90;
+                }
+
+                if (degrees > 135 && degrees <= 225) {
+                    return 180;
+                }
+
+                if (degrees > 225 && degrees <= 315) {
+                    return 270;
+                }
+
+                throw new RuntimeException("Expected a value between 0 and 359");
+            }
+
+        };
+
     }
 
     private void openCamera() {
@@ -55,6 +96,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT && mFrontCameraSelected ||
                     info.facing == Camera.CameraInfo.CAMERA_FACING_BACK && !mFrontCameraSelected) {
                 mCamera = Camera.open(i);
+                mCameraInfo = info;
                 Log.d(TAG, "Camera opened");
                 setCameraDisplayOrientation(i, mCamera);
                 Camera.Parameters params = mCamera.getParameters();
@@ -67,10 +109,31 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                 }
 
                 setBestFocusMode();
-
+                setBestResolution();
                 break;
             }
         }
+    }
+
+    private void setBestResolution() {
+        Camera.Parameters params = mCamera.getParameters();
+        List<Camera.Size> sizes = params.getSupportedPictureSizes();
+
+        int maxPixels = 0;
+        int settingIndex = 0;
+        int biggestSizeIndex = 0;
+        for (Camera.Size size : sizes) {
+            int pixels = size.width * size.height;
+            if (maxPixels < pixels) {
+                maxPixels = pixels;
+                biggestSizeIndex = settingIndex;
+            }
+            settingIndex++;
+        }
+
+        Camera.Size biggestSize = sizes.get(biggestSizeIndex);
+        params.setPictureSize(biggestSize.width, biggestSize.height);
+        mCamera.setParameters(params);
     }
 
     private void setBestFocusMode() {
@@ -135,6 +198,19 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
         camera.setDisplayOrientation(result);
     }
 
+    public void setCameraRotation() {
+        int result;
+        if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            result = (mCameraInfo.orientation + mLastOrientation) % 360;
+            // result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (mCameraInfo.orientation - mLastOrientation + 360) % 360;
+        }
+        Camera.Parameters params = mCamera.getParameters();
+        params.setRotation(result);
+        mCamera.setParameters(params);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         mRootView = (ViewGroup)inflater.inflate(R.layout.camera_fragment, viewGroup, false);
@@ -172,11 +248,14 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
             mCameraPreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setCameraRotation();
                     mCamera.takePicture(null, null, CameraFragment.this);
                 }
             });
             Log.d(TAG, "Camera preview camera instance set");
         }
+
+        mOrientationListener.enable();
 
         super.onResume();
     }
@@ -186,6 +265,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
         mCamera.stopPreview();
         mCamera.release();
         mCamera = null;
+        mOrientationListener.disable();
         Log.d(TAG, "Camera released");
         super.onPause();
     }
@@ -197,14 +277,20 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
             FileOutputStream fos = getActivity().openFileOutput(pictureFileName, Context.MODE_PRIVATE);
             fos.write(data);
             fos.close();
-            Intent activityIntent = new Intent(getActivity(), ConfirmPictureActivity.class);
-            activityIntent.putExtra(ConfirmPictureActivity.EXTRA_FILENAME, pictureFileName);
-            activityIntent.putExtra(ConfirmPictureActivity.EXTRA_TITLE, getArguments().getString(ARG_TITLE));
-            startActivityForResult(activityIntent, CONFIRM_REQ_CODE);
+
+            File pictureFile = new File(getActivity().getFilesDir(), pictureFileName);
+            Log.d(TAG, "Picture saved at: " + pictureFile.toString());
+
+            Uri pictureUri = Uri.fromFile(pictureFile);
+
+            if (mCallback != null) {
+                mCallback.onPictureTaken(pictureUri);
+            }
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Cannot create profile pic file", e);
         } catch (IOException e) {
             Log.e(TAG, "Cannot write profile pic file", e);
         }
     }
+
 }

@@ -212,55 +212,55 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
 
-        <provider
-            android:name="de.schildbach.wallet.AddressBookProvider"
-            android:authorities="org.hopestarter.wallet_test.address_book"
-            android:exported="false" />
-        <provider
-            android:name="de.schildbach.wallet.ExchangeRatesProvider"
-            android:authorities="org.hopestarter.wallet_test.exchange_rates"
-            android:exported="false" />
-        <provider
-            android:name="de.schildbach.wallet.FileAttachmentProvider"
-            android:authorities="org.hopestarter.wallet_test.file_attachment"
-            android:exported="false"
-            android:grantUriPermissions="true" />
+        <!--<provider-->
+            <!--android:name="de.schildbach.wallet.AddressBookProvider"-->
+            <!--android:authorities="org.hopestarter.wallet_test.address_book"-->
+            <!--android:exported="false" />-->
+        <!--<provider-->
+            <!--android:name="de.schildbach.wallet.ExchangeRatesProvider"-->
+            <!--android:authorities="org.hopestarter.wallet_test.exchange_rates"-->
+            <!--android:exported="false" />-->
+        <!--<provider-->
+            <!--android:name="de.schildbach.wallet.FileAttachmentProvider"-->
+            <!--android:authorities="org.hopestarter.wallet_test.file_attachment"-->
+            <!--android:exported="false"-->
+            <!--android:grantUriPermissions="true" />-->
 
-        <receiver
-            android:name="de.schildbach.wallet.WalletBalanceWidgetProvider"
-            android:label="Bitcoin Wallet Balance">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
+        <!--<receiver-->
+            <!--android:name="de.schildbach.wallet.WalletBalanceWidgetProvider"-->
+            <!--android:label="Bitcoin Wallet Balance">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+            <!--</intent-filter>-->
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/wallet_balance_widget" />
-        </receiver>
+            <!--<meta-data-->
+                <!--android:name="android.appwidget.provider"-->
+                <!--android:resource="@xml/wallet_balance_widget" />-->
+        <!--</receiver>-->
 
-        <service
-            android:name="de.schildbach.wallet.service.BlockchainServiceImpl"
-            android:exported="false" />
-        <service
-            android:name="de.schildbach.wallet.offline.AcceptBluetoothService"
-            android:exported="false" />
+        <!--<service-->
+            <!--android:name="de.schildbach.wallet.service.BlockchainServiceImpl"-->
+            <!--android:exported="false" />-->
+        <!--<service-->
+            <!--android:name="de.schildbach.wallet.offline.AcceptBluetoothService"-->
+            <!--android:exported="false" />-->
 
-        <receiver android:name="de.schildbach.wallet.service.AutosyncReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name="de.schildbach.wallet.service.AutosyncReceiver">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MY_PACKAGE_REPLACED" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <service
-            android:name="de.schildbach.wallet.service.UpgradeWalletService"
-            android:exported="false" />
+        <!--<service-->
+            <!--android:name="de.schildbach.wallet.service.UpgradeWalletService"-->
+            <!--android:exported="false" />-->
 
-        <meta-data
-            android:name="android.nfc.disable_beam_default"
-            android:value="true" />
+        <!--<meta-data-->
+            <!--android:name="android.nfc.disable_beam_default"-->
+            <!--android:value="true" />-->
 
 
     </application>

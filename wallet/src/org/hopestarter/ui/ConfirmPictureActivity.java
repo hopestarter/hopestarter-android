@@ -117,6 +117,9 @@ public class ConfirmPictureActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
+                Intent data = new Intent();
+                data.setData(mFileUri);
+                setResult(RESULT_CANCELED, data);
                 finish();
                 return true;
         }

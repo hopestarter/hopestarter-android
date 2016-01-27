@@ -2,24 +2,24 @@ package org.hopestarter.ui;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.TabHost;
 
 import org.hopestarter.wallet_test.R;
 
-public class PictureSelectActivity extends AppCompatActivity implements CameraFragment.CameraFragmentCallback {
+import java.io.File;
+
+public class PictureSelectActivity extends AppCompatActivity implements CameraFragment.CameraFragmentCallback, GalleryFragment.Callback {
 
     public static final String EXTRA_TITLE = "EXTRA_TITLE";
     public static final String GALLERY_FRAGMENT_SPEC = "Gallery";
     public static final String TAKE_PHOTO_SPEC = "Take Photo";
-    private static final int CONFIRMATION_REQ_CODE = 0;
+    private static final int FROM_CAMERA_CONFIRMATION_REQ_CODE = 0;
+    private static final int FROM_GALLERY_CONFIRMATION_REQ_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,28 +67,46 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
 
     @Override
     public void onPictureTaken(Uri pictureUri) {
-        askUserConfirmation(pictureUri);
+        askUserConfirmation(pictureUri, true);
     }
 
-    private void askUserConfirmation(Uri pictureUri) {
+    @Override
+    public void onImageSelected(Uri imageUri) {
+        askUserConfirmation(imageUri, false);
+    }
+
+    private void askUserConfirmation(Uri pictureUri, boolean fromCamera) {
         Intent activityIntent = new Intent(this, ConfirmPictureActivity.class);
         activityIntent.putExtra(ConfirmPictureActivity.EXTRA_TITLE, getTitle());
         activityIntent.setData(pictureUri);
+        if (fromCamera) {
+            startActivityForResult(activityIntent, FROM_CAMERA_CONFIRMATION_REQ_CODE);
+        } else {
+            startActivityForResult(activityIntent, FROM_GALLERY_CONFIRMATION_REQ_CODE);
+        }
 
-        startActivityForResult(activityIntent, CONFIRMATION_REQ_CODE);
     }
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         switch(reqCode) {
-            case CONFIRMATION_REQ_CODE:
+            case FROM_CAMERA_CONFIRMATION_REQ_CODE:
+                if (resCode == RESULT_OK) {
+                    setResult(resCode, data);
+                    finish();
+                } else {
+                    deleteFile(data.getData().getLastPathSegment());
+                }
+                break;
+            case FROM_GALLERY_CONFIRMATION_REQ_CODE:
                 if (resCode == RESULT_OK) {
                     setResult(resCode, data);
                     finish();
                 }
-                break;
             default:
                 super.onActivityResult(reqCode, resCode, data);
         }
     }
+
+
 }

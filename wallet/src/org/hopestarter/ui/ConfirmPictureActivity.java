@@ -30,15 +30,14 @@ public class ConfirmPictureActivity extends AppCompatActivity {
     public static final String STATE_IMG_URI = "EXTRA_IMG_URI";
     public static final String EXTRA_TITLE = "EXTRA_TITLE";
     private static final String TAG = "ConfirmPictureAct";
-    private String mTitle;
     private Uri mFileUri;
-    private ImageView mPicturePreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_picture);
 
+        String mTitle;
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             mTitle = intent.getStringExtra(EXTRA_TITLE);
@@ -57,30 +56,20 @@ public class ConfirmPictureActivity extends AppCompatActivity {
         setSupportActionBar(topToolbar);
 
         ActionBar ab = getSupportActionBar();
+        if (ab == null) {
+            throw new IllegalStateException("getSupportActionBar() unexpectedly returned null");
+        }
+
         ab.setDisplayShowHomeEnabled(true);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        mPicturePreview = (ImageView)findViewById(R.id.picture_preview);
+        ImageView mPicturePreview = (ImageView) findViewById(R.id.picture_preview);
 
         Picasso.with(this)
                 .load(mFileUri)
                 .resize(320, 240)
                 .centerCrop()
                 .into(mPicturePreview);
-
-//        InputStream fis;
-//        Bitmap pictureBitmap = null;
-//        try {
-//            fis = getContentResolver().openInputStream(mFileUri);
-//            pictureBitmap = BitmapFactory.decodeStream(fis);
-//            fis.close();
-//        } catch (FileNotFoundException e) {
-//            Log.e(TAG, "Cannot open picture file", e);
-//        } catch (IOException e) {
-//            Log.e(TAG, "Cannot read picture file", e);
-//        }
-//
-//        mPicturePreview.setImageBitmap(pictureBitmap);
 
         final Activity activity = this;
 

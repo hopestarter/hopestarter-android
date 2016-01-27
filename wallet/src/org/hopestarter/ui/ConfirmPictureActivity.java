@@ -114,4 +114,12 @@ public class ConfirmPictureActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent data = new Intent();
+        data.setData(mFileUri);
+        setResult(RESULT_CANCELED, data);
+        finish();
+    }
 }

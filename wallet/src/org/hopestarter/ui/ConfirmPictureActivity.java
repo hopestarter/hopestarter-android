@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 public class ConfirmPictureActivity extends AppCompatActivity {
 
-    public static final String STATE_IMG_URI = "EXTRA_IMG_URI";
+    public static final String STATE_IMG_URI = "STATE_IMG_URI";
     public static final String EXTRA_TITLE = "EXTRA_TITLE";
     private static final String TAG = "ConfirmPictureAct";
     private Uri mFileUri;

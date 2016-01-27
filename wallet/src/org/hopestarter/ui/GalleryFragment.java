@@ -134,7 +134,9 @@ public class GalleryFragment extends Fragment implements ImageViewHolder.OnClick
         @Override
         public void onBindViewHolder(ImageViewHolder holder, int position) {
             Uri imageUri = mImageUris.get(position);
-            mImageLoader.load(imageUri).fit().centerCrop().into(holder.imageView);
+            if (holder.imageUri == null || !holder.imageUri.equals(imageUri)) {
+                mImageLoader.load(imageUri).fit().centerCrop().into(holder.imageView);
+            }
             holder.imageUri = imageUri;
         }
 

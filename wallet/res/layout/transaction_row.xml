@@ -166,7 +166,7 @@
 
 	<ImageButton
 		android:id="@+id/transaction_row_menu"
-		style="@style/AppTheme.Widget.Button.Borderless.Small"
+		style="@style/My.Widget.Button.Borderless.Small"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="top|right"

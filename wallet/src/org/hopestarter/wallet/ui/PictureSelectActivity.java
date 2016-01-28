@@ -1,4 +1,4 @@
-package org.hopestarter.ui;
+package org.hopestarter.wallet.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,8 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.hopestarter.wallet_test.R;
-
-import java.io.File;
 
 public class PictureSelectActivity extends AppCompatActivity implements CameraFragment.CameraFragmentCallback, GalleryFragment.Callback {
 

@@ -1,10 +1,8 @@
-package org.hopestarter.ui;
+package org.hopestarter.wallet.ui;
 
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,10 +19,10 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import org.hopestarter.ui.view.IconFragmentPagerAdapter;
+import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
 
-public class MainTabbedActivity extends AppCompatActivity {
+public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -96,17 +94,13 @@ public class MainTabbedActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**
@@ -115,7 +109,7 @@ public class MainTabbedActivity extends AppCompatActivity {
      */
 
     public static class FakeFragment extends Fragment {
-        public static final java.lang.String ARG_NUMBER = "ARG_NUMBER";
+        public static final String ARG_NUMBER = "ARG_NUMBER";
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -133,14 +127,13 @@ public class MainTabbedActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            FakeFragment fragment = new FakeFragment();
-            Bundle arguments = new Bundle();
+
             switch(position) {
                 case 0:
-                    arguments.putInt(FakeFragment.ARG_NUMBER, position);
-                    fragment.setArguments(arguments);
-                    return fragment;
+                    return createWalletFragment();
                 case 1:
+                    FakeFragment fragment = new FakeFragment();
+                    Bundle arguments = new Bundle();
                     arguments.putInt(FakeFragment.ARG_NUMBER, position);
                     fragment.setArguments(arguments);
                     return fragment;
@@ -149,9 +142,12 @@ public class MainTabbedActivity extends AppCompatActivity {
             }
         }
 
+        private WalletFragment createWalletFragment() {
+            return WalletFragment.newInstance("test1", "test2");
+        }
+
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 2;
         }
 

@@ -1,4 +1,4 @@
-package org.hopestarter.ui.view;
+package org.hopestarter.wallet.ui.view;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;

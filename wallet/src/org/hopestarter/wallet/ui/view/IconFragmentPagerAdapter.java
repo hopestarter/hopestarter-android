@@ -1,4 +1,4 @@
-package org.hopestarter.ui.view;
+package org.hopestarter.wallet.ui.view;
 
 import android.support.v4.app.FragmentManager;
 import android.graphics.drawable.Drawable;

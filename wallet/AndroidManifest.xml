@@ -188,7 +188,7 @@
         -->
 
         <activity
-            android:name="org.hopestarter.ui.WelcomeActivity"
+            android:name="org.hopestarter.wallet.ui.WelcomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -198,15 +198,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.hopestarter.ui.CreateAccountActivity"
+            android:name="org.hopestarter.wallet.ui.CreateAccountActivity"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="org.hopestarter.ui.PictureSelectActivity"
+            android:name="org.hopestarter.wallet.ui.PictureSelectActivity"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="org.hopestarter.ui.ConfirmPictureActivity"
+            android:name="org.hopestarter.wallet.ui.ConfirmPictureActivity"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme" />
 
@@ -227,7 +227,7 @@
 
         <!-- <receiver -->
         <!-- android:name="de.schildbach.wallet.WalletBalanceWidgetProvider" -->
-        <!-- android:label="Bitcoin Wallet Balance"> -->
+        <!-- android:label="Bitcoin WalletFragment Balance"> -->
         <!-- <intent-filter> -->
         <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
         <!-- </intent-filter> -->
@@ -267,7 +267,7 @@
         <!-- android:value="true" /> -->
 
         <activity
-            android:name="org.hopestarter.ui.MainTabbedActivity"
+            android:name="org.hopestarter.wallet.ui.MainTabbedActivity"
             android:label="@string/title_activity_main_tabbed"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme" />

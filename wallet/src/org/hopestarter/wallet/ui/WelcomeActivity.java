@@ -1,4 +1,4 @@
-package org.hopestarter.ui;
+package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
 import android.content.Intent;

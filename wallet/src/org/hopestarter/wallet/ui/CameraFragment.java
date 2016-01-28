@@ -1,8 +1,6 @@
-package org.hopestarter.ui;
+package org.hopestarter.wallet.ui;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -11,13 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import org.hopestarter.ui.view.CameraPreview;
+import org.hopestarter.wallet.ui.view.CameraPreview;
 import org.hopestarter.wallet_test.R;
 
 import java.io.File;

@@ -5,7 +5,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.hopestarter.ui.MainTabbedActivity">
+    tools:context="org.hopestarter.wallet.ui.MainTabbedActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -20,7 +20,7 @@
             android:background="?attr/colorPrimary">
         </android.support.v7.widget.Toolbar>
 
-        <org.hopestarter.ui.view.IconTabLayout
+        <org.hopestarter.wallet.ui.view.IconTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

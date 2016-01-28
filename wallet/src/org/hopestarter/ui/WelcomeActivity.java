@@ -10,6 +10,8 @@ import org.hopestarter.wallet_test.R;
 
 public class WelcomeActivity extends Activity {
 
+    private static final int ACCOUNT_CREATION_REQ_CODE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,8 +20,19 @@ public class WelcomeActivity extends Activity {
         btn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(WelcomeActivity.this, CreateAccountActivity.class));
+                startActivityForResult(new Intent(WelcomeActivity.this, CreateAccountActivity.class), ACCOUNT_CREATION_REQ_CODE);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent data) {
+        switch(reqCode) {
+            case ACCOUNT_CREATION_REQ_CODE:
+                if (resCode == RESULT_OK) {
+                    startActivity(new Intent(this, MainTabbedActivity.class));
+                    finish();
+                }
+        }
     }
 }

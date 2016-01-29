@@ -1,29 +1,29 @@
-package org.hopestarter.wallet.ui;
+package org.hopestarter.wallet_test;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.hopestarter.wallet_test.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link WalletFragment.OnFragmentInteractionListener} interface
+ * {@link ProfileFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link WalletFragment#newInstance} factory method to
+ * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WalletFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private RecyclerView mRecyclerView;
 
-    public WalletFragment() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -31,11 +31,10 @@ public class WalletFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment.
      *
-     * @return A new instance of fragment WalletFragment.
+     * @return A new instance of fragment ProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static WalletFragment newInstance() {
-        WalletFragment fragment = new WalletFragment();
+    public static ProfileFragment newInstance() {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -44,14 +43,14 @@ public class WalletFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -91,5 +90,30 @@ public class WalletFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public class ProfileUpdatesAdapter extends RecyclerView.Adapter<ProfileUpdatesViewHolder> {
+
+        @Override
+        public ProfileUpdatesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(ProfileUpdatesViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+    }
+
+    public class ProfileUpdatesViewHolder extends RecyclerView.ViewHolder {
+
+        public ProfileUpdatesViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }

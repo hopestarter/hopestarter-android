@@ -20,9 +20,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
+import org.hopestarter.wallet_test.ProfileFragment;
 import org.hopestarter.wallet_test.R;
 
-public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener {
+public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -132,18 +133,18 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
                 case 0:
                     return createWalletFragment();
                 case 1:
-                    FakeFragment fragment = new FakeFragment();
-                    Bundle arguments = new Bundle();
-                    arguments.putInt(FakeFragment.ARG_NUMBER, position);
-                    fragment.setArguments(arguments);
-                    return fragment;
+                    return createProfileFragment();
                 default:
                     return null;
             }
         }
 
+        private ProfileFragment createProfileFragment() {
+            return ProfileFragment.newInstance();
+        }
+
         private WalletFragment createWalletFragment() {
-            return WalletFragment.newInstance("test1", "test2");
+            return WalletFragment.newInstance();
         }
 
         @Override

@@ -78,8 +78,10 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new UpdateItemDecoration(getActivity()));
+        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 10);
         mNumUpdates = (TextView)rootView.findViewById(R.id.profile_updates);
 
         Uri path = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image);
@@ -229,7 +231,6 @@ public class ProfileFragment extends Fragment {
         @Override
         public void onBindViewHolder(ProfileUpdatesViewHolder holder, int position) {
             UpdateInfo data = mUpdates.get(position);
-
             holder.data = data;
             holder.userNameView.setText(data.getUserName());
             holder.messageView.setText(data.getMessage());
@@ -241,7 +242,6 @@ public class ProfileFragment extends Fragment {
             }
 
             if (data.getPictureUri() != null) {
-
                 mImageLoader.load(data.getPictureUri()).fit().centerCrop().into(holder.attachedImageView);
             }
 

@@ -7,8 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.google.common.util.concurrent.AtomicDouble;
 
 import org.hopestarter.wallet_test.R;
+
+import java.text.NumberFormat;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 /**
@@ -22,6 +29,8 @@ import org.hopestarter.wallet_test.R;
 public class WalletFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private TextView mDonatedWorldwide;
+    private TextView mRefugeeCount;
 
     public WalletFragment() {
         // Required empty public constructor
@@ -50,8 +59,39 @@ public class WalletFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_wallet, container, false);
+        mDonatedWorldwide = (TextView)rootView.findViewById(R.id.world_donations);
+        startDonationsUpdater();
+        mRefugeeCount = (TextView)rootView.findViewById(R.id.refugees);
+        mRefugeeCount.setText(getString(R.string.donated_so_far_worldwide, 833));
+        return rootView;
+    }
+
+    private void startDonationsUpdater() {
+        GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
+        calendar.set(2016, 0, 1, 0, 0, 0);
+        final long sD = calendar.getTimeInMillis();
+        final double r = 0.025; // $/min
+
+        final NumberFormat currencyFormater = NumberFormat.getCurrencyInstance(Locale.US);
+
+        Runnable update = new Runnable() {
+            @Override
+            public void run() {
+                double lastValue = getLastDonationValue(sD, System.currentTimeMillis(), r);
+                mDonatedWorldwide.setText(currencyFormater.format(lastValue));
+                mDonatedWorldwide.postDelayed(this, 1000);
+            }
+        };
+
+        mDonatedWorldwide.post(update);
+
+    }
+
+    private double getLastDonationValue(long start, long now, double r) {
+        long d = now - start;
+        double min = Long.valueOf(d).doubleValue()/(1000 * 60);
+        return min * r;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

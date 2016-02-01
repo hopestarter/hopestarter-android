@@ -64,23 +64,32 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/first_name_input"
-                android:hint="First name"/>
+                android:hint="First name"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/last_name_input"
-                android:hint="Last name"/>
+                android:hint="Last name"
+                android:singleLine="true"
+                android:inputType="textCapWords" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/ethnicity_input"
-                android:hint="Ethnicity"/>
+                android:hint="Ethnicity"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
 
         </LinearLayout>
 

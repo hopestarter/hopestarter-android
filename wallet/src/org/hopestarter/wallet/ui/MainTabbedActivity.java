@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
-import org.hopestarter.wallet_test.ProfileFragment;
 import org.hopestarter.wallet_test.R;
 
 public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {

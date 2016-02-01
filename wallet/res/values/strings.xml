@@ -325,5 +325,10 @@
     <string name="now">now</string>
     <string name="views">views</string>
     <string name="received_donations">received donations</string>
+    <string name="ethnicity_text_field">Ethnicity</string>
+    <string name="last_name_field">Last name</string>
+    <string name="first_name_field">First name</string>
+    <string name="add_profile_picture">Add a profile picture</string>
+    <string name="create_account_instructions">Fill in your personal details</string>
 
 </resources>

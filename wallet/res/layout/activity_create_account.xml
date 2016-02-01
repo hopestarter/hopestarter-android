@@ -42,8 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
                 android:textStyle="bold"
-                android:textSize="16dp"
-                android:text="Fill in your personal details"/>
+                android:textSize="16sp"
+                android:text="@string/create_account_instructions"/>
 
             <ImageView
                 android:layout_width="94dp"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:textSize="18dp"
-                android:text="Add a profile picture"
+                android:text="@string/add_profile_picture"
                 android:textColor="@color/turquoise"
                 android:id="@+id/add_profile_picture_link"/>
 
@@ -67,7 +67,7 @@
                 android:imeOptions="actionNext"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/first_name_input"
-                android:hint="First name"
+                android:hint="@string/first_name_field"
                 android:inputType="textCapWords"
                 android:singleLine="true" />
 
@@ -77,7 +77,7 @@
                 android:imeOptions="actionNext"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/last_name_input"
-                android:hint="Last name"
+                android:hint="@string/last_name_field"
                 android:singleLine="true"
                 android:inputType="textCapWords" />
 
@@ -87,7 +87,7 @@
                 android:imeOptions="actionDone"
                 android:layout_marginBottom="10dp"
                 android:id="@+id/ethnicity_input"
-                android:hint="Ethnicity"
+                android:hint="@string/ethnicity_text_field"
                 android:inputType="textCapWords"
                 android:singleLine="true" />
 

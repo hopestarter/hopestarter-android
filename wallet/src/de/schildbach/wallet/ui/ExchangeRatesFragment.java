@@ -52,6 +52,7 @@ import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.WalletBalanceWidgetProvider;
 import org.hopestarter.wallet.service.BlockchainState;
 import org.hopestarter.wallet.service.BlockchainStateLoader;
+import de.schildbach.wallet.ui.WalletBalanceLoader;
 import org.hopestarter.wallet.util.WholeStringBuilder;
 import org.hopestarter.wallet_test.R;
 

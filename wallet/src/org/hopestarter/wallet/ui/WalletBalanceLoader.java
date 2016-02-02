@@ -15,26 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.schildbach.wallet.ui;
+package org.hopestarter.wallet.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.AsyncTaskLoader;
-import android.support.v4.content.LocalBroadcastManager;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Wallet;
 import org.bitcoinj.core.Wallet.BalanceType;
 import org.bitcoinj.utils.Threading;
-import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.RejectedExecutionException;
-
+import android.support.v4.content.AsyncTaskLoader;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import de.schildbach.wallet.WalletApplication;
+import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
 
 /**
  * @author Andreas Schildbach

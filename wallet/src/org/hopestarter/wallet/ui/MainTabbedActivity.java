@@ -2,35 +2,28 @@ package org.hopestarter.wallet.ui;
 
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
-
+import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
 
 public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
     private Toolbar mToolbar;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +66,24 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
         setSupportActionBar(mToolbar);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((WalletApplication)getApplication()).startBlockchainService(true);
+            }
+        }, 1000);
+    }
+
+    @Override
+    protected void onPause() {
+        mHandler.removeCallbacksAndMessages(null);
+        super.onPause();
+    }
+
     public void setToolbarTitle(CharSequence title) {
         mToolbar.setTitle(title);
     }
@@ -104,7 +115,6 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
 
         @Override
         public Fragment getItem(int position) {
-
             switch(position) {
                 case 0:
                     return createWalletFragment();

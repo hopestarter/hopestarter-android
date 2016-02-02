@@ -26,6 +26,7 @@ import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Wallet;
 import org.bitcoinj.uri.BitcoinURI;
 import org.bitcoinj.utils.Threading;
+import org.hopestarter.wallet.ui.WalletBalanceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

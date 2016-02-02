@@ -50,6 +50,8 @@ import de.schildbach.wallet.WalletApplication;
 import org.hopestarter.wallet.service.BlockchainState;
 import org.hopestarter.wallet.service.BlockchainStateLoader;
 import de.schildbach.wallet.ui.send.SendCoinsActivity;
+
+import de.schildbach.wallet.ui.WalletBalanceLoader;
 import org.hopestarter.wallet_test.R;
 
 /**

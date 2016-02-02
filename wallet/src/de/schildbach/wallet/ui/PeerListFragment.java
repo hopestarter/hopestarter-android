@@ -54,8 +54,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
-import de.schildbach.wallet.service.BlockchainService;
-import de.schildbach.wallet.service.BlockchainServiceImpl;
+import org.hopestarter.wallet.service.BlockchainService;
+import org.hopestarter.wallet.service.BlockchainServiceImpl;
 import org.hopestarter.wallet_test.R;
 
 /**

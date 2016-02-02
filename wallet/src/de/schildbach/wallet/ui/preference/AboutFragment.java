@@ -25,7 +25,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
 import org.hopestarter.wallet_test.R;
 

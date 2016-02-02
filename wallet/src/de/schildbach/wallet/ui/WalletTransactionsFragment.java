@@ -75,16 +75,16 @@ import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
-import de.schildbach.wallet.AddressBookProvider;
-import de.schildbach.wallet.Configuration;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.AddressBookProvider;
+import org.hopestarter.wallet.Configuration;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.ui.TransactionsAdapter.Warning;
 import de.schildbach.wallet.ui.send.RaiseFeeDialogFragment;
-import de.schildbach.wallet.util.BitmapFragment;
-import de.schildbach.wallet.util.Qr;
-import de.schildbach.wallet.util.ThrottlingWalletChangeListener;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.util.BitmapFragment;
+import org.hopestarter.wallet.util.Qr;
+import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
+import org.hopestarter.wallet.util.WalletUtils;
 import org.hopestarter.wallet_test.R;
 
 /**

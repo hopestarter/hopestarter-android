@@ -46,10 +46,10 @@ import android.widget.Toast;
 
 import com.google.common.base.Charsets;
 
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.FileAttachmentProvider;
-import de.schildbach.wallet.util.CrashReporter;
-import de.schildbach.wallet.util.Io;
+import org.hopestarter.wallet.util.CrashReporter;
+import org.hopestarter.wallet.util.Io;
 import org.hopestarter.wallet_test.R;
 
 /**

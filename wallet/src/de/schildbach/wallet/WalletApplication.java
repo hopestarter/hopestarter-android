@@ -36,6 +36,8 @@ import org.bitcoinj.store.WalletProtobufSerializer;
 import org.bitcoinj.utils.Threading;
 import org.bitcoinj.wallet.Protos;
 import org.bitcoinj.wallet.WalletFiles;
+import org.hopestarter.wallet.Configuration;
+import org.hopestarter.wallet.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,10 +61,10 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-import de.schildbach.wallet.service.BlockchainService;
-import de.schildbach.wallet.service.BlockchainServiceImpl;
-import de.schildbach.wallet.util.CrashReporter;
-import de.schildbach.wallet.util.Io;
+import org.hopestarter.wallet.service.BlockchainService;
+import org.hopestarter.wallet.service.BlockchainServiceImpl;
+import org.hopestarter.wallet.util.CrashReporter;
+import org.hopestarter.wallet.util.Io;
 import org.hopestarter.wallet_test.R;
 
 /**

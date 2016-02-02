@@ -33,7 +33,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.util.ThrottlingWalletChangeListener;
+import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
 
 /**
  * @author Andreas Schildbach

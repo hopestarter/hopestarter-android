@@ -38,10 +38,10 @@ import android.os.Looper;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.data.PaymentIntent;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.data.PaymentIntent;
 import de.schildbach.wallet.ui.InputParser;
-import de.schildbach.wallet.util.Bluetooth;
+import org.hopestarter.wallet.util.Bluetooth;
 import org.hopestarter.wallet_test.R;
 
 /**

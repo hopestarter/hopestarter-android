@@ -58,10 +58,10 @@ import android.widget.TextView;
 
 import com.google.common.base.Charsets;
 
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.util.Crypto;
-import de.schildbach.wallet.util.Iso8601Format;
+import org.hopestarter.wallet.util.Crypto;
+import org.hopestarter.wallet.util.Iso8601Format;
 import org.hopestarter.wallet_test.R;
 
 /**

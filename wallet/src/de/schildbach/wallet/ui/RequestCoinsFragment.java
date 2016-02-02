@@ -66,18 +66,18 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import de.schildbach.wallet.Configuration;
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.ExchangeRatesProvider;
-import de.schildbach.wallet.ExchangeRatesProvider.ExchangeRate;
+import org.hopestarter.wallet.Configuration;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.ExchangeRatesProvider;
+import org.hopestarter.wallet.ExchangeRatesProvider.ExchangeRate;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.offline.AcceptBluetoothService;
+import org.hopestarter.wallet.offline.AcceptBluetoothService;
 import de.schildbach.wallet.ui.send.SendCoinsActivity;
-import de.schildbach.wallet.util.BitmapFragment;
-import de.schildbach.wallet.util.Bluetooth;
-import de.schildbach.wallet.util.Nfc;
-import de.schildbach.wallet.util.Qr;
-import de.schildbach.wallet.util.Toast;
+import org.hopestarter.wallet.util.BitmapFragment;
+import org.hopestarter.wallet.util.Bluetooth;
+import org.hopestarter.wallet.util.Nfc;
+import org.hopestarter.wallet.util.Qr;
+import org.hopestarter.wallet.util.Toast;
 import org.hopestarter.wallet_test.R;
 
 /**

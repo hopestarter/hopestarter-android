@@ -55,10 +55,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import de.schildbach.wallet.Configuration;
+import org.hopestarter.wallet.Configuration;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.util.Qr;
-import de.schildbach.wallet.util.ThrottlingWalletChangeListener;
+import org.hopestarter.wallet.util.Qr;
+import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
 import org.hopestarter.wallet_test.R;
 
 /**

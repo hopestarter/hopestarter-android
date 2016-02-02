@@ -29,8 +29,8 @@ import android.os.Parcelable;
 
 import com.google.common.base.Objects;
 
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.WalletUtils;
 
 /**
  * @author Andreas Schildbach

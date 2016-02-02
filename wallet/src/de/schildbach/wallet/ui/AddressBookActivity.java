@@ -40,8 +40,8 @@ import android.view.ViewGroup;
 
 import com.google.common.collect.Iterables;
 
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.ViewPagerTabs;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.ViewPagerTabs;
 import org.hopestarter.wallet_test.R;
 
 /**

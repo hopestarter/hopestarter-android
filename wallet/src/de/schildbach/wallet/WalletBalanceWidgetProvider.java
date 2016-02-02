@@ -24,6 +24,9 @@ import org.bitcoinj.core.Wallet;
 import org.bitcoinj.core.Wallet.BalanceType;
 import org.bitcoinj.utils.Fiat;
 import org.bitcoinj.utils.MonetaryFormat;
+import org.hopestarter.wallet.Configuration;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.ExchangeRatesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +43,13 @@ import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.RemoteViews;
-import de.schildbach.wallet.ExchangeRatesProvider.ExchangeRate;
+import org.hopestarter.wallet.ExchangeRatesProvider.ExchangeRate;
 import de.schildbach.wallet.ui.RequestCoinsActivity;
 import de.schildbach.wallet.ui.SendCoinsQrActivity;
 import de.schildbach.wallet.ui.WalletActivity;
 import de.schildbach.wallet.ui.send.SendCoinsActivity;
-import de.schildbach.wallet.util.GenericUtils;
-import de.schildbach.wallet.util.MonetarySpannable;
+import org.hopestarter.wallet.util.GenericUtils;
+import org.hopestarter.wallet.util.MonetarySpannable;
 import org.hopestarter.wallet_test.R;
 
 /**

@@ -31,9 +31,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.Toast;
-import de.schildbach.wallet.util.WholeStringBuilder;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.Toast;
+import org.hopestarter.wallet.util.WholeStringBuilder;
 import org.hopestarter.wallet_test.R;
 
 /**

@@ -21,7 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Constants;
 
 /**
  * @author Andreas Schildbach

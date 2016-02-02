@@ -51,11 +51,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import de.schildbach.wallet.AddressBookProvider;
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.CircularProgressView;
-import de.schildbach.wallet.util.Formats;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.AddressBookProvider;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.CircularProgressView;
+import org.hopestarter.wallet.util.Formats;
+import org.hopestarter.wallet.util.WalletUtils;
 import org.hopestarter.wallet_test.R;
 
 /**

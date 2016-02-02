@@ -31,8 +31,8 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.WalletUtils;
 import org.hopestarter.wallet_test.R;
 
 /**

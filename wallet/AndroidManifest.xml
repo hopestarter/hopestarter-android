@@ -212,11 +212,11 @@
             android:theme="@style/AppTheme" />
 
         <!-- <provider -->
-        <!-- android:name="de.schildbach.wallet.AddressBookProvider" -->
+        <!-- android:name="org.hopestarter.wallet.AddressBookProvider" -->
         <!-- android:authorities="org.hopestarter.wallet_test.address_book" -->
         <!-- android:exported="false" /> -->
         <!-- <provider -->
-        <!-- android:name="de.schildbach.wallet.ExchangeRatesProvider" -->
+        <!-- android:name="org.hopestarter.wallet.ExchangeRatesProvider" -->
         <!-- android:authorities="org.hopestarter.wallet_test.exchange_rates" -->
         <!-- android:exported="false" /> -->
         <!-- <provider -->
@@ -241,14 +241,14 @@
 
 
         <!-- <service -->
-        <!-- android:name="de.schildbach.wallet.service.BlockchainServiceImpl" -->
+        <!-- android:name="org.hopestarter.wallet.service.BlockchainServiceImpl" -->
         <!-- android:exported="false" /> -->
         <!-- <service -->
-        <!-- android:name="de.schildbach.wallet.offline.AcceptBluetoothService" -->
+        <!-- android:name="org.hopestarter.wallet.offline.AcceptBluetoothService" -->
         <!-- android:exported="false" /> -->
 
 
-        <!-- <receiver android:name="de.schildbach.wallet.service.AutosyncReceiver"> -->
+        <!-- <receiver android:name="org.hopestarter.wallet.service.AutosyncReceiver"> -->
         <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
         <!-- </intent-filter> -->
@@ -259,7 +259,7 @@
 
 
         <!-- <service -->
-        <!-- android:name="de.schildbach.wallet.service.UpgradeWalletService" -->
+        <!-- android:name="org.hopestarter.wallet.service.UpgradeWalletService" -->
         <!-- android:exported="false" /> -->
 
 

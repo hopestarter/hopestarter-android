@@ -27,8 +27,8 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.ScaleXSpan;
 import android.util.AttributeSet;
 import android.widget.TextView;
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.MonetarySpannable;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.MonetarySpannable;
 import org.hopestarter.wallet_test.R;
 
 /**

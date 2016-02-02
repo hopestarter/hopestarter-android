@@ -24,8 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import de.schildbach.wallet.service.BlockchainService;
-import de.schildbach.wallet.service.BlockchainServiceImpl;
+import org.hopestarter.wallet.service.BlockchainService;
+import org.hopestarter.wallet.service.BlockchainServiceImpl;
 
 /**
  * @author Andreas Schildbach

@@ -47,8 +47,8 @@ import android.os.Looper;
 
 import com.google.common.base.Charsets;
 
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.util.Io;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.util.Io;
 import org.hopestarter.wallet_test.R;
 
 /**

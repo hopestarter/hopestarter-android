@@ -36,8 +36,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.service.BlockchainService;
-import de.schildbach.wallet.service.BlockchainState;
+import org.hopestarter.wallet.service.BlockchainService;
+import org.hopestarter.wallet.service.BlockchainState;
 import de.schildbach.wallet.ui.send.MaintenanceDialogFragment;
 
 /**

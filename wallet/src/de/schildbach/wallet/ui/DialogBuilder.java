@@ -28,7 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet_test.R;
 
 /**

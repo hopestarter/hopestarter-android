@@ -42,8 +42,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import de.schildbach.wallet.AddressBookProvider;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.AddressBookProvider;
+import org.hopestarter.wallet.util.WalletUtils;
 import org.hopestarter.wallet_test.R;
 
 /**

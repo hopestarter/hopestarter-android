@@ -35,10 +35,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import de.schildbach.wallet.AddressBookProvider;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.AddressBookProvider;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.util.WalletUtils;
 import org.hopestarter.wallet_test.R;
 
 /**

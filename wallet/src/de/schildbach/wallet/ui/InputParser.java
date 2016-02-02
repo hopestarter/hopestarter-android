@@ -57,10 +57,10 @@ import com.google.common.hash.Hashing;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.UninitializedMessageException;
 
-import de.schildbach.wallet.Constants;
-import de.schildbach.wallet.data.PaymentIntent;
-import de.schildbach.wallet.util.Io;
-import de.schildbach.wallet.util.Qr;
+import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.data.PaymentIntent;
+import org.hopestarter.wallet.util.Io;
+import org.hopestarter.wallet.util.Qr;
 import org.hopestarter.wallet_test.R;
 
 /**

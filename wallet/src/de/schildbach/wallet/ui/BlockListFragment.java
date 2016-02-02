@@ -55,11 +55,11 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ViewAnimator;
-import de.schildbach.wallet.Configuration;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Configuration;
+
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.service.BlockchainService;
-import de.schildbach.wallet.service.BlockchainServiceImpl;
+import org.hopestarter.wallet.service.BlockchainService;
+import org.hopestarter.wallet.service.BlockchainServiceImpl;
 import org.hopestarter.wallet_test.R;
 
 /**

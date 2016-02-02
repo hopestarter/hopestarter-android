@@ -38,11 +38,11 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import de.schildbach.wallet.Configuration;
+import org.hopestarter.wallet.Configuration;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.service.BlockchainState;
-import de.schildbach.wallet.service.BlockchainState.Impediment;
-import de.schildbach.wallet.service.BlockchainStateLoader;
+import org.hopestarter.wallet.service.BlockchainState;
+import org.hopestarter.wallet.service.BlockchainState.Impediment;
+import org.hopestarter.wallet.service.BlockchainStateLoader;
 import org.hopestarter.wallet_test.R;
 
 /**

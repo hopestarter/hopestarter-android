@@ -40,8 +40,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import de.schildbach.wallet.util.GenericUtils;
-import de.schildbach.wallet.util.MonetarySpannable;
+import org.hopestarter.wallet.util.GenericUtils;
+import org.hopestarter.wallet.util.MonetarySpannable;
 import org.hopestarter.wallet_test.R;
 
 /**

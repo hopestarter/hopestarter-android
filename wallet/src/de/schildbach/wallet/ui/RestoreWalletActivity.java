@@ -41,12 +41,12 @@ import android.widget.EditText;
 
 import com.google.common.base.Charsets;
 
-import de.schildbach.wallet.Configuration;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Configuration;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.util.Crypto;
-import de.schildbach.wallet.util.Io;
-import de.schildbach.wallet.util.WalletUtils;
+import org.hopestarter.wallet.util.Crypto;
+import org.hopestarter.wallet.util.Io;
+import org.hopestarter.wallet.util.WalletUtils;
 import org.hopestarter.wallet_test.R;
 
 /**

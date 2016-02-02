@@ -31,11 +31,11 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
-import de.schildbach.wallet.Constants;
+import org.hopestarter.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.ui.DialogBuilder;
 import de.schildbach.wallet.ui.ReportIssueDialogBuilder;
-import de.schildbach.wallet.util.CrashReporter;
+import org.hopestarter.wallet.util.CrashReporter;
 import org.hopestarter.wallet_test.R;
 
 /**

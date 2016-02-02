@@ -30,7 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import de.schildbach.wallet.ui.DialogBuilder;
-import de.schildbach.wallet.util.Qr;
+import org.hopestarter.wallet.util.Qr;
 import org.hopestarter.wallet_test.R;
 
 /**

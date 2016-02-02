@@ -330,5 +330,7 @@
     <string name="first_name_field">First name</string>
     <string name="add_profile_picture">Add a profile picture</string>
     <string name="create_account_instructions">Fill in your personal details</string>
+    <string name="title_fragment_wallet">Wallet</string>
+    <string name="title_profile_fragment">Profile</string>
 
 </resources>

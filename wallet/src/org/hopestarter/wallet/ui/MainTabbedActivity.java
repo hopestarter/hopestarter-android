@@ -24,14 +24,6 @@ import org.hopestarter.wallet_test.R;
 
 public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -51,7 +43,7 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        final String[] tabTitles = {"Wallet", "Profile"};
+        final String[] tabTitles = {getString(R.string.title_fragment_wallet), getString(R.string.title_profile_fragment)};
 
         setToolbarTitle(tabTitles[0]);
 

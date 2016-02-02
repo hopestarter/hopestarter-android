@@ -103,21 +103,6 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
 
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-
-    public static class FakeFragment extends Fragment {
-        public static final String ARG_NUMBER = "ARG_NUMBER";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-            TextView tv = new TextView(getActivity());
-            tv.setText("This is fake fragment number" + Integer.toString(getArguments().getInt(ARG_NUMBER)));
-            return tv;
-        }
-    }
 
     public class SectionsPagerAdapter extends IconFragmentPagerAdapter {
 

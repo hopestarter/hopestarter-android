@@ -211,19 +211,19 @@
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme" />
 
-        <!-- <provider -->
-        <!-- android:name="org.hopestarter.wallet.AddressBookProvider" -->
-        <!-- android:authorities="org.hopestarter.wallet_test.address_book" -->
-        <!-- android:exported="false" /> -->
-        <!-- <provider -->
-        <!-- android:name="org.hopestarter.wallet.ExchangeRatesProvider" -->
-        <!-- android:authorities="org.hopestarter.wallet_test.exchange_rates" -->
-        <!-- android:exported="false" /> -->
-        <!-- <provider -->
-        <!-- android:name="de.schildbach.wallet.FileAttachmentProvider" -->
-        <!-- android:authorities="org.hopestarter.wallet_test.file_attachment" -->
-        <!-- android:exported="false" -->
-        <!-- android:grantUriPermissions="true" /> -->
+         <provider
+         android:name="org.hopestarter.wallet.AddressBookProvider"
+         android:authorities="org.hopestarter.wallet_test.address_book"
+         android:exported="false" />
+         <provider
+         android:name="org.hopestarter.wallet.ExchangeRatesProvider"
+         android:authorities="org.hopestarter.wallet_test.exchange_rates"
+         android:exported="false" />
+         <provider
+         android:name="de.schildbach.wallet.FileAttachmentProvider"
+         android:authorities="org.hopestarter.wallet_test.file_attachment"
+         android:exported="false"
+         android:grantUriPermissions="true" />
 
 
         <!-- <receiver -->
@@ -240,27 +240,27 @@
         <!-- </receiver> -->
 
 
-        <!-- <service -->
-        <!-- android:name="org.hopestarter.wallet.service.BlockchainServiceImpl" -->
-        <!-- android:exported="false" /> -->
-        <!-- <service -->
-        <!-- android:name="org.hopestarter.wallet.offline.AcceptBluetoothService" -->
-        <!-- android:exported="false" /> -->
+         <service
+         android:name="org.hopestarter.wallet.service.BlockchainServiceImpl"
+         android:exported="false" />
+         <service
+         android:name="org.hopestarter.wallet.offline.AcceptBluetoothService"
+         android:exported="false" />
 
 
-        <!-- <receiver android:name="org.hopestarter.wallet.service.AutosyncReceiver"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
-        <!-- </intent-filter> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.MY_PACKAGE_REPLACED" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
+         <receiver android:name="org.hopestarter.wallet.service.AutosyncReceiver">
+         <intent-filter>
+         <action android:name="android.intent.action.BOOT_COMPLETED" />
+         </intent-filter>
+         <intent-filter>
+         <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+         </intent-filter>
+         </receiver>
 
 
-        <!-- <service -->
-        <!-- android:name="org.hopestarter.wallet.service.UpgradeWalletService" -->
-        <!-- android:exported="false" /> -->
+         <service
+         android:name="org.hopestarter.wallet.service.UpgradeWalletService"
+         android:exported="false" />
 
 
         <!-- <meta-data -->

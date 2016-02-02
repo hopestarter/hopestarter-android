@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import de.schildbach.wallet.WalletApplication;
+import org.hopestarter.wallet.WalletApplication;
 
 /**
  * This service upgrades the wallet to an HD wallet. Use {@link #startUpgrade(Context)} to start the process.

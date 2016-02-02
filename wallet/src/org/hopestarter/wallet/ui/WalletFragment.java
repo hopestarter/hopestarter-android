@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import java.util.Locale;
 public class WalletFragment extends Fragment {
 
     private static final int WALLET_BALANCE_LOADER = 0;
+    private static final String TAG = WalletFragment.class.getName();
     private OnFragmentInteractionListener mListener;
     private TextView mDonatedWorldwideView;
     private TextView mBalanceView;
@@ -63,6 +65,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onPause() {
         mLoaderManager.destroyLoader(WALLET_BALANCE_LOADER);
+        super.onPause();
     }
 
     @Override
@@ -127,8 +130,10 @@ public class WalletFragment extends Fragment {
     }
 
     private void updateViews() {
+        Log.d(TAG, "updateViews: current address is " + mWallet.currentReceiveAddress().toString());
         MonetaryFormat format = MonetaryFormat.MBTC;
-        mBalanceView.setText(format.format(mBalance));
+
+        mBalanceView.setText(format.postfixCode().format(mBalance));
     }
 
 

@@ -36,7 +36,12 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        final String[] tabTitles = {getString(R.string.title_fragment_wallet), getString(R.string.title_profile_fragment)};
+        final String[] tabTitles = {
+                getString(R.string.title_fragment_wallet),
+                getString(R.string.title_sendrequest_fragment),
+                getString(R.string.title_world_fragment) ,
+                getString(R.string.title_profile_fragment)
+        };
 
         setToolbarTitle(tabTitles[0]);
 
@@ -115,6 +120,10 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
                 case 0:
                     return createWalletFragment();
                 case 1:
+                    return createSendReceiveFragment();
+                case 2:
+                    return createWorldUpdatesFragment();
+                case 3:
                     return createProfileFragment();
                 default:
                     return null;
@@ -129,9 +138,13 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
             return WalletFragment.newInstance();
         }
 
+        private WorldUpdatesFragment createWorldUpdatesFragment() { return WorldUpdatesFragment.newInstance(); }
+
+        private SendReceiveFragment createSendReceiveFragment() { return SendReceiveFragment.newInstance();}
+
         @Override
         public int getCount() {
-            return 2;
+            return 4;
         }
 
         @Override
@@ -146,6 +159,10 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
                 case 0:
                     return getResources().getDrawable(R.drawable.wallet_tab_icon);
                 case 1:
+                    return getResources().getDrawable(R.drawable.sendreceive_tab_icon);
+                case 2:
+                    return getResources().getDrawable(R.drawable.world_tab_icon);
+                case 3:
                     return getResources().getDrawable(R.drawable.profile_tab_icon);
                 default:
                     return null;

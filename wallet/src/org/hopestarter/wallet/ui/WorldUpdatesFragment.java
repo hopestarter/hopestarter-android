@@ -51,7 +51,7 @@ public class WorldUpdatesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_worldupdates, container, false);
         mUpdatesFragment = UpdatesFragment.newInstance();
 
         mPostPictureUpdate = (Button)rootView.findViewById(R.id.post_photo_update);
@@ -89,7 +89,17 @@ public class WorldUpdatesFragment extends Fragment {
                 .setUpdateViews(688)
                 .build();
 
-        mUpdatesFragment.addAll(new UpdateInfo[] {info, info2});
+        UpdateInfo info3 = new UpdateInfo.Builder()
+                .setUserName("Dawud Wasamet")
+                .setEthnicity("Iraqi")
+                .setLocation("hegyeshalom, Hungary")
+                .setUpdateDateMillis(System.currentTimeMillis() - 6 * 60 * 60 * 1000)
+                .setPictureUri(path2)
+                .setMessage("Syrian refugees are freezing to death as snow covers the region.")
+                .setUpdateViews(230)
+                .build();
+
+        mUpdatesFragment.addAll(new UpdateInfo[] {info, info2, info3});
 
         return rootView;
     }

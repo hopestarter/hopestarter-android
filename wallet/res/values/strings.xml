@@ -336,5 +336,7 @@
     <string name="post_menu_item">Post</string>
     <string name="post_a_photo_update_title">Post a photo update</string>
     <string name="message_edit_hint">What\'s happening...</string>
+    <string name="title_world_fragment">World updates</string>
+    <string name="title_sendrequest_fragment">Send or Request</string>
 
 </resources>

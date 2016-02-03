@@ -332,5 +332,9 @@
     <string name="create_account_instructions">Fill in your personal details</string>
     <string name="title_fragment_wallet">Wallet</string>
     <string name="title_profile_fragment">Profile</string>
+    <string name="title_activity_create_new_update">Type a message</string>
+    <string name="post_menu_item">Post</string>
+    <string name="post_a_photo_update_title">Post a photo update</string>
+    <string name="message_edit_hint">What\'s happening...</string>
 
 </resources>

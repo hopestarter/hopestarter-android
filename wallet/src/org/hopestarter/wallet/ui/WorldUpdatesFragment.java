@@ -16,27 +16,21 @@ import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet_test.R;
 
-public class ProfileFragment extends Fragment {
+public class WorldUpdatesFragment extends Fragment {
 
-    private static final String TAG = "ProfileFragment";
+    private static final String TAG = WorldUpdatesFragment.class.getName();
     private static final int POST_UPDATE_REQ_CODE = 0;
     private UpdatesFragment mUpdatesFragment;
     private Picasso mImageLoader;
     private TextView mNumUpdates;
     private Button mPostPictureUpdate;
 
-    public ProfileFragment() {
+    public WorldUpdatesFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment.
-     *
-     * @return A new instance of fragment ProfileFragment.
-     */
-    public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
+    public static WorldUpdatesFragment newInstance() {
+        WorldUpdatesFragment fragment = new WorldUpdatesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -58,9 +52,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        mNumUpdates = (TextView)rootView.findViewById(R.id.profile_updates);
-
         mUpdatesFragment = UpdatesFragment.newInstance();
 
         mPostPictureUpdate = (Button)rootView.findViewById(R.id.post_photo_update);
@@ -98,18 +89,14 @@ public class ProfileFragment extends Fragment {
                 .setUpdateViews(688)
                 .build();
 
-        mUpdatesFragment.addAll(new UpdateInfo[]{info, info2});
-        updateNumberOfUpdates();
+        mUpdatesFragment.addAll(new UpdateInfo[] {info, info2});
+
         return rootView;
     }
 
     private void launchCreateNewUpdateActivity() {
         Intent activityIntent = new Intent(getActivity(), CreateNewUpdateActivity.class);
         startActivityForResult(activityIntent, POST_UPDATE_REQ_CODE);
-    }
-
-    private void updateNumberOfUpdates() {
-        mNumUpdates.setText(Integer.toString(mUpdatesFragment.getNumberOfUpdates()));
     }
 
     @Override
@@ -127,7 +114,6 @@ public class ProfileFragment extends Fragment {
                             .build();
 
                     mUpdatesFragment.add(update);
-                    updateNumberOfUpdates();
                 }
                 break;
             default:

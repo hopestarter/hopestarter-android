@@ -2,6 +2,8 @@ package org.hopestarter.wallet.ui;
 
 import android.net.Uri;
 
+import java.util.Comparator;
+
 /**
  * Created by Adrian on 03/02/2016.
  */
@@ -142,6 +144,14 @@ public class UpdateInfo {
         public UpdateInfo.Builder setProfilePictureUri(Uri profilePictureUri) {
             this.profilePictureUri = profilePictureUri;
             return this;
+        }
+    }
+
+    public static class UpdateInfoInverseDateComparator implements Comparator<UpdateInfo> {
+
+        @Override
+        public int compare(UpdateInfo lhs, UpdateInfo rhs) {
+            return -Long.valueOf(lhs.getUpdateDateMillis()).compareTo(rhs.getUpdateDateMillis());
         }
     }
 }

@@ -21,6 +21,7 @@ import org.hopestarter.wallet_test.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -130,12 +131,20 @@ public class UpdatesFragment extends Fragment {
         mAdapter.clear();
     }
 
+    public int getNumberOfUpdates() { return mAdapter.getItemCount(); }
+
     public class ProfileUpdatesAdapter extends RecyclerView.Adapter<ProfileUpdatesViewHolder> {
         public final ArrayList<UpdateInfo> mUpdates = new ArrayList<>();
 
+        private void sortData() {
+            Collections.sort(mUpdates, new UpdateInfo.UpdateInfoInverseDateComparator());
+        }
+
         public void add(UpdateInfo item) {
             mUpdates.add(item);
-            notifyItemInserted(mUpdates.size()-1);
+            sortData();
+            int index = mUpdates.indexOf(item);
+            notifyItemInserted(index);
         }
 
         public void addAll(List<UpdateInfo> updateList) {
@@ -155,13 +164,13 @@ public class UpdatesFragment extends Fragment {
 
         public void remove(UpdateInfo item) {
             int index = mUpdates.indexOf(item);
-            mUpdates.remove(index);
-            notifyItemRemoved(index);
+            remove(index);
         }
 
         public void remove(int index) {
             mUpdates.remove(index);
-            notifyItemRemoved(index);
+            sortData();
+            notifyDataSetChanged();
         }
 
         public void clear() {

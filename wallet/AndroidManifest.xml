@@ -200,8 +200,8 @@
         <activity
             android:name="org.hopestarter.wallet.ui.CreateAccountActivity"
             android:screenOrientation="sensorPortrait"
-            android:windowSoftInputMode="stateVisible|adjustResize"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name="org.hopestarter.wallet.ui.PictureSelectActivity"
             android:screenOrientation="sensorPortrait"
@@ -211,20 +211,32 @@
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme" />
 
-         <provider
-         android:name="org.hopestarter.wallet.AddressBookProvider"
-         android:authorities="org.hopestarter.wallet_test.address_book"
-         android:exported="false" />
-         <provider
-         android:name="org.hopestarter.wallet.ExchangeRatesProvider"
-         android:authorities="org.hopestarter.wallet_test.exchange_rates"
-         android:exported="false" />
-         <provider
-         android:name="de.schildbach.wallet.FileAttachmentProvider"
-         android:authorities="org.hopestarter.wallet_test.file_attachment"
-         android:exported="false"
-         android:grantUriPermissions="true" />
+        <activity
+            android:name="org.hopestarter.wallet.ui.CreateNewUpdateActivity"
+            android:label="@string/title_activity_create_new_update"
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:theme="@style/AppTheme" />
 
+        <activity
+            android:name="org.hopestarter.wallet.ui.MainTabbedActivity"
+            android:label="@string/title_activity_main_tabbed"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme" />
+
+        <provider
+            android:name="org.hopestarter.wallet.AddressBookProvider"
+            android:authorities="org.hopestarter.wallet_test.address_book"
+            android:exported="false" />
+        <provider
+            android:name="org.hopestarter.wallet.ExchangeRatesProvider"
+            android:authorities="org.hopestarter.wallet_test.exchange_rates"
+            android:exported="false" />
+        <provider
+            android:name="de.schildbach.wallet.FileAttachmentProvider"
+            android:authorities="org.hopestarter.wallet_test.file_attachment"
+            android:exported="false"
+            android:grantUriPermissions="true" />
 
         <!-- <receiver -->
         <!-- android:name="de.schildbach.wallet.WalletBalanceWidgetProvider" -->
@@ -239,39 +251,31 @@
         <!-- android:resource="@xml/wallet_balance_widget" /> -->
         <!-- </receiver> -->
 
+        <service
+            android:name="org.hopestarter.wallet.service.BlockchainServiceImpl"
+            android:exported="false" />
+        <service
+            android:name="org.hopestarter.wallet.offline.AcceptBluetoothService"
+            android:exported="false" />
 
-         <service
-         android:name="org.hopestarter.wallet.service.BlockchainServiceImpl"
-         android:exported="false" />
-         <service
-         android:name="org.hopestarter.wallet.offline.AcceptBluetoothService"
-         android:exported="false" />
+        <receiver android:name="org.hopestarter.wallet.service.AutosyncReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="org.hopestarter.wallet.service.UpgradeWalletService"
+            android:exported="false" />
+
+         <meta-data
+         android:name="android.nfc.disable_beam_default"
+         android:value="true" />
 
 
-         <receiver android:name="org.hopestarter.wallet.service.AutosyncReceiver">
-         <intent-filter>
-         <action android:name="android.intent.action.BOOT_COMPLETED" />
-         </intent-filter>
-         <intent-filter>
-         <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-         </intent-filter>
-         </receiver>
-
-
-         <service
-         android:name="org.hopestarter.wallet.service.UpgradeWalletService"
-         android:exported="false" />
-
-
-        <!-- <meta-data -->
-        <!-- android:name="android.nfc.disable_beam_default" -->
-        <!-- android:value="true" /> -->
-
-        <activity
-            android:name="org.hopestarter.wallet.ui.MainTabbedActivity"
-            android:label="@string/title_activity_main_tabbed"
-            android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

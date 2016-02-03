@@ -19,6 +19,8 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
     private static final int FROM_CAMERA_CONFIRMATION_REQ_CODE = 0;
     private static final int FROM_GALLERY_CONFIRMATION_REQ_CODE = 1;
 
+    private String mTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,19 +28,18 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
 
         Toolbar tb = (Toolbar)findViewById(R.id.toolbar);
 
-        String title;
         Intent intent = getIntent();
         if (savedInstanceState == null) {
-            title = intent.getStringExtra(EXTRA_TITLE);
+            mTitle = intent.getStringExtra(EXTRA_TITLE);
         } else {
-            title = savedInstanceState.getString(EXTRA_TITLE);
+            mTitle = savedInstanceState.getString(EXTRA_TITLE);
         }
 
-        if (title == null) {
-            title = "Select a picture";
+        if (mTitle == null) {
+            mTitle = "Select a picture";
         }
 
-        tb.setTitle(title);
+        tb.setTitle(mTitle);
 
         setSupportActionBar(tb);
         ActionBar ab = getSupportActionBar();
@@ -75,7 +76,7 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
 
     private void askUserConfirmation(Uri pictureUri, boolean fromCamera) {
         Intent activityIntent = new Intent(this, ConfirmPictureActivity.class);
-        activityIntent.putExtra(ConfirmPictureActivity.EXTRA_TITLE, getTitle());
+        activityIntent.putExtra(ConfirmPictureActivity.EXTRA_TITLE, mTitle);
         activityIntent.setData(pictureUri);
         if (fromCamera) {
             startActivityForResult(activityIntent, FROM_CAMERA_CONFIRMATION_REQ_CODE);

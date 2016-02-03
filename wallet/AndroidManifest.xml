@@ -204,7 +204,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name="org.hopestarter.wallet.ui.PictureSelectActivity"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name="org.hopestarter.wallet.ui.ConfirmPictureActivity"

@@ -1,6 +1,8 @@
 package org.hopestarter.wallet.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -42,7 +44,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
     private ViewGroup mRootView;
     private CameraFragmentCallback mCallback;
     private OrientationEventListener mOrientationListener;
-    private int mLastOrientation;
+    private int mCurrentOrientation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
 
             @Override
             public void onOrientationChanged(int orientation) {
-                mLastOrientation = normalize(orientation);
+                mCurrentOrientation = normalize(orientation);
             }
 
             private int normalize(int degrees) {
@@ -95,7 +97,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                 mCamera = Camera.open(i);
                 mCameraInfo = info;
                 Log.d(TAG, "Camera opened");
-                setCameraDisplayOrientation(i, mCamera);
+                setCameraDisplayOrientation(mCameraInfo, mCamera);
                 Camera.Parameters params = mCamera.getParameters();
 
                 Log.d(TAG, ":::Focus modes available:::");
@@ -171,10 +173,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
         changeFlashMode(mFlashModesSupported.get(mCurrentFlashMode));
     }
 
-    public void setCameraDisplayOrientation(int cameraId, android.hardware.Camera camera) {
-        android.hardware.Camera.CameraInfo info =
-                new android.hardware.Camera.CameraInfo();
-        android.hardware.Camera.getCameraInfo(cameraId, info);
+    public void setCameraDisplayOrientation(Camera.CameraInfo info, android.hardware.Camera camera) {
         int rotation = getActivity().getWindowManager().getDefaultDisplay()
                 .getRotation();
         int degrees = 0;
@@ -195,13 +194,14 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
         camera.setDisplayOrientation(result);
     }
 
+
     public void setCameraRotation() {
         int result;
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-            result = (mCameraInfo.orientation + mLastOrientation) % 360;
+            result = (mCameraInfo.orientation + mCurrentOrientation) % 360;
             // result = (360 - result) % 360;  // compensate the mirror
         } else {  // back-facing
-            result = (mCameraInfo.orientation - mLastOrientation + 360) % 360;
+            result = (mCameraInfo.orientation - mCurrentOrientation + 360) % 360;
         }
         Camera.Parameters params = mCamera.getParameters();
         params.setRotation(result);
@@ -237,6 +237,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                     mFrontCameraSelected = !mFrontCameraSelected;
                     mCamera.stopPreview();
                     mCamera.release();
+                    mCamera = null;
                     openCamera();
                     mCameraPreview.setCamera(mCamera);
                 }
@@ -250,9 +251,9 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                 }
             });
             Log.d(TAG, "Camera preview camera instance set");
-        }
 
-        mOrientationListener.enable();
+            mOrientationListener.enable();
+        }
 
         super.onResume();
     }

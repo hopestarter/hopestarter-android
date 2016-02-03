@@ -22,13 +22,13 @@ public class ConfirmPictureActivity extends AppCompatActivity {
     public static final String EXTRA_TITLE = "EXTRA_TITLE";
     private static final String TAG = "ConfirmPictureAct";
     private Uri mFileUri;
+    private String mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_picture);
 
-        String mTitle;
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             mTitle = intent.getStringExtra(EXTRA_TITLE);
@@ -86,6 +86,13 @@ public class ConfirmPictureActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        out.putString(EXTRA_TITLE, mTitle);
+        out.putParcelable(STATE_IMG_URI, mFileUri);
+        super.onSaveInstanceState(out);
     }
 
     @Override

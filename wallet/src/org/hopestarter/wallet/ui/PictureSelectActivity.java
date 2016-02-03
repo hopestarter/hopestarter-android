@@ -55,6 +55,12 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
     }
 
     @Override
+    public void onSaveInstanceState(Bundle out) {
+        out.putString(EXTRA_TITLE, mTitle);
+        super.onSaveInstanceState(out);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case android.R.id.home:

@@ -18,7 +18,7 @@ import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
 
-public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
+public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -45,9 +45,7 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             @Override
             public void onPageSelected(int position) {
@@ -55,9 +53,7 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
+            public void onPageScrollStateChanged(int state) {}
         });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);

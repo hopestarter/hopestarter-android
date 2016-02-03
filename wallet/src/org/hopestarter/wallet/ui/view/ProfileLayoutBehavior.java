@@ -37,7 +37,7 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
 
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, RelativeLayout child,
-                                     View target, int dx, int dy, int[] consumed) {
+            View target, int dx, int dy, int[] consumed) {
         if (dy <= 0) {
             return;
         }
@@ -47,7 +47,8 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
     }
 
     @Override
-    public boolean onNestedPreFling(CoordinatorLayout layout, RelativeLayout child, View target, float velocityX, float velocityY) {
+    public boolean onNestedPreFling(CoordinatorLayout layout, RelativeLayout child, View target,
+            float velocityX, float velocityY) {
         if (velocityY <= 0 || child.getTop() == mStartTop - child.getHeight()) {
             return false;
         }
@@ -55,19 +56,19 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
         return flingChildView(layout, child, velocityY);
     }
 
-    @Override
-    public boolean onNestedFling(final CoordinatorLayout layout,
-            final RelativeLayout child, View target, float velocityX, float velocityY,
-            boolean consumed) {
-        Log.d(TAG, "NestedFling consumed: " + Boolean.toString(consumed));
-        if (consumed || velocityY >= 0 || child.getTop() == mStartTop) {
-            return false;
-        }
-
-        boolean flung = flingChildView(layout, child, velocityY);
-        target.invalidate();
-        return flung;
-    }
+//    @Override
+//    public boolean onNestedFling(final CoordinatorLayout layout,
+//            final RelativeLayout child, View target, float velocityX, float velocityY,
+//            boolean consumed) {
+//        Log.d(TAG, "NestedFling consumed: " + Boolean.toString(consumed));
+//        if (consumed || velocityY >= 0 || child.getTop() == mStartTop) {
+//            return false;
+//        }
+//
+//        boolean flung = flingChildView(layout, child, velocityY);
+//        target.invalidate();
+//        return flung;
+//    }
 
     private boolean flingChildView(CoordinatorLayout layout, RelativeLayout child, float velocityY) {
         if (mFlingRunnable != null) {
@@ -94,8 +95,7 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
     }
 
 
-    private int scrollChildView(RelativeLayout child, int dy) {
-        int yOffset = dy;
+    private int scrollChildView(RelativeLayout child, int yOffset) {
         int newTop = child.getTop() - yOffset;
 
         if (newTop > mStartTop) {
@@ -121,8 +121,7 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
 
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, RelativeLayout child,
-                               View target, int dxConsumed, int dyConsumed,
-                               int dxUnconsumed, int dyUnconsumed) {
+            View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         if (dyConsumed == 0 && dyUnconsumed < 0) {
             scrollChildView(child, dyUnconsumed);
         }
@@ -130,7 +129,7 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
 
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, RelativeLayout abl,
-                                   View target) {
+            View target) {
         Log.d(TAG, "Stopped scroll");
     }
 

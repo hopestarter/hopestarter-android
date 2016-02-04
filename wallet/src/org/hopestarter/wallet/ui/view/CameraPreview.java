@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 /**
@@ -16,6 +19,7 @@ import java.util.List;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = "CameraPreview";
+    private static final Logger log = LoggerFactory.getLogger(CameraPreview.class);
 
     private Context mContext;
     private SurfaceHolder mHolder;
@@ -42,6 +46,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void setCamera(Camera camera) {
+        if (mCamera != null) {
+            try {
+                mCamera.stopPreview();
+            } catch (Exception e) {
+                // This will be for when we stop and preview wasn't started before
+            }
+        }
         mCamera = camera;
 
         // supported preview sizes
@@ -51,23 +62,29 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
-        mHolder.removeCallback(this);
+        if (mHolder.getSurface() != null && mHolder.getSurface().isValid()) {
+            log.debug("Surface is valid, starting preview");
+            startCameraPreview();
+        }
         mHolder.addCallback(this);
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         requestLayout();
         invalidate();
+
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
+        log.debug("Surface created!");
         startCameraPreview();
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.d(TAG, "Surface destroyed!");
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        Log.e(TAG, "surfaceChanged => w=" + w + ", h=" + h);
+        log.debug("surfaceChanged => w=" + w + ", h=" + h);
         startCameraPreview();
     }
 
@@ -96,8 +113,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
 
-        } catch (Exception e){
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Error starting camera preview: " + e.getMessage());
         }
     }
 

@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import org.hopestarter.wallet.ui.view.CameraPreview;
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +36,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
         void onPictureTaken(Uri pictureUri);
     }
 
+    private static final Logger log = LoggerFactory.getLogger(CameraFragment.class);
     private static final String TAG = "CameraFragment";
     private boolean mFrontCameraSelected;
     private Camera mCamera;
@@ -96,11 +99,11 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                     info.facing == Camera.CameraInfo.CAMERA_FACING_BACK && !mFrontCameraSelected) {
                 mCamera = Camera.open(i);
                 mCameraInfo = info;
-                Log.d(TAG, "Camera opened");
+                log.debug("Camera opened");
                 setCameraDisplayOrientation(mCameraInfo, mCamera);
                 Camera.Parameters params = mCamera.getParameters();
 
-                Log.d(TAG, ":::Focus modes available:::");
+                log.debug(":::Focus modes available:::");
                 mFlashModesSupported = params.getSupportedFlashModes();
 
                 if (mFlashModesSupported != null && mFlashModesSupported.size() > 0) {
@@ -250,7 +253,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                     mCamera.takePicture(null, null, CameraFragment.this);
                 }
             });
-            Log.d(TAG, "Camera preview camera instance set");
+            log.debug("Camera preview camera instance set");
 
             mOrientationListener.enable();
         }
@@ -264,7 +267,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
         mCamera.release();
         mCamera = null;
         mOrientationListener.disable();
-        Log.d(TAG, "Camera released");
+        log.debug("Camera released");
         super.onPause();
     }
 
@@ -277,7 +280,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
             fos.close();
 
             File pictureFile = new File(getActivity().getFilesDir(), pictureFileName);
-            Log.d(TAG, "Picture saved at: " + pictureFile.toString());
+            log.debug(TAG, "Picture saved at: " + pictureFile.toString());
 
             Uri pictureUri = Uri.fromFile(pictureFile);
 
@@ -285,9 +288,9 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                 mCallback.onPictureTaken(pictureUri);
             }
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "Cannot create profile pic file", e);
+            log.error(TAG, "Cannot create profile pic file", e);
         } catch (IOException e) {
-            Log.e(TAG, "Cannot write profile pic file", e);
+            log.error(TAG, "Cannot write profile pic file", e);
         }
     }
 

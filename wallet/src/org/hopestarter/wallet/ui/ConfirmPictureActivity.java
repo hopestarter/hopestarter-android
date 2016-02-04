@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfirmPictureActivity extends AppCompatActivity {
 
@@ -23,11 +26,21 @@ public class ConfirmPictureActivity extends AppCompatActivity {
     private static final String TAG = "ConfirmPictureAct";
     private Uri mFileUri;
     private String mTitle;
+    private Picasso mImageLoader;
+    protected static final Logger log = LoggerFactory.getLogger(ConfirmPictureActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_picture);
+
+        mImageLoader = new Picasso.Builder(this)
+                .listener(new Picasso.Listener() {
+                    @Override
+                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                        log.error("failed loading image at " + uri.toString(), exception);
+                    }
+                }).build();
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();

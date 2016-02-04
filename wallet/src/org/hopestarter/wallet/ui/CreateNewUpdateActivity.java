@@ -1,6 +1,5 @@
 package org.hopestarter.wallet.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,15 +9,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateNewUpdateActivity extends AppCompatActivity {
+    private static final Logger log = LoggerFactory.getLogger(CreateNewUpdateActivity.class);
     private static final int PICTURE_REQ_CODE = 0;
     private static final String TAG = CreateNewUpdateActivity.class.getName();
     public static final String EXTRA_RESULT_MESSAGE = "EXTRA_RESULT_MESSAGE";
@@ -38,28 +39,14 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
         mImageLoader = new Picasso.Builder(this).listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.e(TAG, "Image load failed. Tried to load image at: " + uri.toString());
+                log.error("Image load failed. Tried to load image at: " + uri.toString());
             }
         }).build();
 
         mImageView = (ImageView)findViewById(R.id.imageview);
         mMessageView = (EditText)findViewById(R.id.message);
 
-
         launchPictureSelectActivity();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-    @Override
-    public void onPause() {
-        super.onPause();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.isActive();
-        imm.hideSoftInputFromWindow(mMessageView.getWindowToken(), 0);
     }
 
     public void launchPictureSelectActivity() {
@@ -111,9 +98,6 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
             } else {
                 mImageUri = data.getData();
                 mImageLoader.load(data.getData()).fit().centerCrop().into(mImageView);
-                mMessageView.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

@@ -18,6 +18,8 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +30,7 @@ import java.util.List;
 public class UpdatesFragment extends Fragment {
 
     private static final String TAG = UpdatesFragment.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(UpdatesFragment.class);
     private RecyclerView mRecyclerView;
     private Picasso mImageLoader;
     private ProfileUpdatesAdapter mAdapter = new ProfileUpdatesAdapter();
@@ -56,7 +59,7 @@ public class UpdatesFragment extends Fragment {
         mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.e(TAG, "Failed loading picture at " + uri.toString(), exception);
+                log.error("Failed loading picture at " + uri.toString(), exception);
             }
         }).build();
 

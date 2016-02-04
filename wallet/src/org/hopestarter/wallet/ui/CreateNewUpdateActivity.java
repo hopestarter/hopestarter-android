@@ -1,5 +1,6 @@
 package org.hopestarter.wallet.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -43,7 +45,21 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
         mImageView = (ImageView)findViewById(R.id.imageview);
         mMessageView = (EditText)findViewById(R.id.message);
 
+
         launchPictureSelectActivity();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.isActive();
+        imm.hideSoftInputFromWindow(mMessageView.getWindowToken(), 0);
     }
 
     public void launchPictureSelectActivity() {
@@ -95,6 +111,9 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
             } else {
                 mImageUri = data.getData();
                 mImageLoader.load(data.getData()).fit().centerCrop().into(mImageView);
+                mMessageView.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

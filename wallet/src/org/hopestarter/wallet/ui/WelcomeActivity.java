@@ -35,4 +35,5 @@ public class WelcomeActivity extends Activity {
                 }
         }
     }
+
 }

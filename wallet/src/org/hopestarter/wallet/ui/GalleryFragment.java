@@ -89,7 +89,9 @@ public class GalleryFragment extends Fragment implements ImageViewHolder.OnClick
                 Cursor c = MediaStore.Images.Media.query(
                         getActivity().getContentResolver(),
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        new String[] {MediaStore.Images.Media.DATA}
+                        new String[] {MediaStore.Images.Media.DATA},
+                        null,
+                        MediaStore.Images.Media.DATE_ADDED + " DESC"
                 );
                 if (!c.moveToFirst()) {
                     c.close();
@@ -126,7 +128,6 @@ public class GalleryFragment extends Fragment implements ImageViewHolder.OnClick
         @Override
         public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ImageView iv = (ImageView)getActivity().getLayoutInflater().inflate(R.layout.gallery_image_cell, parent, false);
-            //iv.setLayoutParams(new GridLayoutManager.LayoutParams(GridLayoutManager.LayoutParams.MATCH_PARENT, 300));
             return new ImageViewHolder(iv, mImageClickListener);
         }
 

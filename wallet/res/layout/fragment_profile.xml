@@ -53,8 +53,7 @@
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif-light"
                 android:textColor="@color/black"
-                android:textSize="20sp"
-                android:text="Some Name"/>
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profile_ethnicity"
@@ -65,7 +64,6 @@
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif-light"
                 android:textColor="@color/grey"
-                android:text="Ethnicity"
                 android:textSize="16sp" />
 
             <LinearLayout

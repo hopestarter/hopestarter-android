@@ -1,7 +1,9 @@
 package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +16,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet_test.R;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
 
@@ -23,7 +29,14 @@ public class ProfileFragment extends Fragment {
     private UpdatesFragment mUpdatesFragment;
     private Picasso mImageLoader;
     private TextView mNumUpdates;
-    private Button mPostPictureUpdate;
+    private Button mPostBtn;
+    private TextView mUserNameView;
+    private TextView mUserEthnicityView;
+    private TextView mProfileDonations;
+    private String mFirstName;
+    private String mLastName;
+    private String mEthnicity;
+    private String mFullName;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -52,6 +65,12 @@ public class ProfileFragment extends Fragment {
                 Log.e(TAG, "Failed loading picture at " + uri.toString(), exception);
             }
         }).build();
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
+        mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, "Unnamed");
+        mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, "User");
+        mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, "No ethnicity");
+        mFullName = mFirstName + " " + mLastName;
     }
 
     @Override
@@ -63,9 +82,9 @@ public class ProfileFragment extends Fragment {
 
         mUpdatesFragment = UpdatesFragment.newInstance();
 
-        mPostPictureUpdate = (Button)rootView.findViewById(R.id.post_photo_update);
+        mPostBtn = (Button)rootView.findViewById(R.id.post_photo_update);
 
-        mPostPictureUpdate.setOnClickListener(new View.OnClickListener() {
+        mPostBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchCreateNewUpdateActivity();
@@ -75,6 +94,16 @@ public class ProfileFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .add(R.id.updates_fragment_container, mUpdatesFragment).commit();
 
+        mUserNameView = (TextView)rootView.findViewById(R.id.profile_full_name);
+        mUserEthnicityView = (TextView)rootView.findViewById(R.id.profile_ethnicity);
+        mProfileDonations = (TextView)rootView.findViewById(R.id.profile_received_donations);
+
+        feedFakeData();
+        updateNumberOfUpdates();
+        return rootView;
+    }
+
+    private void feedFakeData() {
         Uri path = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image);
         Uri path2 = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image2);
 
@@ -99,8 +128,14 @@ public class ProfileFragment extends Fragment {
                 .build();
 
         mUpdatesFragment.addAll(new UpdateInfo[]{info, info2});
-        updateNumberOfUpdates();
-        return rootView;
+
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+        mProfileDonations.setText(currencyFormat.format(46.30));
+
+
+
+        mUserNameView.setText(mFullName);
+        mUserEthnicityView.setText(mEthnicity);
     }
 
     private void launchCreateNewUpdateActivity() {
@@ -118,12 +153,12 @@ public class ProfileFragment extends Fragment {
             case POST_UPDATE_REQ_CODE:
                 if (resCode == Activity.RESULT_OK) {
                     UpdateInfo update = new UpdateInfo.Builder()
-                            .setUserName("Muhammad Erbil")
+                            .setUserName(mFullName)
                             .setPictureUri(data.getData())
                             .setMessage(data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE))
                             .setUpdateDateMillis(System.currentTimeMillis())
-                            .setEthnicity("Syrian")
-                            .setLocation("Samothrace, Greece")
+                            .setEthnicity(mEthnicity)
+                            .setLocation("Unknown")
                             .build();
 
                     mUpdatesFragment.add(update);

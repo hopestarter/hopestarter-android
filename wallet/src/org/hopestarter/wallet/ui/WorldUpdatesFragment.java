@@ -1,7 +1,9 @@
 package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet_test.R;
 
 public class WorldUpdatesFragment extends Fragment {
@@ -24,6 +27,10 @@ public class WorldUpdatesFragment extends Fragment {
     private Picasso mImageLoader;
     private TextView mNumUpdates;
     private Button mPostPictureUpdate;
+    private String mFirstName;
+    private String mLastName;
+    private String mFullName;
+    private String mEthnicity;
 
     public WorldUpdatesFragment() {
         // Required empty public constructor
@@ -46,6 +53,12 @@ public class WorldUpdatesFragment extends Fragment {
                 Log.e(TAG, "Failed loading picture at " + uri.toString(), exception);
             }
         }).build();
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
+        mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, "Unnamed");
+        mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, "User");
+        mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, "No ethnicity");
+        mFullName = mFirstName + " " + mLastName;
     }
 
     @Override
@@ -115,12 +128,12 @@ public class WorldUpdatesFragment extends Fragment {
             case POST_UPDATE_REQ_CODE:
                 if (resCode == Activity.RESULT_OK) {
                     UpdateInfo update = new UpdateInfo.Builder()
-                            .setUserName("Muhammad Erbil")
+                            .setUserName(mFullName)
                             .setPictureUri(data.getData())
                             .setMessage(data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE))
                             .setUpdateDateMillis(System.currentTimeMillis())
-                            .setEthnicity("Syrian")
-                            .setLocation("Samothrace, Greece")
+                            .setEthnicity(mEthnicity)
+                            .setLocation("Unknown")
                             .build();
 
                     mUpdatesFragment.add(update);

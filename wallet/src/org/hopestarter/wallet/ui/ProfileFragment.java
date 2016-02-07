@@ -24,7 +24,7 @@ import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
 
-    private static final String TAG = "ProfileFragment";
+    private static final String TAG = ProfileFragment.class.getName();
     private static final int POST_UPDATE_REQ_CODE = 0;
     private UpdatesFragment mUpdatesFragment;
     private Picasso mImageLoader;
@@ -42,12 +42,6 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment.
-     *
-     * @return A new instance of fragment ProfileFragment.
-     */
     public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();

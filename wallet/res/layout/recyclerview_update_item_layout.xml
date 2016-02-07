@@ -24,7 +24,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:text=""
+
         android:textSize="14sp"
         android:textStyle="bold"
         android:fontFamily="sans-serif"
@@ -44,12 +44,13 @@
         android:layout_toRightOf="@id/user_profile_picture"
         android:layout_toEndOf="@id/user_profile_picture"
         android:layout_below="@id/user_name"
-        android:id="@+id/additional_info" />
+        android:id="@+id/additional_info"
+        />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_below="@id/user_profile_picture"
+        android:layout_below="@id/additional_info"
         android:layout_marginTop="10dp"
         android:id="@+id/attached_picture"/>
 

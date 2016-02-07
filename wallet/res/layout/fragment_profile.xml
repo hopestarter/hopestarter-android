@@ -24,7 +24,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="215dp"
+            android:layout_height="wrap_content"
             android:id="@+id/profile_layout"
             android:background="@color/white"
             app:layout_behavior="org.hopestarter.wallet.ui.view.ProfileLayoutBehavior"
@@ -49,29 +49,30 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Muhammad Erbil"
                 android:layout_below="@id/profile_image_view"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif-light"
                 android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:text="Some Name"/>
 
             <TextView
                 android:id="@+id/profile_ethnicity"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Syrian"
                 android:layout_below="@id/profile_full_name"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="sans-serif-light"
                 android:textColor="@color/grey"
+                android:text="Ethnicity"
                 android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_ethnicity"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
                 <RelativeLayout
                     android:layout_width="0dip"
@@ -83,7 +84,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="1"
+                        android:text="0"
                         android:fontFamily="sans-serif-light"
                         android:textSize="24sp"
                         android:textColor="@color/black" />
@@ -91,6 +92,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:text="updates"
                         android:layout_below="@+id/profile_updates"
                         android:layout_centerHorizontal="true"
@@ -113,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="$46.10"
+                        android:text="$0.00"
                         android:fontFamily="sans-serif-light"
                         android:textSize="24sp"
                         android:textColor="@color/black" />
@@ -121,6 +123,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:text="@string/received_donations"
                         android:layout_below="@id/profile_received_donations"
                         android:layout_centerHorizontal="true"
@@ -141,7 +144,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/button"
-        android:text="Post a photo update"
+        android:text="@string/post_a_photo_update_title"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textColor="@color/white"

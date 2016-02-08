@@ -22,6 +22,7 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
 
     private static final String TAG = "ProfileLayoutBehavior";
     private FlingRunnable mFlingRunnable;
+    private boolean mAlreadyLayedOut;
 
     public ProfileLayoutBehavior(Context context, AttributeSet attrs) {}
 
@@ -29,6 +30,7 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
     public boolean onStartNestedScroll(CoordinatorLayout parent, RelativeLayout child,
             View directTargetChild, View target, int nestedScrollAxes) {
         if ((nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0) {
+            if (mScroller != null) mScroller.abortAnimation();
             return true;
         }
 
@@ -115,7 +117,12 @@ public class ProfileLayoutBehavior extends CoordinatorLayout.Behavior<RelativeLa
     @Override
     public boolean onLayoutChild(CoordinatorLayout parent, RelativeLayout child, int layoutDirection) {
         parent.onLayoutChild(child, layoutDirection);
-        mStartTop = child.getTop();
+
+        if (!mAlreadyLayedOut) {
+            mStartTop = child.getTop();
+        }
+
+        mAlreadyLayedOut = true;
         return true;
     }
 

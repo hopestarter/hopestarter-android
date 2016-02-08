@@ -137,6 +137,7 @@ public class ProfileFragment extends Fragment {
                     CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)mProfileLayout.getLayoutParams();
                     layoutParams.topMargin = Double.valueOf(Math.floor(mProfileLayout.getTop() + dy)).intValue();
                     mProfileLayout.setLayoutParams(layoutParams);
+                    mProfileLayout.getParent().requestLayout();
                     return true;
                 }
 

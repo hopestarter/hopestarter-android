@@ -6,18 +6,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -25,6 +30,7 @@ import java.util.Locale;
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = ProfileFragment.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(ProfileFragment.class);
     private static final int POST_UPDATE_REQ_CODE = 0;
     private UpdatesFragment mUpdatesFragment;
     private Picasso mImageLoader;
@@ -37,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private String mLastName;
     private String mEthnicity;
     private String mFullName;
+    private RelativeLayout mProfileLayout;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -56,7 +63,7 @@ public class ProfileFragment extends Fragment {
         mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.e(TAG, "Failed loading picture at " + uri.toString(), exception);
+                log.error("Failed loading picture at " + uri.toString(), exception);
             }
         }).build();
 
@@ -91,6 +98,51 @@ public class ProfileFragment extends Fragment {
         mUserNameView = (TextView)rootView.findViewById(R.id.profile_full_name);
         mUserEthnicityView = (TextView)rootView.findViewById(R.id.profile_ethnicity);
         mProfileDonations = (TextView)rootView.findViewById(R.id.profile_received_donations);
+
+        mProfileLayout = (RelativeLayout)rootView.findViewById(R.id.profile_layout);
+        mProfileLayout.setClickable(true);
+        mProfileLayout.setOnTouchListener(new View.OnTouchListener() {
+            private float lastY;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                log.debug("Profile layout onTouchListener.onTouch called");
+                final int action = event.getAction() & MotionEvent.ACTION_MASK;
+                switch(action) {
+                    case MotionEvent.ACTION_DOWN:
+                        log.debug("ACTION DOWN event received");
+                        lastY = event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        log.debug("ACTION DOWN event received");
+                        return moveView(event);
+                }
+                return false;
+            }
+
+            private boolean moveView(MotionEvent event) {
+                float dy = event.getRawY() - lastY;
+                float newTop = mProfileLayout.getTop() + dy;
+
+                lastY = event.getRawY();
+
+                if (newTop < -mProfileLayout.getHeight()) {
+                    dy = dy - (newTop + mProfileLayout.getHeight());
+                }
+
+                if (newTop > 0) {
+                    dy = dy - newTop;
+                }
+
+                if (dy != 0) {
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)mProfileLayout.getLayoutParams();
+                    layoutParams.topMargin = Double.valueOf(Math.floor(mProfileLayout.getTop() + dy)).intValue();
+                    mProfileLayout.setLayoutParams(layoutParams);
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
         feedFakeData();
         updateNumberOfUpdates();

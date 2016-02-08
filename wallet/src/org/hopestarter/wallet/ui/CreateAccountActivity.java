@@ -1,10 +1,17 @@
 package org.hopestarter.wallet.ui;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,10 +30,11 @@ import com.squareup.picasso.Picasso;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet_test.R;
 
-public class CreateAccountActivity extends AppCompatActivity {
+public class CreateAccountActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
 
     private static final int PROFILE_PIC_REQ_CODE = 0;
     private static final String TAG = "CreateAccountAct";
+    private static final int PERMISSION_REQUEST_READ_PHONE_STATE = 0;
 
     private ImageView mImageView;
     private EditText mFirstNameView;
@@ -75,9 +83,48 @@ public class CreateAccountActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.done:
-                createAccount();
+                safeCreateAccount();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void safeCreateAccount() {
+        if (appHasPermissions()) {
+            createAccount();
+        } else {
+            askForPermissions();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
+        switch(requestCode) {
+            case PERMISSION_REQUEST_READ_PHONE_STATE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    createAccount();
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("Error")
+                            .setIcon(R.drawable.ic_error_24dp)
+                            .setMessage("Cannot create a new account without the required system permission.")
+                            .create();
+                    dialog.show();
+                }
+        }
+    }
+
+    private void askForPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_PHONE_STATE},
+                PERMISSION_REQUEST_READ_PHONE_STATE);
+    }
+
+    private boolean appHasPermissions() {
+        int status = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_PHONE_STATE);
+        return (status == PackageManager.PERMISSION_GRANTED);
     }
 
     @Override

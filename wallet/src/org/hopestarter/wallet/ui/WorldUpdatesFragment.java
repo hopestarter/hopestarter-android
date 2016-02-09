@@ -17,11 +17,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorldUpdatesFragment extends Fragment {
 
     private static final String TAG = WorldUpdatesFragment.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(WorldUpdatesFragment.class);
     private static final int POST_UPDATE_REQ_CODE = 0;
     private UpdatesFragment mUpdatesFragment;
     private Picasso mImageLoader;
@@ -31,6 +35,7 @@ public class WorldUpdatesFragment extends Fragment {
     private String mLastName;
     private String mFullName;
     private String mEthnicity;
+    private Uri mProfilePicture;
 
     public WorldUpdatesFragment() {
         // Required empty public constructor
@@ -50,14 +55,22 @@ public class WorldUpdatesFragment extends Fragment {
         mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.e(TAG, "Failed loading picture at " + uri.toString(), exception);
+                log.error("Failed loading picture at " + uri.toString(), exception);
             }
         }).build();
 
         SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
-        mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, "Unnamed");
-        mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, "User");
-        mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, "No ethnicity");
+        mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, getString(R.string.unnamed_first_name));
+        mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, getString(R.string.unnamed_last_name));
+        mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, getString(R.string.no_ethnicity_ethnicity));
+        mProfilePicture = Uri.parse(
+                prefs.getString(
+                        UserInfoPrefs.PROFILE_PIC,
+                        ResourceUtils.resIdToUri(
+                                getActivity(), R.drawable.avatar_placeholder
+                        ).toString()
+                )
+        );
         mFullName = mFirstName + " " + mLastName;
     }
 
@@ -79,6 +92,11 @@ public class WorldUpdatesFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .add(R.id.updates_fragment_container, mUpdatesFragment).commit();
 
+        feedFakeData();
+        return rootView;
+    }
+
+    private void feedFakeData() {
         Uri path = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image);
         Uri path2 = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image2);
 
@@ -113,8 +131,6 @@ public class WorldUpdatesFragment extends Fragment {
                 .build();
 
         mUpdatesFragment.addAll(new UpdateInfo[] {info, info2, info3});
-
-        return rootView;
     }
 
     private void launchCreateNewUpdateActivity() {
@@ -130,6 +146,7 @@ public class WorldUpdatesFragment extends Fragment {
                     UpdateInfo update = new UpdateInfo.Builder()
                             .setUserName(mFullName)
                             .setPictureUri(data.getData())
+                            .setProfilePictureUri(mProfilePicture)
                             .setMessage(data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE))
                             .setUpdateDateMillis(System.currentTimeMillis())
                             .setEthnicity(mEthnicity)

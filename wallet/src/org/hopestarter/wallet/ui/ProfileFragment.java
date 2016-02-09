@@ -17,9 +17,11 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,8 @@ public class ProfileFragment extends Fragment {
     private String mEthnicity;
     private String mFullName;
     private RelativeLayout mProfileLayout;
+    private Uri mProfilePicture;
+    private RoundedImageView mProfilePictureView;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -68,9 +72,18 @@ public class ProfileFragment extends Fragment {
         }).build();
 
         SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
-        mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, "Unnamed");
-        mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, "User");
-        mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, "No ethnicity");
+        mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, getString(R.string.unnamed_first_name));
+        mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, getString(R.string.unnamed_last_name));
+        mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, getString(R.string.no_ethnicity_ethnicity));
+        mProfilePicture = Uri.parse(
+                prefs.getString(
+                        UserInfoPrefs.PROFILE_PIC,
+                        ResourceUtils.resIdToUri(
+                                getActivity(), R.drawable.avatar_placeholder
+                        ).toString()
+                )
+        );
+
         mFullName = mFirstName + " " + mLastName;
     }
 
@@ -98,16 +111,18 @@ public class ProfileFragment extends Fragment {
         mUserNameView = (TextView)rootView.findViewById(R.id.profile_full_name);
         mUserEthnicityView = (TextView)rootView.findViewById(R.id.profile_ethnicity);
         mProfileDonations = (TextView)rootView.findViewById(R.id.profile_received_donations);
+        mProfilePictureView = (RoundedImageView)rootView.findViewById(R.id.profile_image_view);
 
         mProfileLayout = (RelativeLayout)rootView.findViewById(R.id.profile_layout);
         mProfileLayout.setClickable(true);
         mProfileLayout.setOnTouchListener(new View.OnTouchListener() {
             private float lastY;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 log.debug("Profile layout onTouchListener.onTouch called");
                 final int action = event.getAction() & MotionEvent.ACTION_MASK;
-                switch(action) {
+                switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         log.debug("ACTION DOWN event received");
                         lastY = event.getRawY();
@@ -134,7 +149,7 @@ public class ProfileFragment extends Fragment {
                 }
 
                 if (dy != 0) {
-                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)mProfileLayout.getLayoutParams();
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) mProfileLayout.getLayoutParams();
                     layoutParams.topMargin = Double.valueOf(Math.floor(mProfileLayout.getTop() + dy)).intValue();
                     mProfileLayout.setLayoutParams(layoutParams);
                     mProfileLayout.getParent().requestLayout();
@@ -146,8 +161,15 @@ public class ProfileFragment extends Fragment {
         });
 
         feedFakeData();
+        feedData();
         updateNumberOfUpdates();
         return rootView;
+    }
+
+    private void feedData() {
+        mUserNameView.setText(mFullName);
+        mUserEthnicityView.setText(mEthnicity);
+        mImageLoader.load(mProfilePicture).fit().centerCrop().into(mProfilePictureView);
     }
 
     private void feedFakeData() {
@@ -178,11 +200,6 @@ public class ProfileFragment extends Fragment {
 
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
         mProfileDonations.setText(currencyFormat.format(46.30));
-
-
-
-        mUserNameView.setText(mFullName);
-        mUserEthnicityView.setText(mEthnicity);
     }
 
     private void launchCreateNewUpdateActivity() {
@@ -191,7 +208,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateNumberOfUpdates() {
-        mNumUpdates.setText(Integer.toString(mUpdatesFragment.getNumberOfUpdates()));
+        mNumUpdates.setText(String.format("%d", mUpdatesFragment.getNumberOfUpdates()));
     }
 
     @Override
@@ -202,6 +219,7 @@ public class ProfileFragment extends Fragment {
                     UpdateInfo update = new UpdateInfo.Builder()
                             .setUserName(mFullName)
                             .setPictureUri(data.getData())
+                            .setProfilePictureUri(mProfilePicture)
                             .setMessage(data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE))
                             .setUpdateDateMillis(System.currentTimeMillis())
                             .setEthnicity(mEthnicity)

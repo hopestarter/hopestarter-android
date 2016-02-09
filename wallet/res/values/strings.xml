@@ -338,5 +338,8 @@
     <string name="message_edit_hint">What\'s happening...</string>
     <string name="title_world_fragment">World updates</string>
     <string name="title_sendrequest_fragment">Send or Request</string>
+    <string name="unnamed_first_name">Unnamed</string>
+    <string name="unnamed_last_name">User</string>
+    <string name="no_ethnicity_ethnicity">No ethnicity</string>
 
 </resources>

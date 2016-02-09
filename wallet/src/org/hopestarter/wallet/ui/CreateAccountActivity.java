@@ -29,9 +29,12 @@ import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateAccountActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
 
+    private static final Logger log = LoggerFactory.getLogger(CreateAccountActivity.class);
     private static final int PROFILE_PIC_REQ_CODE = 0;
     private static final String TAG = "CreateAccountAct";
     private static final int PERMISSION_REQUEST_READ_PHONE_STATE = 0;
@@ -40,6 +43,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
     private EditText mFirstNameView;
     private EditText mLastNameView;
     private EditText mEthnicityView;
+    private Uri mProfilePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +152,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
     }
 
     private void setProfilePicture(Uri pictureUri) {
+        mProfilePicture = pictureUri;
         Picasso.with(this).load(pictureUri).resize(94, 94).centerCrop().into(mImageView);
     }
 
@@ -156,10 +161,23 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         final String lastName = mLastNameView.getText().toString();
         final String ethnicity = mEthnicityView.getText().toString();
         final String imei = ((TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+        final String profilePicture = mProfilePicture.toString();
 
         AsyncTask<String, Void, AccountCreationResult> createAccountTask = new AsyncTask<String, Void, AccountCreationResult>() {
+            private String firstName;
+            private String lastName;
+            private String ethnicity;
+            private String imei;
+            private String profilePicture;
+
             @Override
             protected AccountCreationResult doInBackground(String... params) {
+                firstName = params[0];
+                lastName = params[1];
+                ethnicity = params[2];
+                imei = params[3];
+                profilePicture = params[4];
+
                 // TODO: Replace this code with one communicating with the server to create an account
                 //       It also must obtain a token associated with the new account
                 return new AccountCreationResult("sometoken");
@@ -168,7 +186,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             @Override
             protected void onPostExecute(AccountCreationResult result) {
                 if (result.token != null) {
-                    saveUserInformation(result.token, firstName, lastName, ethnicity);
+                    saveUserInformation(result.token, firstName, lastName, ethnicity, profilePicture);
                     setResult(RESULT_OK);
                     finish();
                 } else {
@@ -178,16 +196,17 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             }
         };
 
-        createAccountTask.execute(firstName, lastName, ethnicity, imei);
+        createAccountTask.execute(firstName, lastName, ethnicity, imei, profilePicture);
     }
 
-    private void saveUserInformation(String token, String firstName, String lastName, String ethnicity) {
+    private void saveUserInformation(String token, String firstName, String lastName, String ethnicity, String profilePicture) {
         SharedPreferences prefs = getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
         prefs.edit()
                 .putString(UserInfoPrefs.TOKEN, token)
                 .putString(UserInfoPrefs.FIRST_NAME, firstName)
                 .putString(UserInfoPrefs.LAST_NAME, lastName)
                 .putString(UserInfoPrefs.ETHNICITY, ethnicity)
+                .putString(UserInfoPrefs.PROFILE_PIC, profilePicture)
                 .commit();
 
     }

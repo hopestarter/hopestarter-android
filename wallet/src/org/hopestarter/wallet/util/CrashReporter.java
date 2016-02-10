@@ -49,7 +49,7 @@ import com.google.common.base.Charsets;
 
 import org.hopestarter.wallet.Configuration;
 import org.hopestarter.wallet.Constants;
-import de.schildbach.wallet.WalletApplication;
+import org.hopestarter.wallet.WalletApplication;
 
 /**
  * @author Andreas Schildbach

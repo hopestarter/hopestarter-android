@@ -155,8 +155,7 @@ public class WalletApplication extends Application
 	}
 
 	private void initRetrofit() {
-		OkHttpClient client = new OkHttpClient();
-		client.interceptors().add(new Interceptor() {
+		Interceptor interceptor = new Interceptor() {
 			private final Logger log = LoggerFactory.getLogger("OkHttpInterceptor");
 			@Override
 			public Response intercept(Chain chain) throws IOException {
@@ -166,10 +165,15 @@ public class WalletApplication extends Application
 				log.debug("Response code " + Integer.toString(response.code()) + " from " +request.url().toString());
 				return response;
 			}
-		});
+		};
+
+		OkHttpClient client = new OkHttpClient.Builder()
+				.addNetworkInterceptor(interceptor)
+				.build();
 
 		retrofit = new Retrofit.Builder()
 				.client(client)
+				.baseUrl(Constants.STAGING_BASE_URL)
 				.build();
 	}
 

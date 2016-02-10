@@ -41,6 +41,8 @@ public final class Constants
 
 	/** Network this wallet is on (e.g. testnet or mainnet). */
 	public static final NetworkParameters NETWORK_PARAMETERS = TEST ? TestNet3Params.get() : MainNetParams.get();
+	public static final String STAGING_BASE_URL = "http://127.0.0.1:8000";
+	public static final String API_BASE_URL = "http://127.0.0.1:8001";
 
 	public final static class Files
 	{

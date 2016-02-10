@@ -137,7 +137,7 @@ public class ExchangeRatesProvider extends ContentProvider
 
 		this.config = new Configuration(PreferenceManager.getDefaultSharedPreferences(context), context.getResources());
 
-		this.userAgent = de.schildbach.wallet.WalletApplication.httpUserAgent(de.schildbach.wallet.WalletApplication.packageInfoFromContext(context).versionName);
+		this.userAgent = org.hopestarter.wallet.WalletApplication.httpUserAgent(org.hopestarter.wallet.WalletApplication.packageInfoFromContext(context).versionName);
 
 		final ExchangeRate cachedExchangeRate = config.getCachedExchangeRate();
 		if (cachedExchangeRate != null)

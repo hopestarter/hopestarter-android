@@ -36,7 +36,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.format.DateUtils;
-import de.schildbach.wallet.WalletApplication;
+import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.util.CrashReporter;
 import org.hopestarter.wallet.util.Toast;
 import org.hopestarter.wallet_test.R;

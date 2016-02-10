@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import de.schildbach.wallet.WalletApplication;
+import org.hopestarter.wallet.WalletApplication;
 
 /**
  * @author Andreas Schildbach

@@ -87,7 +87,6 @@ import org.hopestarter.wallet.AddressBookProvider;
 import org.hopestarter.wallet.Configuration;
 import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.WalletApplication;
-import de.schildbach.wallet.WalletBalanceWidgetProvider;
 import org.hopestarter.wallet.service.BlockchainState.Impediment;
 import org.hopestarter.wallet.util.CrashReporter;
 import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
@@ -139,7 +138,7 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 		@Override
 		public void onThrottledWalletChanged()
 		{
-			WalletBalanceWidgetProvider.updateWidgets(BlockchainServiceImpl.this, application.getWallet());
+
 		}
 
 		@Override

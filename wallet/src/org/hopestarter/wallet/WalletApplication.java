@@ -209,6 +209,7 @@ public class WalletApplication extends Application
 	public Retrofit getStagingRetrofit() {
 		return stagingRetrofit;
 	}
+	public Retrofit getApiRetrofit() { return apiRetrofit; }
 
 	private void afterLoadWallet()
 	{

@@ -87,14 +87,15 @@ public class WalletApplication extends Application
 	private File walletFile;
 	private Wallet wallet;
 	private PackageInfo packageInfo;
-	private Retrofit retrofit;
+	private Retrofit stagingRetrofit;
+	private Retrofit apiRetrofit;
 
 	public static final String ACTION_WALLET_REFERENCE_CHANGED = WalletApplication.class.getPackage().getName() + ".wallet_reference_changed";
 
 	public static final int VERSION_CODE_SHOW_BACKUP_REMINDER = 205;
 
 	private static final Logger log = LoggerFactory.getLogger(WalletApplication.class);
-	;
+
 
 	@Override
 	public void onCreate()
@@ -155,6 +156,11 @@ public class WalletApplication extends Application
 	}
 
 	private void initRetrofit() {
+		initStagingRetrofit();
+		initApiRetrofit();
+	}
+
+	private void initApiRetrofit() {
 		Interceptor interceptor = new Interceptor() {
 			private final Logger log = LoggerFactory.getLogger("OkHttpInterceptor");
 			@Override
@@ -171,14 +177,37 @@ public class WalletApplication extends Application
 				.addNetworkInterceptor(interceptor)
 				.build();
 
-		retrofit = new Retrofit.Builder()
+		apiRetrofit = new Retrofit.Builder()
+				.client(client)
+				.baseUrl(Constants.API_BASE_URL)
+				.build();
+	}
+
+	private void initStagingRetrofit() {
+		Interceptor interceptor = new Interceptor() {
+			private final Logger log = LoggerFactory.getLogger("OkHttpInterceptor");
+			@Override
+			public Response intercept(Chain chain) throws IOException {
+				Request request = chain.request();
+				log.debug("Requesting " + request.method() + " " + request.url().toString());
+				Response response = chain.proceed(request);
+				log.debug("Response code " + Integer.toString(response.code()) + " from " +request.url().toString());
+				return response;
+			}
+		};
+
+		OkHttpClient client = new OkHttpClient.Builder()
+				.addNetworkInterceptor(interceptor)
+				.build();
+
+		stagingRetrofit = new Retrofit.Builder()
 				.client(client)
 				.baseUrl(Constants.STAGING_BASE_URL)
 				.build();
 	}
 
-	public Retrofit getRetrofit() {
-		return retrofit;
+	public Retrofit getStagingRetrofit() {
+		return stagingRetrofit;
 	}
 
 	private void afterLoadWallet()

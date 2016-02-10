@@ -28,8 +28,6 @@ public class WorldUpdatesFragment extends Fragment {
     private static final Logger log = LoggerFactory.getLogger(WorldUpdatesFragment.class);
     private static final int POST_UPDATE_REQ_CODE = 0;
     private UpdatesFragment mUpdatesFragment;
-    private Picasso mImageLoader;
-    private TextView mNumUpdates;
     private Button mPostPictureUpdate;
     private String mFirstName;
     private String mLastName;
@@ -51,13 +49,6 @@ public class WorldUpdatesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                log.error("Failed loading picture at " + uri.toString(), exception);
-            }
-        }).build();
 
         SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
         mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, getString(R.string.unnamed_first_name));

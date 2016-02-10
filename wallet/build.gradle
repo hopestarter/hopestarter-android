@@ -19,6 +19,7 @@ dependencies {
     compile 'org.bitcoinj:bitcoinj-core:0.13.4'
     compile 'com.google.protobuf:protobuf-java:2.5.0'
     compile 'com.google.guava:guava:16.0.1'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     compile 'com.google.zxing:core:3.2.1'
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'com.squareup.picasso:picasso:2.5.2'

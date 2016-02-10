@@ -61,6 +61,12 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+
 import org.hopestarter.wallet.service.BlockchainService;
 import org.hopestarter.wallet.service.BlockchainServiceImpl;
 import org.hopestarter.wallet.util.CrashReporter;
@@ -81,12 +87,14 @@ public class WalletApplication extends Application
 	private File walletFile;
 	private Wallet wallet;
 	private PackageInfo packageInfo;
+	private Retrofit retrofit;
 
 	public static final String ACTION_WALLET_REFERENCE_CHANGED = WalletApplication.class.getPackage().getName() + ".wallet_reference_changed";
 
 	public static final int VERSION_CODE_SHOW_BACKUP_REMINDER = 205;
 
 	private static final Logger log = LoggerFactory.getLogger(WalletApplication.class);
+	;
 
 	@Override
 	public void onCreate()
@@ -119,6 +127,8 @@ public class WalletApplication extends Application
 
 		initMnemonicCode();
 
+		initRetrofit();
+
 		config = new Configuration(PreferenceManager.getDefaultSharedPreferences(this), getResources());
 		activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
@@ -142,6 +152,29 @@ public class WalletApplication extends Application
 		afterLoadWallet();
 
 		cleanupFiles();
+	}
+
+	private void initRetrofit() {
+		OkHttpClient client = new OkHttpClient();
+		client.interceptors().add(new Interceptor() {
+			private final Logger log = LoggerFactory.getLogger("OkHttpInterceptor");
+			@Override
+			public Response intercept(Chain chain) throws IOException {
+				Request request = chain.request();
+				log.debug("Requesting " + request.method() + " " + request.url().toString());
+				Response response = chain.proceed(request);
+				log.debug("Response code " + Integer.toString(response.code()) + " from " +request.url().toString());
+				return response;
+			}
+		});
+
+		retrofit = new Retrofit.Builder()
+				.client(client)
+				.build();
+	}
+
+	public Retrofit getRetrofit() {
+		return retrofit;
 	}
 
 	private void afterLoadWallet()

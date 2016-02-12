@@ -1,6 +1,9 @@
 package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,10 +19,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
@@ -157,6 +162,39 @@ public class ProfileFragment extends Fragment {
                 }
 
                 return false;
+            }
+        });
+
+        mProfileLayout.setOnClickListener(new View.OnClickListener() {
+            private int taps;
+
+            private Runnable resetRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    taps = 0;
+                }
+            };
+
+            @Override
+            public void onClick(View v) {
+                taps++;
+                if (taps == 10) {
+                    taps = 0;
+                    String receiveAddress = ((WalletApplication)getActivity().getApplication()).getWallet().currentReceiveAddress().toString();
+
+                    ClipboardManager clipboardManager = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData data = ClipData.newPlainText("address", receiveAddress);
+                    clipboardManager.setPrimaryClip(data);
+                    Toast.makeText(getActivity(), "Address copied to the clipboard", Toast.LENGTH_SHORT).show();
+
+                    AlertDialog addressDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("Bitcoin address")
+                            .setMessage(receiveAddress)
+                            .create();
+                    addressDialog.show();
+                }
+                mProfileLayout.removeCallbacks(resetRunnable);
+                mProfileLayout.postDelayed(resetRunnable, 1000);
             }
         });
 

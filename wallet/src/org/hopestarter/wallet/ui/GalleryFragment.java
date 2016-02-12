@@ -16,10 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.ui.view.ImageViewHolder;
 import org.hopestarter.wallet_test.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,10 +38,26 @@ public class GalleryFragment extends Fragment implements ImageViewHolder.OnClick
     }
 
     private static final String TAG = "GalleryFragment";
+    private static final Logger log = LoggerFactory.getLogger(GalleryFragment.class);
+
     private RecyclerView mRecyclerView;
     private ImageGridRecyclerViewAdapter mAdapter;
-    private Picasso mImageLoader;
     private Callback mCallback;
+
+    private RequestListener mImageLoaderListener = new RequestListener() {
+        @Override
+        public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+            log.error("Failed loading image " + e);
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Object resource, Object model, Target target,
+                boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+
+    };
 
     @Override
      public void onCreate(Bundle savedInstanceState) {
@@ -48,12 +69,6 @@ public class GalleryFragment extends Fragment implements ImageViewHolder.OnClick
 
         mCallback = (GalleryFragment.Callback)getActivity();
 
-        mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.e(TAG, "Failed loading image at: " + uri.toString(), exception);
-            }
-        }).build();
     }
 
     @Override
@@ -135,7 +150,8 @@ public class GalleryFragment extends Fragment implements ImageViewHolder.OnClick
         public void onBindViewHolder(ImageViewHolder holder, int position) {
             Uri imageUri = mImageUris.get(position);
             if (holder.imageUri == null || !holder.imageUri.equals(imageUri)) {
-                mImageLoader.load(imageUri).fit().centerCrop().into(holder.imageView);
+                //mImageLoader.load(imageUri).fit().centerCrop().into(holder.imageView);
+                Glide.with(getActivity()).load(imageUri).listener(mImageLoaderListener).centerCrop().into(holder.imageView);
             }
             holder.imageUri = imageUri;
         }

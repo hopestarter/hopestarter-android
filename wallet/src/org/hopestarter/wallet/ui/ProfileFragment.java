@@ -21,8 +21,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
@@ -40,7 +42,6 @@ public class ProfileFragment extends Fragment {
     private static final Logger log = LoggerFactory.getLogger(ProfileFragment.class);
     private static final int POST_UPDATE_REQ_CODE = 0;
     private UpdatesFragment mUpdatesFragment;
-    private Picasso mImageLoader;
     private TextView mNumUpdates;
     private Button mPostBtn;
     private TextView mUserNameView;
@@ -53,6 +54,19 @@ public class ProfileFragment extends Fragment {
     private RelativeLayout mProfileLayout;
     private Uri mProfilePicture;
     private RoundedImageView mProfilePictureView;
+
+    private RequestListener mImageLoaderListener = new RequestListener() {
+        @Override
+        public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+            log.error("Failed loading image", e);
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+    };
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -68,13 +82,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                log.error("Failed loading picture at " + uri.toString(), exception);
-            }
-        }).build();
 
         SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
         mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, getString(R.string.unnamed_first_name));
@@ -207,7 +214,7 @@ public class ProfileFragment extends Fragment {
     private void feedData() {
         mUserNameView.setText(mFullName);
         mUserEthnicityView.setText(mEthnicity);
-        mImageLoader.load(mProfilePicture).fit().centerCrop().into(mProfilePictureView);
+        Glide.with(this).load(mProfilePicture).centerCrop().listener(mImageLoaderListener).into(mProfilePictureView);
     }
 
     private void feedFakeData() {

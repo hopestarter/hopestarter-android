@@ -14,8 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
@@ -32,8 +36,20 @@ public class UpdatesFragment extends Fragment {
     private static final String TAG = UpdatesFragment.class.getName();
     private static final Logger log = LoggerFactory.getLogger(UpdatesFragment.class);
     private RecyclerView mRecyclerView;
-    private Picasso mImageLoader;
     private ProfileUpdatesAdapter mAdapter = new ProfileUpdatesAdapter();
+
+    private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
+        @Override
+        public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+            log.error("Failed loading picture at " + model.toString(), e);
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+    };
 
     public UpdatesFragment() {
         // Required empty public constructor
@@ -55,14 +71,6 @@ public class UpdatesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mImageLoader = new Picasso.Builder(getActivity()).listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                log.error("Failed loading picture at " + uri.toString(), exception);
-            }
-        }).build();
-
 
     }
 
@@ -195,14 +203,25 @@ public class UpdatesFragment extends Fragment {
             holder.userNameView.setText(data.getUserName());
             holder.messageView.setText(data.getMessage());
 
+            RequestManager glide = Glide.with(getActivity());
+
             if (data.getProfilePictureUri() != null) {
-                mImageLoader.load(data.getProfilePictureUri()).fit().centerCrop().into(holder.userPictureView);
+                glide.load(data.getProfilePictureUri())
+                        .centerCrop()
+                        .listener(mImageLoaderListener)
+                        .into(holder.userPictureView);
+
             } else {
-                mImageLoader.load(R.drawable.avatar_placeholder).fit().centerCrop().into(holder.userPictureView);
+                glide.load(R.drawable.avatar_placeholder)
+                        .centerCrop()
+                        .into(holder.userPictureView);
             }
 
             if (data.getPictureUri() != null) {
-                mImageLoader.load(data.getPictureUri()).fit().centerCrop().into(holder.attachedImageView);
+                glide.load(data.getPictureUri())
+                        .centerCrop()
+                        .listener(mImageLoaderListener)
+                        .into(holder.attachedImageView);
             }
 
             String additionalInfo = String.format(

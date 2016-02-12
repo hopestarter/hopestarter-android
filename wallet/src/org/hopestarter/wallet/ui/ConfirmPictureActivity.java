@@ -13,7 +13,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
@@ -26,21 +29,26 @@ public class ConfirmPictureActivity extends AppCompatActivity {
     private static final String TAG = "ConfirmPictureAct";
     private Uri mFileUri;
     private String mTitle;
-    private Picasso mImageLoader;
     protected static final Logger log = LoggerFactory.getLogger(ConfirmPictureActivity.class);
+    private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
+        @Override
+        public boolean onException(Exception e, Uri model, Target<GlideDrawable> target,
+                boolean isFirstResource) {
+            log.error("Failed loading picture at " + model.toString(), e);
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, Uri model,
+                Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_picture);
-
-        mImageLoader = new Picasso.Builder(this)
-                .listener(new Picasso.Listener() {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        log.error("failed loading image at " + uri.toString(), exception);
-                    }
-                }).build();
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
@@ -69,11 +77,7 @@ public class ConfirmPictureActivity extends AppCompatActivity {
 
         ImageView mPicturePreview = (ImageView) findViewById(R.id.picture_preview);
 
-        Picasso.with(this)
-                .load(mFileUri)
-                .resize(320, 240)
-                .centerCrop()
-                .into(mPicturePreview);
+        Glide.with(this).load(mFileUri).centerCrop().listener(mImageLoaderListener).into(mPicturePreview);
 
         final Activity activity = this;
 

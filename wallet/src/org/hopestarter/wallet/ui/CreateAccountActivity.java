@@ -27,7 +27,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.NoTokenException;
@@ -53,6 +56,18 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
     private EditText mLastNameView;
     private EditText mEthnicityView;
     private Uri mProfilePicture;
+    private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
+        @Override
+        public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+            log.error("Failed loading image at " + model.toString());
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +179,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
     private void setProfilePicture(Uri pictureUri) {
         mProfilePicture = pictureUri;
-        Picasso.with(this).load(pictureUri).resize(94, 94).centerCrop().into(mImageView);
+        Glide.with(this).load(pictureUri).centerCrop().listener(mImageLoaderListener).into(mImageView);
     }
 
     private void createAccount() {

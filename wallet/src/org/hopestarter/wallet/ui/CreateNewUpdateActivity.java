@@ -12,7 +12,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
@@ -25,8 +28,21 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
     public static final String EXTRA_RESULT_MESSAGE = "EXTRA_RESULT_MESSAGE";
     private ImageView mImageView;
     private EditText mMessageView;
-    private Picasso mImageLoader;
     private Uri mImageUri;
+    private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
+        @Override
+        public boolean onException(Exception e, Uri model, Target<GlideDrawable> target,
+                boolean isFirstResource) {
+            log.error("Failed loading picture at " + model.toString(), e);
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, Uri model,
+                Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +51,6 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_create_new_update);
         setSupportActionBar(toolbar);
-
-        mImageLoader = new Picasso.Builder(this).listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                log.error("Image load failed. Tried to load image at: " + uri.toString());
-            }
-        }).build();
 
         mImageView = (ImageView)findViewById(R.id.imageview);
         mMessageView = (EditText)findViewById(R.id.message);
@@ -97,7 +106,11 @@ public class CreateNewUpdateActivity extends AppCompatActivity {
                 finish();
             } else {
                 mImageUri = data.getData();
-                mImageLoader.load(data.getData()).fit().centerCrop().into(mImageView);
+                Glide.with(this)
+                        .load(data.getData())
+                        .centerCrop()
+                        .listener(mImageLoaderListener)
+                        .into(mImageView);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

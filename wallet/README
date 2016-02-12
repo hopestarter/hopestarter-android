@@ -3,18 +3,18 @@ FILES
 Your wallet contains your private keys and various transaction related metadata. It is stored in app-private
 storage:
 
-	Mainnet: /data/data/de.schildbach.wallet/files/wallet-protobuf (MODE_PRIVATE)
+	Mainnet: /data/data/org.hopestarter.wallet/files/wallet-protobuf (MODE_PRIVATE)
 
-	Testnet: /data/data/de.schildbach.wallet_test/files/wallet-protobuf-testnet (MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE)
+	Testnet: /data/data/org.hopestarter.wallet_test/files/wallet-protobuf-testnet (MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE)
 
 The wallet file format is not compatible to wallet.dat (Satoshi client). Rather, it uses a custom protobuf format
 which should be compatible between clients using bitcoinj.
 
 Certain actions cause automatic rolling backups of your wallet to app-private storage:
 
-	Mainnet: /data/data/de.schildbach.wallet/files/key-backup-protobuf (MODE_PRIVATE)
+	Mainnet: /data/data/org.hopestarter.wallet/files/key-backup-protobuf (MODE_PRIVATE)
 
-	Testnet: /data/data/de.schildbach.wallet_test/files/key-backup-protobuf-testnet (MODE_PRIVATE)
+	Testnet: /data/data/org.hopestarter.wallet_test/files/key-backup-protobuf-testnet (MODE_PRIVATE)
 
 Your wallet can be manually backed up to and restored from external storage:
 
@@ -30,7 +30,7 @@ DEBUGGING
 
 Wallet file for Testnet can be pulled from an (even un-rooted) device using
 
-	adb pull /data/data/de.schildbach.wallet_test/files/wallet-protobuf-testnet
+	adb pull /data/data/org.hopestarter.wallet_test/files/wallet-protobuf-testnet
 
 Log messages can be viewed by
 
@@ -68,14 +68,14 @@ and switch to it. Use
 
 to download the necessary API level.
 
-Finally, you can build Bitcoin Wallet and sign it with your development key. Again in your workspace,
+Finally, you can build Hopestarter and sign it with your development key. Again in your workspace,
 use
 
 	# first time only
-	git clone -b master https://github.com/schildbach/bitcoin-wallet.git bitcoin-wallet
+	git clone -b master https://github.com/hopestarter/hopestarter-android.git hopestarter
 
 	# each time
-	cd bitcoin-wallet
+	cd hopestarter
 	git pull
 	gradle clean test build
 

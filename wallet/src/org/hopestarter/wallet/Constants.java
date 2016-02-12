@@ -27,6 +27,7 @@ import org.bitcoinj.utils.MonetaryFormat;
 import android.os.Build;
 import android.os.Environment;
 import android.text.format.DateUtils;
+import android.util.Base64;
 
 import com.google.common.io.BaseEncoding;
 
@@ -41,8 +42,12 @@ public final class Constants
 
 	/** Network this wallet is on (e.g. testnet or mainnet). */
 	public static final NetworkParameters NETWORK_PARAMETERS = TEST ? TestNet3Params.get() : MainNetParams.get();
-	public static final String STAGING_BASE_URL = "http://127.0.0.1:8000";
-	public static final String API_BASE_URL = "http://127.0.0.1:8001";
+	public static final String STAGING_BASE_URL = "http://192.168.1.121:8000";
+	public static final String API_BASE_URL = "http://192.168.1.121:8001";
+	public static final String BASIC_BASE64_CREDENTIALS =
+			"d2t6Nkg0TElNbWtENjdWOUh2RlNxY2VYTUZqb0lnMzhFb0x5MU1rbTpJaVF3ZE1qUWlTc0h2bDlNdDJZdVdUQUx" +
+			"rdFNHSWVkWGxQenFTaktUZ25UWVNHb3EwMXVwU2c4MmFBWjZmVzhJQk9WbHI3SnlmRHI0enZ3UWJ3MHAwczBqa1" +
+			"JHMGxLQ0ZMN25PQXZqSEhBSEVEWFVOVWZKRU82UHFYYmxMYlM3UQ==";
 
 	public final static class Files
 	{

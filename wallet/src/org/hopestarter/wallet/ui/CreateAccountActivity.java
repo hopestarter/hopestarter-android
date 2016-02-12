@@ -1,6 +1,7 @@
 package org.hopestarter.wallet.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -28,9 +29,16 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.NoTokenException;
+import org.hopestarter.wallet.server_api.ResponseNotOkException;
+import org.hopestarter.wallet.server_api.ServerApi;
+import org.hopestarter.wallet.server_api.StagingApi;
+import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class CreateAccountActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
 
@@ -65,6 +73,8 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         mFirstNameView = (EditText)findViewById(R.id.first_name_input);
         mLastNameView = (EditText)findViewById(R.id.last_name_input);
         mEthnicityView = (EditText)findViewById(R.id.ethnicity_input);
+
+        mProfilePicture = ResourceUtils.resIdToUri(this, R.drawable.avatar_placeholder);
 
         View.OnClickListener addPicClickListener = new View.OnClickListener() {
             @Override
@@ -163,6 +173,8 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         final String imei = ((TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
         final String profilePicture = mProfilePicture.toString();
 
+        final Activity thisActivity = this;
+
         AsyncTask<String, Void, AccountCreationResult> createAccountTask = new AsyncTask<String, Void, AccountCreationResult>() {
             private String firstName;
             private String lastName;
@@ -178,9 +190,29 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 imei = params[3];
                 profilePicture = params[4];
 
-                // TODO: Replace this code with one communicating with the server to create an account
-                //       It also must obtain a token associated with the new account
-                return new AccountCreationResult("sometoken");
+                try {
+                    StagingApi stagingApi = new StagingApi();
+                    ServerApi serverApi = new ServerApi();
+                    int respCode = stagingApi.signUp(imei, "demopassword");
+                    if (respCode == 200 || respCode == 302) {
+                        String token = serverApi.getToken(imei, "demopassword");
+                        if (token != null) {
+                            return new AccountCreationResult(token);
+                        } else {
+                            String errorMsg = getString(R.string.account_creation_error_no_token);
+                            return new AccountCreationResult(new NoTokenException(errorMsg));
+                        }
+                    } else {
+                        String errorMsg = getString(R.string.account_creation_error_response_not_ok);
+                        String formattedErrorMsg = String.format(errorMsg, respCode);
+                        return new AccountCreationResult(new ResponseNotOkException(formattedErrorMsg));
+                    }
+
+                } catch (IOException e) {
+                    return new AccountCreationResult(e);
+                } catch (ResponseNotOkException e) {
+                    return new AccountCreationResult(e);
+                }
             }
 
             @Override
@@ -190,8 +222,20 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                     setResult(RESULT_OK);
                     finish();
                 } else {
-                    setResult(RESULT_CANCELED);
-                    finish();
+                    if (result.error != null) {
+                        String errorMsg;
+                        if (result.error instanceof IOException) {
+                            errorMsg = getString(R.string.account_creation_error_connection_problem);
+                        } else {
+                            errorMsg = result.error.getMessage();
+                        }
+                        AlertDialog dialog = new AlertDialog.Builder(thisActivity)
+                                .setTitle("Error")
+                                .setMessage(errorMsg)
+                                .setIcon(R.drawable.ic_error_24dp)
+                                .create();
+                        dialog.show();
+                    }
                 }
             }
         };

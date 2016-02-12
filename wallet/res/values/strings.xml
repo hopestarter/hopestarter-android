@@ -341,5 +341,8 @@
     <string name="unnamed_first_name">Unnamed</string>
     <string name="unnamed_last_name">User</string>
     <string name="no_ethnicity_ethnicity">No ethnicity</string>
+    <string name="account_creation_error_response_not_ok">"Couldn't create the account, server responded with code %d"</string>
+    <string name="account_creation_error_no_token">No token returned by the server</string>
+    <string name="account_creation_error_connection_problem">Connection problem. Please try again.</string>
 
 </resources>

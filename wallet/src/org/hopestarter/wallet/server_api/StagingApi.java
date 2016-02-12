@@ -47,8 +47,8 @@ public class StagingApi {
         mApiImpl = mStagingRetrofit.create(IStagingApi.class);
     }
 
-    public int signUp(String username, String password) throws IOException {
-        Call<Void> call = mApiImpl.signUp(username, password);
+    public int signUp(String username, String password, String firstName, String lastName, String ethnicity) throws IOException {
+        Call<Void> call = mApiImpl.signUp(username, password, firstName, lastName, ethnicity);
         Response response = call.execute();
         return response.code();
     }

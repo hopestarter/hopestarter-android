@@ -3,6 +3,7 @@ package org.hopestarter.wallet.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -175,6 +176,10 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
         final Activity thisActivity = this;
 
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(this, getString(R.string.creating_account_progress_dialog_title),
+                        getString(R.string.please_wait_message), true, false);
+
         AsyncTask<String, Void, AccountCreationResult> createAccountTask = new AsyncTask<String, Void, AccountCreationResult>() {
             private String firstName;
             private String lastName;
@@ -193,7 +198,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 try {
                     StagingApi stagingApi = new StagingApi();
                     ServerApi serverApi = new ServerApi();
-                    int respCode = stagingApi.signUp(imei, "demopassword");
+                    int respCode = stagingApi.signUp(imei, "demopassword", firstName, lastName, ethnicity);
                     if (respCode == 200 || respCode == 302) {
                         String token = serverApi.getToken(imei, "demopassword");
                         if (token != null) {
@@ -217,6 +222,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
             @Override
             protected void onPostExecute(AccountCreationResult result) {
+                progressDialog.dismiss();
                 if (result.token != null) {
                     saveUserInformation(result.token, firstName, lastName, ethnicity, profilePicture);
                     setResult(RESULT_OK);

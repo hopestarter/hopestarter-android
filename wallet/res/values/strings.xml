@@ -344,5 +344,7 @@
     <string name="account_creation_error_response_not_ok">"Couldn't create the account, server responded with code %d"</string>
     <string name="account_creation_error_no_token">No token returned by the server</string>
     <string name="account_creation_error_connection_problem">Connection problem. Please try again.</string>
+    <string name="creating_account_progress_dialog_title">Creating account...</string>
+    <string name="please_wait_message">Please wait...</string>
 
 </resources>

@@ -11,5 +11,7 @@ import retrofit2.http.POST;
 public interface IStagingApi {
     @FormUrlEncoded
     @POST("accounts/demo_signup/")
-    Call<Void> signUp(@Field("username")String username, @Field("password1")String password);
+    Call<Void> signUp(@Field("username")String username, @Field("password1")String password,
+            @Field("name")String firstName, @Field("surname")String lastName,
+            @Field("ethnicity") String ethnicity);
 }

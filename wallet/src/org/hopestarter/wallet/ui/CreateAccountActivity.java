@@ -212,7 +212,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
                 try {
                     StagingApi stagingApi = new StagingApi();
-                    ServerApi serverApi = new ServerApi();
+                    ServerApi serverApi = new ServerApi(thisActivity);
                     int respCode = stagingApi.signUp(imei, "demopassword", firstName, lastName, ethnicity);
                     if (respCode == 200 || respCode == 302) {
                         String token = serverApi.getToken(imei, "demopassword");
@@ -245,17 +245,20 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 } else {
                     if (result.error != null) {
                         String errorMsg;
+
                         if (result.error instanceof IOException) {
-                            errorMsg = getString(R.string.account_creation_error_connection_problem);
+                            errorMsg = getString(R.string.error_connection_problem);
                         } else {
                             errorMsg = result.error.getMessage();
                         }
+
                         AlertDialog dialog = new AlertDialog.Builder(thisActivity)
                                 .setTitle("Error")
                                 .setMessage(errorMsg)
                                 .setIcon(R.drawable.ic_error_24dp)
                                 .create();
                         dialog.show();
+                        log.error("Unable to create account", result.error);
                     }
                 }
             }

@@ -343,8 +343,11 @@
     <string name="no_ethnicity_ethnicity">No ethnicity</string>
     <string name="account_creation_error_response_not_ok">"Couldn't create the account, server responded with code %d"</string>
     <string name="account_creation_error_no_token">No token returned by the server</string>
-    <string name="account_creation_error_connection_problem">Connection problem. Please try again.</string>
+    <string name="error_connection_problem">Connection problem. Please try again.</string>
     <string name="creating_account_progress_dialog_title">Creating account...</string>
     <string name="please_wait_message">Please wait...</string>
+    <string name="error_authentication">Unable to authenticate with the server. Please login again.</string>
+    <string name="error_unexpected">An unexpected error happened. Please try again later.</string>
+    <string name="error_default_dialog_title">A problem happened</string>
 
 </resources>

@@ -1,6 +1,9 @@
 package org.hopestarter.wallet.server_api;
 
+import android.content.Context;
+
 import org.hopestarter.wallet.Constants;
+import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +22,10 @@ import retrofit2.Retrofit;
 public class ServerApi {
     private final Retrofit mApiRetrofit;
     private final IServerApi mApiImpl;
+    private final Context mContext;
 
-    public ServerApi() {
+    public ServerApi(Context context) {
+        mContext = context;
         Interceptor interceptor = new Interceptor() {
             private final Logger log = LoggerFactory.getLogger(ServerApi.class);
             @Override
@@ -41,13 +46,14 @@ public class ServerApi {
                 .client(client)
                 .baseUrl(Constants.API_BASE_URL)
                 .addConverterFactory(new TokenResponseConverterFactory())
+                .addConverterFactory(new UserInfoConverterFactory())
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
     }
 
     public String getToken(String username, String password) throws IOException, ResponseNotOkException {
-        Call<TokenResponse> call = mApiImpl.getToken("password", username, password, "set-location");
+        Call<TokenResponse> call = mApiImpl.getToken("password", username, password, "set-location update-profile");
         Response<TokenResponse> response = call.execute();
         if (response.isSuccess()) {
             TokenResponse tokenResp = response.body();
@@ -55,5 +61,31 @@ public class ServerApi {
         } else {
             throw new ResponseNotOkException("Failed to authenticate\nResponse code: " + Integer.toString(response.code()));
         }
+    }
+
+    public UserInfo getUserInfo() throws NoTokenException, IOException, ForbiddenResourceException,
+            UnexpectedServerResponseException {
+        String headerValue = "Bearer " + mContext
+                .getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE)
+                .getString(UserInfoPrefs.TOKEN, "");
+
+        if (headerValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        Call<UserInfo> call = mApiImpl.getUserInfo(headerValue);
+        Response<UserInfo> response = call.execute();
+        if (response.isSuccess()) {
+            return response.body();
+        } else {
+            switch(response.code()) {
+                case 403:
+                    throw new ForbiddenResourceException();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+
+
     }
 }

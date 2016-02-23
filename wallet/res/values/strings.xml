@@ -349,5 +349,7 @@
     <string name="error_authentication">Unable to authenticate with the server. Please login again.</string>
     <string name="error_unexpected">An unexpected error happened. Please try again later.</string>
     <string name="error_default_dialog_title">A problem happened</string>
+    <string name="error_authentication_message">Failed to authenticate</string>
+    <string name="error_unexpected_account_creation">Something went wrong. Couldn\'t create the account. Try again later.</string>
 
 </resources>

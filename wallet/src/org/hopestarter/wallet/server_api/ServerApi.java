@@ -58,19 +58,25 @@ public class ServerApi {
 
     }
 
-    public String getToken(String username, String password) throws IOException, ResponseNotOkException {
+    public String getToken(String username, String password) throws IOException, AuthenticationFailed, UnexpectedServerResponseException {
         Call<TokenResponse> call = mApiImpl.getToken("password", username, password, "set-location update-profile");
         Response<TokenResponse> response = call.execute();
         if (response.isSuccess()) {
             TokenResponse tokenResp = response.body();
             return tokenResp.getAccessToken();
         } else {
-            throw new ResponseNotOkException("Failed to authenticate\nResponse code: " + Integer.toString(response.code()));
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+
         }
     }
 
     public UserInfo getUserInfo() throws NoTokenException, IOException, ForbiddenResourceException,
-            UnexpectedServerResponseException {
+            UnexpectedServerResponseException, AuthenticationFailed {
 
         if (mAuthHeaderValue.isEmpty()) {
             throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
@@ -81,7 +87,9 @@ public class ServerApi {
         if (response.isSuccess()) {
             return response.body();
         } else {
-            switch(response.code()) {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
                 case 403:
                     throw new ForbiddenResourceException();
                 default:
@@ -90,7 +98,20 @@ public class ServerApi {
         }
     }
 
-    public void setUserInfo() {
-
-    }
+//    public UserInfo setUserInfo(String firstName, String lastName, String pictureUri) throws NoTokenException {
+//        if (mAuthHeaderValue.isEmpty()) {
+//            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+//        }
+//
+//        Call<UserInfo> call = mApiImpl.setUserInfo(mAuthheaderValue, firstName, lastName, pictureUri);
+//        Response<UserInfo> response = call.execute();
+//        if (response.isSuccess()) {
+//            return response.body();
+//        } else {
+//            switch (response.code()) {
+//                case 401:
+//                    throw new
+//            }
+//        }
+//    }
 }

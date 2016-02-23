@@ -33,10 +33,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.NoTokenException;
-import org.hopestarter.wallet.server_api.ResponseNotOkException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
+import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
@@ -223,14 +224,15 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                             return new AccountCreationResult(new NoTokenException(errorMsg));
                         }
                     } else {
-                        String errorMsg = getString(R.string.account_creation_error_response_not_ok);
-                        String formattedErrorMsg = String.format(errorMsg, respCode);
-                        return new AccountCreationResult(new ResponseNotOkException(formattedErrorMsg));
+                        String errorMsg = getString(R.string.error_unexpected_account_creation);
+                        return new AccountCreationResult(new UnexpectedServerResponseException(respCode, errorMsg));
                     }
 
                 } catch (IOException e) {
                     return new AccountCreationResult(e);
-                } catch (ResponseNotOkException e) {
+                } catch (UnexpectedServerResponseException e) {
+                    return new AccountCreationResult(e);
+                } catch (AuthenticationFailed e) {
                     return new AccountCreationResult(e);
                 }
             }

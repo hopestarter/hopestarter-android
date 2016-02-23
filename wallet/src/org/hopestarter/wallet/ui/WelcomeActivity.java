@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
@@ -84,6 +85,9 @@ public class WelcomeActivity extends Activity {
                 } catch (UnexpectedServerResponseException e) {
                     log.error("Unexpected server response", e);
                     return e;
+                } catch (AuthenticationFailed e) {
+                    log.error("Authentication failed", e);
+                    return e;
                 }
             }
 
@@ -93,7 +97,6 @@ public class WelcomeActivity extends Activity {
                 mBtn.setEnabled(true);
 
                 if (error == null) {
-
                     startMainActivity();
                     finish();
                 } else {

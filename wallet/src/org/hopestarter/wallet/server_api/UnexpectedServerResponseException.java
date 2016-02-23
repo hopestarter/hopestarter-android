@@ -5,6 +5,10 @@ package org.hopestarter.wallet.server_api;
  */
 public class UnexpectedServerResponseException extends Exception {
     public UnexpectedServerResponseException(int code) {
-        super("Unexpected server response. Server response code was " + Integer.toString(code));
+        this(code, null);
+    }
+
+    public UnexpectedServerResponseException(int code, String msg) {
+        super("Unexpected server response. Server response code was " + Integer.toString(code) + "\n" + msg);
     }
 }

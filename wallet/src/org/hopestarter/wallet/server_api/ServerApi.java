@@ -23,6 +23,7 @@ public class ServerApi {
     private final Retrofit mApiRetrofit;
     private final IServerApi mApiImpl;
     private final Context mContext;
+    private final String mAuthHeaderValue;
 
     public ServerApi(Context context) {
         mContext = context;
@@ -50,6 +51,11 @@ public class ServerApi {
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
+
+        mAuthHeaderValue = "Bearer " + mContext
+                .getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE)
+                .getString(UserInfoPrefs.TOKEN, "");
+
     }
 
     public String getToken(String username, String password) throws IOException, ResponseNotOkException {
@@ -65,15 +71,12 @@ public class ServerApi {
 
     public UserInfo getUserInfo() throws NoTokenException, IOException, ForbiddenResourceException,
             UnexpectedServerResponseException {
-        String headerValue = "Bearer " + mContext
-                .getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE)
-                .getString(UserInfoPrefs.TOKEN, "");
 
-        if (headerValue.isEmpty()) {
+        if (mAuthHeaderValue.isEmpty()) {
             throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
         }
 
-        Call<UserInfo> call = mApiImpl.getUserInfo(headerValue);
+        Call<UserInfo> call = mApiImpl.getUserInfo(mAuthHeaderValue);
         Response<UserInfo> response = call.execute();
         if (response.isSuccess()) {
             return response.body();
@@ -85,7 +88,9 @@ public class ServerApi {
                     throw new UnexpectedServerResponseException(response.code());
             }
         }
+    }
 
+    public void setUserInfo() {
 
     }
 }

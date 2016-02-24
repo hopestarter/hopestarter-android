@@ -8,13 +8,13 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
- * Created by Adrian on 18/02/2016.
+ * Created by Adrian on 23/02/2016.
  */
-public class UserInfoConverterFactory extends Converter.Factory {
+public class UploadImageResponseConverterFactory extends Converter.Factory {
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        if (type == UserInfo.class) {
-            return new UserInfoConverter();
+        if (type == UploadImageResponse.class) {
+            return new UploadImageResponseConverter();
         }
         return null;
     }

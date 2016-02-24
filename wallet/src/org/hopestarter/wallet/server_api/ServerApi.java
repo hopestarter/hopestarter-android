@@ -2,6 +2,8 @@ package org.hopestarter.wallet.server_api;
 
 import android.content.Context;
 
+import com.amazonaws.mobileconnectors.s3.transfermanager.Upload;
+
 import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.slf4j.Logger;
@@ -23,7 +25,7 @@ public class ServerApi {
     private final Retrofit mApiRetrofit;
     private final IServerApi mApiImpl;
     private final Context mContext;
-    private final String mAuthHeaderValue;
+    private String mAuthHeaderValue;
 
     public ServerApi(Context context) {
         mContext = context;
@@ -47,15 +49,21 @@ public class ServerApi {
                 .client(client)
                 .baseUrl(Constants.API_BASE_URL)
                 .addConverterFactory(new TokenResponseConverterFactory())
-                .addConverterFactory(new UserInfoConverterFactory())
+                .addConverterFactory(new UserInfoResponseConverterFactory())
+                .addConverterFactory(new UserInfoRequestConverterFactory())
+                .addConverterFactory(new UploadImageResponseConverterFactory())
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
 
+        updateAuthHeaderValue();
+
+    }
+
+    public void updateAuthHeaderValue() {
         mAuthHeaderValue = "Bearer " + mContext
                 .getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE)
                 .getString(UserInfoPrefs.TOKEN, "");
-
     }
 
     public String getToken(String username, String password) throws IOException, AuthenticationFailed, UnexpectedServerResponseException {
@@ -71,7 +79,6 @@ public class ServerApi {
                 default:
                     throw new UnexpectedServerResponseException(response.code());
             }
-
         }
     }
 
@@ -98,20 +105,48 @@ public class ServerApi {
         }
     }
 
-//    public UserInfo setUserInfo(String firstName, String lastName, String pictureUri) throws NoTokenException {
-//        if (mAuthHeaderValue.isEmpty()) {
-//            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
-//        }
-//
-//        Call<UserInfo> call = mApiImpl.setUserInfo(mAuthheaderValue, firstName, lastName, pictureUri);
-//        Response<UserInfo> response = call.execute();
-//        if (response.isSuccess()) {
-//            return response.body();
-//        } else {
-//            switch (response.code()) {
-//                case 401:
-//                    throw new
-//            }
-//        }
-//    }
+    public UserInfo setUserInfo(String firstName, String lastName, String pictureUri) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        UserInfo info = new UserInfo(firstName, lastName, pictureUri);
+
+        Call<UserInfo> call = mApiImpl.setUserInfo(mAuthHeaderValue, info);
+        Response<UserInfo> response = call.execute();
+        if (response.isSuccess()) {
+            return response.body();
+        } else {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+    }
+
+    public UploadImageResponse requestImageUpload() throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        Call<UploadImageResponse> call = mApiImpl.requestImageUpload(mAuthHeaderValue);
+        Response<UploadImageResponse> response = call.execute();
+
+        if (response.isSuccess()) {
+            return response.body();
+        } else {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+    }
 }

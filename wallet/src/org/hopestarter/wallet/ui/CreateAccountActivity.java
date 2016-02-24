@@ -27,6 +27,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -34,16 +41,22 @@ import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.AuthenticationFailed;
+import org.hopestarter.wallet.server_api.BucketInfo;
+import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
+import org.hopestarter.wallet.server_api.UploadImageResponse;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.crypto.digests.SHA256Digest;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CreateAccountActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
 
@@ -57,6 +70,10 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
     private EditText mLastNameView;
     private EditText mEthnicityView;
     private Uri mProfilePicture;
+
+    private TransferUtility mTransferUtility;
+
+
     private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
         @Override
         public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -104,6 +121,8 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
         mImageView.setOnClickListener(addPicClickListener);
         addPicView.setOnClickListener(addPicClickListener);
+
+
     }
 
     @Override
@@ -178,6 +197,14 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         }
     }
 
+    @Override
+    public void onDestroy() {
+        if (mTransferUtility != null) {
+            mTransferUtility.cancelAllWithType(TransferType.ANY);
+        }
+        super.onDestroy();
+    }
+
     private void setProfilePicture(Uri pictureUri) {
         mProfilePicture = pictureUri;
         Glide.with(this).load(pictureUri).centerCrop().listener(mImageLoaderListener).into(mImageView);
@@ -214,25 +241,81 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 try {
                     StagingApi stagingApi = new StagingApi();
                     ServerApi serverApi = new ServerApi(thisActivity);
+
                     int respCode = stagingApi.signUp(imei, "demopassword", firstName, lastName, ethnicity);
+
                     if (respCode == 200 || respCode == 302) {
                         String token = serverApi.getToken(imei, "demopassword");
+
                         if (token != null) {
+                            saveUserInformation(token, null, null, null, null);
+                            serverApi.updateAuthHeaderValue();
+
+                            UploadImageResponse uploadInfo = serverApi.requestImageUpload();
+
+                            AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
+                            mTransferUtility = new TransferUtility(amazonClient, thisActivity);
+
+                            BucketInfo bucket = uploadInfo.getBucket();
+
+                            File pictureFile = new File(Uri.parse(profilePicture).getPath());
+
+                            StringBuilder uriBuilder = new StringBuilder();
+
+                            uriBuilder.append("s3://")
+                                    .append(bucket.getName()).append("/")
+                                    .append(bucket.getPrefix());
+
+                            Uri s3BucketUri = Uri.parse(uriBuilder.toString());
+
+                            uriBuilder.append("/").append(pictureFile.getName());
+
+                            Uri s3PictureUri = Uri.parse(uriBuilder.toString());
+
+                            final AtomicBoolean taskFinished = new AtomicBoolean(false);
+
+                            TransferObserver observer = mTransferUtility.upload(s3BucketUri.getPath(), pictureFile.getName(), pictureFile);
+                            observer.setTransferListener(new TransferListener() {
+                                @Override
+                                public void onStateChanged(int id, TransferState state) {
+                                    if (state.equals(TransferState.FAILED) ||
+                                            state.equals(TransferState.CANCELED) ||
+                                            state.equals(TransferState.COMPLETED)) {
+                                        taskFinished.set(true);
+                                        taskFinished.notify();
+                                    }
+                                }
+
+                                @Override
+                                public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+                                }
+
+                                @Override
+                                public void onError(int id, Exception ex) {
+                                    log.error("An error has occurred while uploading picture to S3", ex);
+                                }
+                            });
+
+                            while(!taskFinished.get()) {
+                                taskFinished.wait();
+                            }
+
+                            observer.cleanTransferListener();
+                            serverApi.setUserInfo(null, null, s3PictureUri.toString());
+
                             return new AccountCreationResult(token);
                         } else {
                             String errorMsg = getString(R.string.account_creation_error_no_token);
                             return new AccountCreationResult(new NoTokenException(errorMsg));
                         }
+
                     } else {
                         String errorMsg = getString(R.string.error_unexpected_account_creation);
                         return new AccountCreationResult(new UnexpectedServerResponseException(respCode, errorMsg));
                     }
 
-                } catch (IOException e) {
-                    return new AccountCreationResult(e);
-                } catch (UnexpectedServerResponseException e) {
-                    return new AccountCreationResult(e);
-                } catch (AuthenticationFailed e) {
+                } catch (Exception e) {
                     return new AccountCreationResult(e);
                 }
             }
@@ -244,6 +327,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                     saveUserInformation(result.token, firstName, lastName, ethnicity, profilePicture);
                     setResult(RESULT_OK);
                     finish();
+
                 } else {
                     if (result.error != null) {
                         String errorMsg;
@@ -261,6 +345,8 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                                 .create();
                         dialog.show();
                         log.error("Unable to create account", result.error);
+
+                        clearUserInformation();
                     }
                 }
             }
@@ -269,15 +355,23 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         createAccountTask.execute(firstName, lastName, ethnicity, imei, profilePicture);
     }
 
+    private void clearUserInformation() {
+        saveUserInformation(null, null, null, null, null);
+    }
+
     private void saveUserInformation(String token, String firstName, String lastName, String ethnicity, String profilePicture) {
         SharedPreferences prefs = getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
-        prefs.edit()
+        boolean success = prefs.edit()
                 .putString(UserInfoPrefs.TOKEN, token)
                 .putString(UserInfoPrefs.FIRST_NAME, firstName)
                 .putString(UserInfoPrefs.LAST_NAME, lastName)
                 .putString(UserInfoPrefs.ETHNICITY, ethnicity)
                 .putString(UserInfoPrefs.PROFILE_PIC, profilePicture)
                 .commit();
+
+        if (!success) {
+            log.error("user information couldn't be saved");
+        }
 
     }
 

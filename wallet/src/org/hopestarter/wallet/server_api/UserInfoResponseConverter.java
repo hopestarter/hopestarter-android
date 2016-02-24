@@ -10,7 +10,7 @@ import retrofit2.Converter;
 /**
  * Created by Adrian on 18/02/2016.
  */
-public class UserInfoConverter implements Converter<ResponseBody, UserInfo> {
+public class UserInfoResponseConverter implements Converter<ResponseBody, UserInfo> {
     @Override
     public UserInfo convert(ResponseBody value) throws IOException {
         Gson gson = new Gson();

@@ -1,13 +1,15 @@
 package org.hopestarter.wallet.ui;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.drawable.GradientDrawable;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -220,52 +222,80 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
 
     @Override
     public void onResume() {
+        checkPermissions();
+        super.onResume();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissions() {
+        int permissionStatus = getActivity().checkSelfPermission(Manifest.permission.CAMERA);
+
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            initCamera();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 0);
+        }
+    }
+
+    public void initCamera() {
         openCamera();
 
         if (mCamera != null) {
-            mCameraPreview.setCamera(mCamera);
-
-            ImageButton flashBtn = (ImageButton)mRootView.findViewById(R.id.flash_btn);
-            flashBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switchFlashMode();
-                }
-            });
-
-            ImageButton flipCameraBtn = (ImageButton)mRootView.findViewById(R.id.flip_btn);
-            flipCameraBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mFrontCameraSelected = !mFrontCameraSelected;
-                    mCamera.stopPreview();
-                    mCamera.release();
-                    mCamera = null;
-                    openCamera();
-                    mCameraPreview.setCamera(mCamera);
-                }
-            });
-
-            mCameraPreview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setCameraRotation();
-                    mCamera.takePicture(null, null, CameraFragment.this);
-                }
-            });
-            log.debug("Camera preview camera instance set");
-
-            mOrientationListener.enable();
+            onCameraOpen();
         }
+    }
 
-        super.onResume();
+    @Override
+    public void onRequestPermissionsResult(int reqCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
+        if (grantResult[0] == PackageManager.PERMISSION_GRANTED) {
+            initCamera();
+        }
+    }
+
+    public void onCameraOpen() {
+        mCameraPreview.setCamera(mCamera);
+
+        ImageButton flashBtn = (ImageButton)mRootView.findViewById(R.id.flash_btn);
+        flashBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchFlashMode();
+            }
+        });
+
+        ImageButton flipCameraBtn = (ImageButton)mRootView.findViewById(R.id.flip_btn);
+        flipCameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFrontCameraSelected = !mFrontCameraSelected;
+                mCamera.stopPreview();
+                mCamera.release();
+                mCamera = null;
+                openCamera();
+                mCameraPreview.setCamera(mCamera);
+            }
+        });
+
+        mCameraPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setCameraRotation();
+                mCamera.takePicture(null, null, CameraFragment.this);
+            }
+        });
+        log.debug("Camera preview camera instance set");
+
+        mOrientationListener.enable();
     }
 
     @Override
     public void onPause() {
-        mCamera.stopPreview();
-        mCamera.release();
-        mCamera = null;
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+
         mOrientationListener.disable();
         log.debug("Camera released");
         super.onPause();

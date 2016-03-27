@@ -26,7 +26,7 @@ public interface IServerApi {
     @GET("api/user/profile/")
     Call<UserInfo> getUserInfo(@Header("Authorization") String authHeaderValue);
 
-    @PUT("api/user/profile")
+    @PUT("api/user/profile/")
     Call<UserInfo> setUserInfo(@Header("Authorization") String authHeaderValue, @Body UserInfo userInfo);
 
     @POST("api/collector/uploadimage/")

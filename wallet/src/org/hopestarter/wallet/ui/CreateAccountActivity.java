@@ -32,6 +32,8 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
@@ -40,9 +42,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
-import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.BucketInfo;
-import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
@@ -52,7 +52,6 @@ import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongycastle.crypto.digests.SHA256Digest;
 
 import java.io.File;
 import java.io.IOException;
@@ -215,7 +214,14 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         final String lastName = mLastNameView.getText().toString();
         final String ethnicity = mEthnicityView.getText().toString();
         final String imei = ((TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        final String profilePicture = mProfilePicture.toString();
+
+        Uri placeholderPicture = ResourceUtils.resIdToUri(this, R.drawable.avatar_placeholder);
+        String pictureString = null;
+        if (!placeholderPicture.equals(mProfilePicture)) {
+            pictureString = mProfilePicture.toString();
+        }
+
+        final String profilePicture = pictureString;
 
         final Activity thisActivity = this;
 
@@ -248,61 +254,72 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                         String token = serverApi.getToken(imei, "demopassword");
 
                         if (token != null) {
-                            saveUserInformation(token, null, null, null, null);
-                            serverApi.updateAuthHeaderValue();
+                            if (profilePicture != null && !profilePicture.isEmpty()) {
+                                saveUserInformation(token, null, null, null, null);
+                                serverApi.updateAuthHeaderValue();
 
-                            UploadImageResponse uploadInfo = serverApi.requestImageUpload();
+                                UploadImageResponse uploadInfo = serverApi.requestImageUpload();
 
-                            AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
-                            mTransferUtility = new TransferUtility(amazonClient, thisActivity);
+                                AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
+                                Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
+                                amazonClient.setRegion(region);
+                                mTransferUtility = new TransferUtility(amazonClient, thisActivity);
 
-                            BucketInfo bucket = uploadInfo.getBucket();
+                                BucketInfo bucket = uploadInfo.getBucket();
 
-                            File pictureFile = new File(Uri.parse(profilePicture).getPath());
+                                File pictureFile = new File(Uri.parse(profilePicture).getPath());
 
-                            StringBuilder uriBuilder = new StringBuilder();
+                                StringBuilder uriBuilder = new StringBuilder();
 
-                            uriBuilder.append("s3://")
-                                    .append(bucket.getName()).append("/")
-                                    .append(bucket.getPrefix());
+                                StringBuilder keyBuilder = new StringBuilder();
 
-                            Uri s3BucketUri = Uri.parse(uriBuilder.toString());
+                                keyBuilder.append(bucket.getPrefix()).append(pictureFile.getName());
 
-                            uriBuilder.append("/").append(pictureFile.getName());
+                                uriBuilder.append("s3://")
+                                        .append(bucket.getName()).append("/")
+                                        .append(keyBuilder.toString());
 
-                            Uri s3PictureUri = Uri.parse(uriBuilder.toString());
+                                Uri s3PictureUri = Uri.parse(uriBuilder.toString());
 
-                            final AtomicBoolean taskFinished = new AtomicBoolean(false);
+                                final AtomicBoolean taskFinished = new AtomicBoolean(false);
 
-                            TransferObserver observer = mTransferUtility.upload(s3BucketUri.getPath(), pictureFile.getName(), pictureFile);
-                            observer.setTransferListener(new TransferListener() {
-                                @Override
-                                public void onStateChanged(int id, TransferState state) {
-                                    if (state.equals(TransferState.FAILED) ||
-                                            state.equals(TransferState.CANCELED) ||
-                                            state.equals(TransferState.COMPLETED)) {
-                                        taskFinished.set(true);
-                                        taskFinished.notify();
+                                TransferObserver observer = mTransferUtility.upload(bucket.getName(), keyBuilder.toString(), pictureFile);
+                                observer.setTransferListener(new TransferListener() {
+                                    @Override
+                                    public void onStateChanged(int id, TransferState state) {
+                                        if (state.equals(TransferState.FAILED) ||
+                                                state.equals(TransferState.CANCELED) ||
+                                                state.equals(TransferState.COMPLETED)) {
+                                            synchronized (taskFinished) {
+                                                taskFinished.set(true);
+                                                taskFinished.notify();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(int id, Exception ex) {
+                                        log.error("An error has occurred while uploading picture to S3", ex);
+                                    }
+                                });
+
+                                synchronized (taskFinished) {
+                                    while (!taskFinished.get()) {
+                                        taskFinished.wait();
                                     }
                                 }
 
-                                @Override
-                                public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-
+                                observer.cleanTransferListener();
+                                TransferState transferState = observer.getState();
+                                if (transferState == TransferState.COMPLETED) {
+                                    serverApi.setUserInfo(null, null, s3PictureUri.toString());
                                 }
-
-                                @Override
-                                public void onError(int id, Exception ex) {
-                                    log.error("An error has occurred while uploading picture to S3", ex);
-                                }
-                            });
-
-                            while(!taskFinished.get()) {
-                                taskFinished.wait();
                             }
-
-                            observer.cleanTransferListener();
-                            serverApi.setUserInfo(null, null, s3PictureUri.toString());
 
                             return new AccountCreationResult(token);
                         } else {
@@ -324,7 +341,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             protected void onPostExecute(AccountCreationResult result) {
                 progressDialog.dismiss();
                 if (result.token != null) {
-                    saveUserInformation(result.token, firstName, lastName, ethnicity, profilePicture);
+                    saveUserInformation(result.token, firstName, lastName, ethnicity, null);
                     setResult(RESULT_OK);
                     finish();
 

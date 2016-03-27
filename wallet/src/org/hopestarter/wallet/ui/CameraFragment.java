@@ -274,7 +274,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
         try {
-            String pictureFileName = Long.toString(System.currentTimeMillis()) + "-profile.jpg";
+            String pictureFileName = "tempprofile.jpg";
             FileOutputStream fos = getActivity().openFileOutput(pictureFileName, Context.MODE_PRIVATE);
             fos.write(data);
             fos.close();

@@ -1,7 +1,11 @@
 package org.hopestarter.wallet.ui;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -46,12 +50,14 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
         ab.setDisplayShowHomeEnabled(true);
         ab.setDisplayHomeAsUpEnabled(true);
 
+        setupTabs();
+    }
 
+    private void setupTabs() {
         FragmentTabHost tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
         tabHost.setup(this, getSupportFragmentManager(), R.id.content_layout);
         tabHost.addTab(tabHost.newTabSpec(GALLERY_FRAGMENT_SPEC).setIndicator("Gallery"), GalleryFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(TAKE_PHOTO_SPEC).setIndicator("Take a Photo"), CameraFragment.class, null);
-
     }
 
     @Override

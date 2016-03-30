@@ -33,6 +33,7 @@ import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -87,14 +88,21 @@ public class ProfileFragment extends Fragment {
         mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, getString(R.string.unnamed_first_name));
         mLastName = prefs.getString(UserInfoPrefs.LAST_NAME, getString(R.string.unnamed_last_name));
         mEthnicity = prefs.getString(UserInfoPrefs.ETHNICITY, getString(R.string.no_ethnicity_ethnicity));
-        mProfilePicture = Uri.parse(
+
+        Uri profilePictureSource = Uri.parse(
                 prefs.getString(
-                        UserInfoPrefs.PROFILE_PIC,
-                        ResourceUtils.resIdToUri(
-                                getActivity(), R.drawable.avatar_placeholder
-                        ).toString()
+                    UserInfoPrefs.PROFILE_PIC,
+                    ResourceUtils.resIdToUri(
+                            getActivity(), R.drawable.avatar_placeholder
+                    ).toString()
                 )
         );
+
+        if (profilePictureSource.getScheme() == null || profilePictureSource.getScheme().isEmpty()) {
+            mProfilePicture = Uri.fromFile(new File(profilePictureSource.getPath()));
+        } else {
+            mProfilePicture = profilePictureSource;
+        }
 
         mFullName = mFirstName + " " + mLastName;
     }

@@ -130,9 +130,7 @@ public class WalletFragment extends Fragment {
     }
 
     private void updateViews() {
-        Log.d(TAG, "updateViews: current address is " + mWallet.currentReceiveAddress().toString());
         MonetaryFormat format = MonetaryFormat.MBTC;
-
         mBalanceView.setText(format.postfixCode().format(mBalance));
     }
 

@@ -14,6 +14,7 @@ import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -52,6 +53,7 @@ public class ServerApi {
                 .addConverterFactory(new UserInfoResponseConverterFactory())
                 .addConverterFactory(new UserInfoRequestConverterFactory())
                 .addConverterFactory(new UploadImageResponseConverterFactory())
+                .addConverterFactory(new OutboundLocationMarkConverterFactory())
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
@@ -149,4 +151,25 @@ public class ServerApi {
             }
         }
     }
+
+    public void uploadLocationMark(OutboundLocationMark locationMark) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        Call<ResponseBody> call = mApiImpl.uploadLocationMark(mAuthHeaderValue, locationMark);
+        Response<ResponseBody> response = call.execute();
+
+        if (!response.isSuccess()) {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+    }
+
 }

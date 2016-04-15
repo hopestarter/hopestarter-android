@@ -8,6 +8,6 @@ import java.util.Locale;
  */
 public final class ISODateFormatFactory {
     public static SimpleDateFormat getDateFormat() {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US);
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
     }
 }

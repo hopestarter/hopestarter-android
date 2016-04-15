@@ -310,7 +310,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
             fos.close();
 
             File pictureFile = new File(getActivity().getFilesDir(), pictureFileName);
-            log.debug(TAG, "Picture saved at: " + pictureFile.toString());
+            log.debug("Picture saved at: " + pictureFile.toString());
 
             Uri pictureUri = Uri.fromFile(pictureFile);
 
@@ -318,9 +318,9 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                 mCallback.onPictureTaken(pictureUri);
             }
         } catch (FileNotFoundException e) {
-            log.error(TAG, "Cannot create profile pic file", e);
+            log.error("Cannot create profile pic file", e);
         } catch (IOException e) {
-            log.error(TAG, "Cannot write profile pic file", e);
+            log.error("Cannot write profile pic file", e);
         }
     }
 

@@ -2,16 +2,18 @@ package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +23,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -28,14 +38,30 @@ import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.AuthenticationFailed;
+import org.hopestarter.wallet.server_api.BucketInfo;
+import org.hopestarter.wallet.server_api.ForbiddenResourceException;
+import org.hopestarter.wallet.server_api.NoTokenException;
+import org.hopestarter.wallet.server_api.OutboundLocationMark;
+import org.hopestarter.wallet.server_api.Point;
+import org.hopestarter.wallet.server_api.ServerApi;
+import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
+import org.hopestarter.wallet.server_api.UploadImageResponse;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ProfileFragment extends Fragment {
 
@@ -261,7 +287,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateNumberOfUpdates() {
-        mNumUpdates.setText(String.format("%d", mUpdatesFragment.getNumberOfUpdates()));
+        mNumUpdates.setText(String.format(Locale.US, "%d", mUpdatesFragment.getNumberOfUpdates()));
     }
 
     @Override
@@ -269,7 +295,8 @@ public class ProfileFragment extends Fragment {
         switch(reqCode) {
             case POST_UPDATE_REQ_CODE:
                 if (resCode == Activity.RESULT_OK) {
-                    UpdateInfo update = new UpdateInfo.Builder()
+                    final ProgressDialog dialog = ProgressDialog.show(getActivity(), "Uploading update", "Please wait..", true, false);
+                    final UpdateInfo update = new UpdateInfo.Builder()
                             .setUserName(mFullName)
                             .setPictureUri(data.getData())
                             .setProfilePictureUri(mProfilePicture)
@@ -279,8 +306,27 @@ public class ProfileFragment extends Fragment {
                             .setLocation("Unknown")
                             .build();
 
-                    mUpdatesFragment.add(update);
-                    updateNumberOfUpdates();
+                    LocationMarkUploader uploader = new LocationMarkUploader(getActivity());
+                    uploader.setListener(new LocationMarkUploader.UploaderListener() {
+                        @Override
+                        public void onUploadCompleted(Exception ex) {
+                            dialog.dismiss();
+                            if (ex == null) {
+                                mUpdatesFragment.add(update);
+                                updateNumberOfUpdates();
+                            } else {
+                                log.error("Couldn't upload location marker", ex);
+                                AlertDialog errorDialog = new AlertDialog.Builder(getActivity())
+                                        .setIcon(R.drawable.ic_error_24dp)
+                                        .setTitle("A problem just happened")
+                                        .setMessage("Couldn't send update to server")
+                                        .create();
+                                errorDialog.show();
+                            }
+                        }
+                    });
+
+                    uploader.execute(update);
                 }
                 break;
             default:
@@ -288,5 +334,135 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    public static class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Exception> {
+        public interface UploaderListener {
+            // If this method is called and ex == null everything went fine
+            void onUploadCompleted(Exception ex);
+        }
 
+        private Activity mContext;
+        private UploaderListener mListener;
+
+        public LocationMarkUploader(@NonNull Activity context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Exception doInBackground(UpdateInfo... params) {
+            ServerApi serverApi = new ServerApi(mContext);
+
+            for(UpdateInfo updateInfo : params) {
+                try {
+                    URI pictureUri = null;
+
+                    if (updateInfo.getPictureUri() != null) {
+                        UploadImageResponse uploadInfo = serverApi.requestImageUpload();
+
+                        AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
+
+                        Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
+                        amazonClient.setRegion(region);
+
+                        TransferUtility transferUtility = new TransferUtility(amazonClient, mContext);
+
+                        BucketInfo bucket = uploadInfo.getBucket();
+
+                        File pictureFile = new File(updateInfo.getPictureUri().getPath());
+
+                        StringBuilder uriBuilder = new StringBuilder();
+
+                        StringBuilder keyBuilder = new StringBuilder();
+
+                        UUID fileUUID = UUID.randomUUID();
+
+                        keyBuilder.append(bucket.getPrefix()).append(fileUUID.toString()).append(pictureFile.getName());
+
+                        uriBuilder.append("s3://")
+                                .append(bucket.getName()).append("/")
+                                .append(keyBuilder.toString());
+
+                        URI s3PictureUri = URI.create(uriBuilder.toString());
+
+                        final AtomicBoolean taskFinished = new AtomicBoolean(false);
+
+                        TransferObserver observer = transferUtility.upload(bucket.getName(), keyBuilder.toString(), pictureFile);
+                        observer.setTransferListener(new TransferListener() {
+                            @Override
+                            public void onStateChanged(int id, TransferState state) {
+                                if (state.equals(TransferState.FAILED) ||
+                                        state.equals(TransferState.CANCELED) ||
+                                        state.equals(TransferState.COMPLETED)) {
+                                    synchronized (taskFinished) {
+                                        taskFinished.set(true);
+                                        taskFinished.notify();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+                            }
+
+                            @Override
+                            public void onError(int id, Exception ex) {
+                                log.error("An error has occurred while uploading picture to S3", ex);
+                            }
+                        });
+
+                        synchronized (taskFinished) {
+                            while (!taskFinished.get()) {
+                                taskFinished.wait();
+                            }
+                        }
+
+                        observer.cleanTransferListener();
+
+                        TransferState transferState = observer.getState();
+
+                        if (transferState == TransferState.COMPLETED) {
+                            pictureUri = s3PictureUri;
+                        }
+                    }
+
+                    Date updateDate = new Date(updateInfo.getUpdateDateMillis());
+                    Point point = new Point("point", new float[] {1000, 1000});
+
+                    ArrayList<URI> pictures = null;
+
+                    if (pictureUri != null) {
+                        pictures = new ArrayList<>();
+                        pictures.add(pictureUri);
+                    }
+
+                    OutboundLocationMark locationMark = new OutboundLocationMark(updateDate, point, pictures, updateInfo.getMessage());
+                    serverApi.uploadLocationMark(locationMark);
+                } catch (Exception e) {
+                    return e;
+                }
+            }
+
+            return null; // Everything went well :)
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+
+        }
+
+        @Override
+        protected void onPostExecute(Exception e) {
+            if (mListener != null) {
+                mListener.onUploadCompleted(e);
+            }
+        }
+
+        public void setListener(@NonNull UploaderListener listener) {
+            mListener = listener;
+        }
+
+        public void removeListener() {
+            mListener = null;
+        }
+    }
 }

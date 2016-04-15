@@ -70,7 +70,6 @@ public class MainTabbedActivity extends AppCompatActivity implements WalletFragm
     @Override
     protected void onResume() {
         super.onResume();
-
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {

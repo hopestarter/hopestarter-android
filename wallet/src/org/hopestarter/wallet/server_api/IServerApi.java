@@ -2,6 +2,7 @@ package org.hopestarter.wallet.server_api;
 
 import org.hopestarter.wallet.Constants;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -31,4 +32,7 @@ public interface IServerApi {
 
     @POST("api/collector/uploadimage/")
     Call<UploadImageResponse> requestImageUpload(@Header("Authorization") String authHeaderValue);
+
+    @POST("api/collector/mark/")
+    Call<ResponseBody> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);
 }

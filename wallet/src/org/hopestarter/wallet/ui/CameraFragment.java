@@ -222,7 +222,11 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
 
     @Override
     public void onResume() {
-        checkPermissions();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermissions();
+        } else {
+            initCamera();
+        }
         super.onResume();
     }
 
@@ -304,7 +308,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
         try {
-            String pictureFileName = "tempprofile.jpg";
+            String pictureFileName = "temppicture.jpg";
             FileOutputStream fos = getActivity().openFileOutput(pictureFileName, Context.MODE_PRIVATE);
             fos.write(data);
             fos.close();
@@ -318,9 +322,9 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
                 mCallback.onPictureTaken(pictureUri);
             }
         } catch (FileNotFoundException e) {
-            log.error("Cannot create profile pic file", e);
+            log.error("Cannot create pic file", e);
         } catch (IOException e) {
-            log.error("Cannot write profile pic file", e);
+            log.error("Cannot write pic file", e);
         }
     }
 

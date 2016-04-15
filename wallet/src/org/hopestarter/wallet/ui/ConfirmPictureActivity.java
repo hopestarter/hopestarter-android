@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -77,7 +78,13 @@ public class ConfirmPictureActivity extends AppCompatActivity {
 
         ImageView mPicturePreview = (ImageView) findViewById(R.id.picture_preview);
 
-        Glide.with(this).load(mFileUri).centerCrop().listener(mImageLoaderListener).into(mPicturePreview);
+        Glide.with(this)
+                .load(mFileUri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .listener(mImageLoaderListener)
+                .into(mPicturePreview);
 
         final Activity activity = this;
 

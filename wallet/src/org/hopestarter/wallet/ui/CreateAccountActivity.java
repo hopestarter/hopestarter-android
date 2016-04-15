@@ -37,6 +37,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -206,7 +207,13 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
     private void setProfilePicture(Uri pictureUri) {
         mProfilePicture = pictureUri;
-        Glide.with(this).load(pictureUri).centerCrop().listener(mImageLoaderListener).into(mImageView);
+        Glide.with(this)
+                .load(pictureUri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .listener(mImageLoaderListener)
+                .into(mImageView);
     }
 
     private void createAccount() {

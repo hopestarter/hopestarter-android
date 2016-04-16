@@ -17,7 +17,7 @@ import android.widget.Button;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
 import org.hopestarter.wallet.util.ResourceUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 public class PictureSelectActivity extends AppCompatActivity implements CameraFragment.CameraFragmentCallback, GalleryFragment.Callback {
 

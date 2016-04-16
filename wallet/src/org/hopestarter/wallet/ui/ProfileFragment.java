@@ -49,7 +49,7 @@ import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.server_api.UploadImageResponse;
 import org.hopestarter.wallet.util.ResourceUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

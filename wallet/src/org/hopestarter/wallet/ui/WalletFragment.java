@@ -18,7 +18,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Wallet;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.hopestarter.wallet.WalletApplication;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 import java.text.NumberFormat;
 import java.util.GregorianCalendar;

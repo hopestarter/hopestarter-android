@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * Created by Adrian on 03/02/2016.

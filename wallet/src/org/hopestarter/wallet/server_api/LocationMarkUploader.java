@@ -123,7 +123,7 @@ public class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Excepti
                 }
 
                 Date updateDate = new Date(updateInfo.getUpdateDateMillis());
-                Point point = new Point("point", new float[] {1000, 1000});
+                Point point = new Point("point", new float[] {37.941601f, 23.653013f});
 
                 ArrayList<URI> pictures = null;
 

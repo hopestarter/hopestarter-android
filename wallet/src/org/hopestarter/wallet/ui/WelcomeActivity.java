@@ -30,7 +30,7 @@ import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.util.FileUtils;
 import org.hopestarter.wallet.util.StreamDuplicationFailedException;
 import org.hopestarter.wallet.util.StreamDuplicator;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

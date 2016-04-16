@@ -26,7 +26,7 @@ import org.hopestarter.wallet.Configuration;
 import org.hopestarter.wallet.ExchangeRatesProvider;
 import org.hopestarter.wallet.ExchangeRatesProvider.ExchangeRate;
 import org.hopestarter.wallet.WalletApplication;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 import java.text.NumberFormat;
 import java.util.GregorianCalendar;

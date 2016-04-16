@@ -40,7 +40,7 @@ import android.os.Handler;
 import android.os.Looper;
 import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.util.Bluetooth;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

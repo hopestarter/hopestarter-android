@@ -31,7 +31,7 @@ import android.widget.Toast;
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 import java.util.List;
 import java.util.Locale;

@@ -1,6 +1,6 @@
 package org.hopestarter.wallet.server_api;
 
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * Created by Adrian on 23/02/2016.

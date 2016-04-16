@@ -19,7 +19,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.hopestarter.wallet.ui.view.CameraPreview;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

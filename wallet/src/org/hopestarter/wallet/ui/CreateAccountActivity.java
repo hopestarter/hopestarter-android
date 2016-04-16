@@ -45,7 +45,7 @@ import org.hopestarter.wallet.server_api.TokenResponse;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.util.ResourceUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

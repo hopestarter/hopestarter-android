@@ -91,7 +91,7 @@ import org.hopestarter.wallet.service.BlockchainState.Impediment;
 import org.hopestarter.wallet.util.CrashReporter;
 import org.hopestarter.wallet.util.ThrottlingWalletChangeListener;
 import org.hopestarter.wallet.util.WalletUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

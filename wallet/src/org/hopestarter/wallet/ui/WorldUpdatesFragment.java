@@ -31,10 +31,12 @@ import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.ui.LocationMarksFetcher.Author;
 import org.hopestarter.wallet.util.FetchResult;
 import org.hopestarter.wallet.util.ResourceUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

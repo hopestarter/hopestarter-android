@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import org.hopestarter.wallet.ui.send.SendCoinsActivity;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * Created by Adrian on 03/02/2016.

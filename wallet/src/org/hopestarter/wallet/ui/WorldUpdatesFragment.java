@@ -1,6 +1,8 @@
 package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.LocationMarkUploader;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
@@ -130,7 +133,8 @@ public class WorldUpdatesFragment extends Fragment {
         switch(reqCode) {
             case POST_UPDATE_REQ_CODE:
                 if (resCode == Activity.RESULT_OK) {
-                    UpdateInfo update = new UpdateInfo.Builder()
+                    final ProgressDialog dialog = ProgressDialog.show(getActivity(), "Uploading update", "Please wait..", true, false);
+                    final UpdateInfo update = new UpdateInfo.Builder()
                             .setUserName(mFullName)
                             .setPictureUri(data.getData())
                             .setProfilePictureUri(mProfilePicture)
@@ -140,7 +144,24 @@ public class WorldUpdatesFragment extends Fragment {
                             .setLocation("Unknown")
                             .build();
 
-                    mUpdatesFragment.add(update);
+                    LocationMarkUploader uploader = new LocationMarkUploader(getActivity());
+                    uploader.setListener(new LocationMarkUploader.UploaderListener() {
+                        @Override
+                        public void onUploadCompleted(Exception ex) {
+                            dialog.dismiss();
+                            if (ex == null) {
+                                mUpdatesFragment.add(update);
+                            } else {
+                                log.error("Couldn't upload location marker", ex);
+                                AlertDialog errorDialog = new AlertDialog.Builder(getActivity())
+                                        .setIcon(R.drawable.ic_error_24dp)
+                                        .setTitle("A problem just happened")
+                                        .setMessage("Couldn't send update to server")
+                                        .create();
+                                errorDialog.show();
+                            }
+                        }
+                    });
                 }
                 break;
             default:

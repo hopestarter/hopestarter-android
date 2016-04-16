@@ -74,7 +74,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/rs" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/builds" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
@@ -97,6 +96,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/restart-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/sourceFolderJavaResources" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
@@ -105,23 +105,23 @@
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
-    <orderEntry type="library" exported="" name="retrofit-2.0.0-beta4" level="project" />
     <orderEntry type="library" exported="" name="jcip-annotations-1.0" level="project" />
+    <orderEntry type="library" exported="" name="retrofit-2.0.0-beta4" level="project" />
     <orderEntry type="library" exported="" name="apktool-lib-1.4.4-3" level="project" />
     <orderEntry type="library" exported="" name="guava-16.0.1" level="project" />
     <orderEntry type="library" exported="" name="core-3.2.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="support-v13-23.1.1" level="project" />
-    <orderEntry type="library" exported="" name="bitcoinj-core-0.13.4" level="project" />
-    <orderEntry type="library" exported="" name="jsr305-2.0.3" level="project" />
-    <orderEntry type="library" exported="" name="aws-android-sdk-s3-2.2.12" level="project" />
     <orderEntry type="library" exported="" name="protobuf-java-2.5.0" level="project" />
+    <orderEntry type="library" exported="" name="jsr305-2.0.3" level="project" />
+    <orderEntry type="library" exported="" name="bitcoinj-core-0.13.4" level="project" />
+    <orderEntry type="library" exported="" name="aws-android-sdk-s3-2.2.13" level="project" />
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="core-1.51.0.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-3.0.1" level="project" />
-    <orderEntry type="library" exported="" name="aws-android-sdk-core-2.2.12" level="project" />
+    <orderEntry type="library" exported="" name="aws-android-sdk-core-2.2.13" level="project" />
+    <orderEntry type="library" exported="" name="aws-android-sdk-cognito-2.2.13" level="project" />
     <orderEntry type="library" exported="" name="glide-3.7.0" level="project" />
-    <orderEntry type="library" exported="" name="aws-android-sdk-cognito-2.2.12" level="project" />
     <orderEntry type="library" exported="" name="roundedimageview-2.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.2.0" level="project" />

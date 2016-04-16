@@ -21,7 +21,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

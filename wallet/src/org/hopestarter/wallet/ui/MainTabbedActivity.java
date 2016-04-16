@@ -16,7 +16,7 @@ import android.view.MenuItem;
 
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener{
 

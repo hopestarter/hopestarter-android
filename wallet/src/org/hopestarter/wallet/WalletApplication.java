@@ -42,7 +42,7 @@ import org.bitcoinj.store.WalletProtobufSerializer;
 import org.bitcoinj.utils.Threading;
 import org.bitcoinj.wallet.Protos;
 import org.bitcoinj.wallet.WalletFiles;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

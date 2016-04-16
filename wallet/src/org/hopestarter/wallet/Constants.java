@@ -31,7 +31,7 @@ import android.util.Base64;
 
 import com.google.common.io.BaseEncoding;
 
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

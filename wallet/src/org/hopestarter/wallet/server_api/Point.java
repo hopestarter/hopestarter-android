@@ -24,4 +24,9 @@ public class Point {
     public float[] getCoordinates() {
         return mCoordinates;
     }
+
+    @Override
+    public String toString() {
+        return "Point {" + mCoordinates.toString() + "}";
+    }
 }

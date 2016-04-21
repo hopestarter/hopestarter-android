@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Created by Adrian on 16/04/2016.
  */
-public class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Exception> {
+public class LocationMarkUploader extends AsyncTask<OutboundLocationMark, Integer, Exception> {
     private static final Logger log = LoggerFactory.getLogger(LocationMarkUploader.class);
 
     public interface UploaderListener {
@@ -43,14 +43,14 @@ public class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Excepti
     }
 
     @Override
-    protected Exception doInBackground(UpdateInfo... params) {
+    protected Exception doInBackground(OutboundLocationMark... params) {
         ServerApi serverApi = new ServerApi(mContext);
 
-        for(UpdateInfo updateInfo : params) {
+        for(OutboundLocationMark inputLocationMark : params) {
             try {
                 URI pictureUri = null;
 
-                if (updateInfo.getPictureUri() != null) {
+                if (inputLocationMark.getPictures() != null && inputLocationMark.getPictures().size() != 0) {
                     UploadImageResponse uploadInfo = serverApi.requestImageUpload();
 
                     AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
@@ -62,7 +62,7 @@ public class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Excepti
 
                     BucketInfo bucket = uploadInfo.getBucket();
 
-                    File pictureFile = new File(updateInfo.getPictureUri().getPath());
+                    File pictureFile = new File(inputLocationMark.getPictures().get(0).getPath());
 
                     StringBuilder uriBuilder = new StringBuilder();
 
@@ -122,9 +122,6 @@ public class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Excepti
                     }
                 }
 
-                Date updateDate = new Date(updateInfo.getUpdateDateMillis());
-                Point point = new Point("point", new float[] {37.941601f, 23.653013f});
-
                 ArrayList<URI> pictures = null;
 
                 if (pictureUri != null) {
@@ -132,7 +129,13 @@ public class LocationMarkUploader extends AsyncTask<UpdateInfo, Integer, Excepti
                     pictures.add(pictureUri);
                 }
 
-                OutboundLocationMark locationMark = new OutboundLocationMark(updateDate, point, pictures, updateInfo.getMessage());
+                OutboundLocationMark locationMark = new OutboundLocationMark(
+                        inputLocationMark.getCreated(),
+                        inputLocationMark.getPoint(),
+                        pictures,
+                        inputLocationMark.getText()
+                );
+
                 serverApi.uploadLocationMark(locationMark);
             } catch (Exception e) {
                 return e;

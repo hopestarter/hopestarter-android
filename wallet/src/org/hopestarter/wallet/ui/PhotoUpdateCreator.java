@@ -18,6 +18,8 @@ import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
@@ -110,35 +112,50 @@ public class PhotoUpdateCreator {
         try {
             mProgressDialog.show();
 
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            LocationRequest locationRequest = new LocationRequest();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(5000);
 
-            Point point = new Point("point", new float[]{(float)location.getLatitude(), (float)location.getLongitude()});
-
-            log.debug("Geolocation coordinates are " + point.toString());
-
-            OutboundLocationMark locationMark = new OutboundLocationMark(
-                    new Date(System.currentTimeMillis()),
-                    point,
-                    Arrays.asList(URI.create(data.getData().toString())),
-                    data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE)
-            );
-
-            LocationMarkUploader uploader = new LocationMarkUploader(mFragment.getActivity());
-            uploader.setListener(new LocationMarkUploader.UploaderListener() {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, new LocationListener() {
+                private boolean used;
                 @Override
-                public void onUploadCompleted(Exception ex) {
-                    mProgressDialog.dismiss();
-                    if (mListener != null) {
-                        mListener.onUploadCompleted(ex);
+                public void onLocationChanged(Location location) {
+                    if (!used) { // Location service runs in another thread, this avoids this callback to run more than once
+                        sendLocationUpdate(location, data);
+                        used = true;
+                        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); // Don't need the callback anymore
                     }
                 }
             });
-
-            uploader.execute(locationMark);
         } catch(SecurityException e) {
-            // Permissions were changed while uploading location
+            // Permissions have changed while uploading location
         }
+    }
 
+    private void sendLocationUpdate(Location location, Intent data) {
+        Point point = new Point("point", new float[]{(float)location.getLatitude(), (float)location.getLongitude()});
+
+        log.debug("Geolocation coordinates are " + point.toString());
+
+        OutboundLocationMark locationMark = new OutboundLocationMark(
+                new Date(System.currentTimeMillis()),
+                point,
+                Arrays.asList(URI.create(data.getData().toString())),
+                data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE)
+        );
+
+        LocationMarkUploader uploader = new LocationMarkUploader(mFragment.getActivity());
+        uploader.setListener(new LocationMarkUploader.UploaderListener() {
+            @Override
+            public void onUploadCompleted(Exception ex) {
+                mProgressDialog.dismiss();
+                if (mListener != null) {
+                    mListener.onUploadCompleted(ex);
+                }
+            }
+        });
+
+        uploader.execute(locationMark);
     }
 
     public static class PermissionRequestDialog extends DialogFragment {

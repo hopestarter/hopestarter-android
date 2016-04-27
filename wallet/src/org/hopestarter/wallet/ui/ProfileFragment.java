@@ -2,16 +2,15 @@ package org.hopestarter.wallet.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,52 +22,36 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
-import org.hopestarter.wallet.server_api.AuthenticationFailed;
-import org.hopestarter.wallet.server_api.BucketInfo;
-import org.hopestarter.wallet.server_api.ForbiddenResourceException;
-import org.hopestarter.wallet.server_api.LocationMarkUploader;
-import org.hopestarter.wallet.server_api.NoTokenException;
-import org.hopestarter.wallet.server_api.OutboundLocationMark;
-import org.hopestarter.wallet.server_api.Point;
-import org.hopestarter.wallet.server_api.ServerApi;
-import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
-import org.hopestarter.wallet.server_api.UploadImageResponse;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ProfileFragment extends Fragment {
-
+public class ProfileFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = ProfileFragment.class.getName();
     private static final Logger log = LoggerFactory.getLogger(ProfileFragment.class);
-    private static final int POST_UPDATE_REQ_CODE = 0;
+
+    // Activity result request codes
+    private static final int PHOTO_UPDATE_DATA_REQUEST = 0;
+
+    // Permission request codes
+    private static final int PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION = 0;
+
     private UpdatesFragment mUpdatesFragment;
     private TextView mNumUpdates;
     private Button mPostBtn;
@@ -82,6 +65,9 @@ public class ProfileFragment extends Fragment {
     private RelativeLayout mProfileLayout;
     private Uri mProfilePicture;
     private RoundedImageView mProfilePictureView;
+    private PhotoUpdateCreator mPhotoUpdateCreator;
+    private GoogleApiClient mGoogleApiClient;
+    private boolean mPostingEnabled;
 
     private RequestListener mImageLoaderListener = new RequestListener() {
         @Override
@@ -101,15 +87,19 @@ public class ProfileFragment extends Fragment {
     }
 
     public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new ProfileFragment();
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
         SharedPreferences prefs = getActivity().getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
         mFirstName = prefs.getString(UserInfoPrefs.FIRST_NAME, getString(R.string.unnamed_first_name));
@@ -148,7 +138,9 @@ public class ProfileFragment extends Fragment {
         mPostBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchCreateNewUpdateActivity();
+                if (mPostingEnabled && mPhotoUpdateCreator != null) {
+                    mPhotoUpdateCreator.create();
+                }
             }
         });
 
@@ -240,6 +232,8 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        mPhotoUpdateCreator = new PhotoUpdateCreator(this, mGoogleApiClient, PHOTO_UPDATE_DATA_REQUEST, PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION);
+
         feedFakeData();
         feedData();
         updateNumberOfUpdates();
@@ -250,6 +244,18 @@ public class ProfileFragment extends Fragment {
         mUserNameView.setText(mFullName);
         mUserEthnicityView.setText(mEthnicity);
         Glide.with(this).load(mProfilePicture).centerCrop().listener(mImageLoaderListener).into(mProfilePictureView);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     private void feedFakeData() {
@@ -282,52 +288,40 @@ public class ProfileFragment extends Fragment {
         mProfileDonations.setText(currencyFormat.format(46.30));
     }
 
-    private void launchCreateNewUpdateActivity() {
-        Intent activityIntent = new Intent(getActivity(), CreateNewUpdateActivity.class);
-        startActivityForResult(activityIntent, POST_UPDATE_REQ_CODE);
-    }
-
     private void updateNumberOfUpdates() {
         mNumUpdates.setText(String.format(Locale.US, "%d", mUpdatesFragment.getNumberOfUpdates()));
     }
 
     @Override
-    public void onActivityResult(int reqCode, int resCode, Intent data) {
+    public void onRequestPermissionsResult(int requestCode, @Nullable String[] permissions, @Nullable int[] grantResult) {
+        switch(requestCode) {
+            case PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION:
+                mPhotoUpdateCreator.onRequestPermissionsResult(permissions, grantResult);
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, final Intent data) {
         switch(reqCode) {
-            case POST_UPDATE_REQ_CODE:
+            case PHOTO_UPDATE_DATA_REQUEST:
                 if (resCode == Activity.RESULT_OK) {
-                    final ProgressDialog dialog = ProgressDialog.show(getActivity(), "Uploading update", "Please wait..", true, false);
-                    final UpdateInfo update = new UpdateInfo.Builder()
-                            .setUserName(mFullName)
-                            .setPictureUri(data.getData())
-                            .setProfilePictureUri(mProfilePicture)
-                            .setMessage(data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE))
-                            .setUpdateDateMillis(System.currentTimeMillis())
-                            .setEthnicity(mEthnicity)
-                            .setLocation("Unknown")
-                            .build();
-
-                    LocationMarkUploader uploader = new LocationMarkUploader(getActivity());
-                    uploader.setListener(new LocationMarkUploader.UploaderListener() {
-                        @Override
-                        public void onUploadCompleted(Exception ex) {
-                            dialog.dismiss();
-                            if (ex == null) {
-                                mUpdatesFragment.add(update);
-                                updateNumberOfUpdates();
-                            } else {
-                                log.error("Couldn't upload location marker", ex);
-                                AlertDialog errorDialog = new AlertDialog.Builder(getActivity())
-                                        .setIcon(R.drawable.ic_error_24dp)
-                                        .setTitle("A problem just happened")
-                                        .setMessage("Couldn't send update to server")
-                                        .create();
-                                errorDialog.show();
+                    if (!mGoogleApiClient.isConnected()) {
+                        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(@Nullable Bundle bundle) {
+                                mPhotoUpdateCreator.onActivityResult(data);
+                                mGoogleApiClient.unregisterConnectionCallbacks(this);
                             }
-                        }
-                    });
 
-                    uploader.execute(update);
+                            @Override
+                            public void onConnectionSuspended(int i) {
+
+                            }
+                        });
+                    } else {
+                        mPhotoUpdateCreator.onActivityResult(data);
+                    }
                 }
                 break;
             default:
@@ -335,5 +329,18 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mPostingEnabled = true;
+    }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPostingEnabled = false;
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }

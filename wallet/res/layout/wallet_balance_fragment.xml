@@ -12,7 +12,7 @@
 		android:gravity="center"
 		android:orientation="vertical" >
 
-		<de.schildbach.wallet.ui.CurrencyTextView
+		<org.hopestarter.wallet.ui.CurrencyTextView
 			android:id="@+id/wallet_balance_btc"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
 			android:textSize="@dimen/font_size_tiny"
 			android:visibility="gone" />
 
-		<de.schildbach.wallet.ui.CurrencyTextView
+		<org.hopestarter.wallet.ui.CurrencyTextView
 			android:id="@+id/wallet_balance_local"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

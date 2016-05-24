@@ -14,7 +14,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/send_icon"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:id="@+id/send_button"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,7 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/request_icon"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:id="@+id/request_button"/>
 
         <TextView
             android:layout_width="wrap_content"

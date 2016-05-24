@@ -18,7 +18,7 @@ import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
 
-public class MainTabbedActivity extends AppCompatActivity implements WalletFragment.OnFragmentInteractionListener{
+public class MainTabbedActivity extends AbstractWalletActivity implements WalletFragment.OnFragmentInteractionListener{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;

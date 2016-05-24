@@ -1,11 +1,14 @@
 package org.hopestarter.wallet.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import org.hopestarter.wallet.ui.send.SendCoinsActivity;
 import org.hopestarter.wallet_test.R;
 
 /**
@@ -26,6 +29,24 @@ public class SendReceiveFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sendreceive, parent, false);
+        View rootView = inflater.inflate(R.layout.fragment_sendreceive, parent, false);
+
+        ImageButton sendButton = (ImageButton) rootView.findViewById(R.id.send_button);
+        ImageButton receiveButton = (ImageButton) rootView.findViewById(R.id.request_button);
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SendCoinsActivity.class));
+            }
+        });
+
+        receiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), RequestCoinsActivity.class));
+            }
+        });
+        return rootView;
     }
 }

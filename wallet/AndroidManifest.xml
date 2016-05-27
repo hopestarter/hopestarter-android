@@ -105,12 +105,24 @@
         <activity
             android:name="org.hopestarter.wallet.ui.RequestCoinsActivity"
             android:screenOrientation="sensorPortrait"
+            android:label="@string/request_coins_activity_title"
             android:theme="@style/AppTheme" />
 
         <activity
             android:name="org.hopestarter.wallet.ui.send.SendCoinsActivity"
             android:screenOrientation="sensorPortrait"
+            android:label="@string/send_coins_activity_title"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme" />
+
+        <activity
+            android:name="org.hopestarter.wallet.ui.ScanActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:stateNotNeeded="true"
+            android:theme="@style/My.Theme.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"
+             />
 
         <provider
             android:name="org.hopestarter.wallet.AddressBookProvider"

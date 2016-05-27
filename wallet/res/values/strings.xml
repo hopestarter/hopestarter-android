@@ -351,5 +351,6 @@
     <string name="error_default_dialog_title">A problem happened</string>
     <string name="error_authentication_message">Failed to authenticate</string>
     <string name="error_unexpected_account_creation">Something went wrong. Couldn\'t create the account. Try again later.</string>
+    <string name="change_transaction_fee_text">Change transaction fee</string>
 
 </resources>

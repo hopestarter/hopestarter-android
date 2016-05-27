@@ -161,6 +161,18 @@
 		android:layout_marginRight="@dimen/list_entry_padding_horizontal_lax"
 		android:textSize="@dimen/font_size_small" />
 
+	<TextView
+		android:id="@+id/change_transaction_fee_link"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/change_transaction_fee_text"
+		android:clickable="true"
+		android:textColor="@color/turquoise"
+		android:paddingBottom="20dp"
+		android:textStyle="bold"
+		android:layout_marginLeft="@dimen/list_entry_padding_horizontal_lax"
+		android:layout_marginRight="@dimen/list_entry_padding_horizontal_lax"/>
+
 	<LinearLayout
 		android:id="@+id/send_coins_private_key_password_group"
 		android:layout_width="match_parent"
@@ -210,6 +222,6 @@
 		android:layoutAnimation="@anim/transaction_layout_anim"
 		android:visibility="gone" />
 
-	<include layout="@layout/send_coins_buttons_include" />
+	<!--<include layout="@layout/send_coins_buttons_include" />-->
 
 </LinearLayout>

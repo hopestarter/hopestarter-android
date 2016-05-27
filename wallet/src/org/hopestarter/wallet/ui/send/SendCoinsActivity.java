@@ -20,6 +20,8 @@ package org.hopestarter.wallet.ui.send;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -49,13 +51,20 @@ public final class SendCoinsActivity extends AbstractBindServiceActivity
 
 		setContentView(R.layout.send_coins_content);
 
+		Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(tb);
+
+		ActionBar ab = getSupportActionBar();
+		ab.setDisplayShowHomeEnabled(true);
+		ab.setDisplayHomeAsUpEnabled(true);
+
 		getWalletApplication().startBlockchainService(false);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu)
 	{
-		getMenuInflater().inflate(R.menu.send_coins_activity_options, menu);
+		//getMenuInflater().inflate(R.menu.send_coins_activity_options, menu);
 
 		return super.onCreateOptionsMenu(menu);
 	}

@@ -105,6 +105,7 @@
         <activity
             android:name="org.hopestarter.wallet.ui.RequestCoinsActivity"
             android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/request_coins_activity_title"
             android:theme="@style/AppTheme" />
 

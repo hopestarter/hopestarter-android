@@ -28,7 +28,7 @@ import android.view.MenuItem;
 import org.hopestarter.wallet.data.PaymentIntent;
 import org.hopestarter.wallet.ui.AbstractBindServiceActivity;
 import org.hopestarter.wallet.ui.HelpDialogFragment;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

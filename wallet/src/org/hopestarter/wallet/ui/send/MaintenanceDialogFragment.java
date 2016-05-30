@@ -59,7 +59,7 @@ import javax.annotation.Nullable;
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.ui.AbstractWalletActivity;
 import org.hopestarter.wallet.ui.DialogBuilder;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

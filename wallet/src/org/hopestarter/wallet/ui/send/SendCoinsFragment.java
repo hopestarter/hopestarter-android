@@ -122,7 +122,7 @@ import org.hopestarter.wallet.ui.TransactionsAdapter;
 import org.hopestarter.wallet.util.Bluetooth;
 import org.hopestarter.wallet.util.Nfc;
 import org.hopestarter.wallet.util.WalletUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

@@ -59,7 +59,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.hopestarter.wallet.camera.CameraManager;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

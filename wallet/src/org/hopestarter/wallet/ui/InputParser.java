@@ -61,7 +61,7 @@ import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.data.PaymentIntent;
 import org.hopestarter.wallet.util.Io;
 import org.hopestarter.wallet.util.Qr;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

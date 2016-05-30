@@ -24,7 +24,7 @@ import org.hopestarter.wallet.server_api.LocationMarkUploader;
 
 import org.hopestarter.wallet.server_api.OutboundLocationMark;
 import org.hopestarter.wallet.server_api.Point;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

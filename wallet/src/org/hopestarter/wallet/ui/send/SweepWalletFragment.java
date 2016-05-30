@@ -78,7 +78,7 @@ import org.hopestarter.wallet.ui.ScanActivity;
 import org.hopestarter.wallet.ui.TransactionsAdapter;
 import org.hopestarter.wallet.util.MonetarySpannable;
 import org.hopestarter.wallet.util.WalletUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 import static com.google.common.base.Preconditions.checkState;
 

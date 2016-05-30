@@ -58,7 +58,7 @@ import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.ui.AbstractWalletActivity;
 import org.hopestarter.wallet.ui.DialogBuilder;
 import org.hopestarter.wallet.util.WalletUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

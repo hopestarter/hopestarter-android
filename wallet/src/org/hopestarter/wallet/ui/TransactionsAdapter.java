@@ -57,7 +57,7 @@ import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.util.CircularProgressView;
 import org.hopestarter.wallet.util.Formats;
 import org.hopestarter.wallet.util.WalletUtils;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

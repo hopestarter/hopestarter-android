@@ -25,7 +25,7 @@ import android.view.MenuItem;
 import org.bitcoinj.core.VersionedChecksummedBytes;
 
 import org.hopestarter.wallet.ui.AbstractBindServiceActivity;
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * @author Andreas Schildbach

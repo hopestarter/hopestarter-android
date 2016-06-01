@@ -17,8 +17,10 @@
 
 package org.hopestarter.wallet.ui.send;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -126,6 +128,7 @@ import org.hopestarter.wallet_test.R;
  */
 public final class SendCoinsFragment extends Fragment
 {
+	private static final int PERMISSION_REQUEST = 0;
 	private AbstractBindServiceActivity activity;
 	private WalletApplication application;
 	private Configuration config;
@@ -1069,6 +1072,29 @@ public final class SendCoinsFragment extends Fragment
 
 	private void handleScan()
 	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+				launchQRScanner();
+			} else {
+				requestPermissions(new String[] {Manifest.permission.CAMERA}, PERMISSION_REQUEST);
+			}
+		} else {
+			launchQRScanner();
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @Nullable String[] permissions, @Nullable int[] grantResult) {
+		switch(requestCode) {
+			case PERMISSION_REQUEST:
+				if (grantResult[0] == PackageManager.PERMISSION_GRANTED) {
+					launchQRScanner();
+				}
+				break;
+		}
+	}
+	
+	private void launchQRScanner() {
 		startActivityForResult(new Intent(activity, ScanActivity.class), REQUEST_CODE_SCAN);
 	}
 

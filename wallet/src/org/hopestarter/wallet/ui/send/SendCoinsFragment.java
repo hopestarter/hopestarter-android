@@ -20,7 +20,6 @@ package org.hopestarter.wallet.ui.send;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -50,7 +49,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,7 +58,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -87,6 +84,7 @@ import org.bitcoinj.core.Wallet.CouldNotAdjustDownwards;
 import org.bitcoinj.core.Wallet.DustySendRequested;
 import org.bitcoinj.core.Wallet.SendRequest;
 import org.bitcoinj.protocols.payments.PaymentProtocol;
+import org.bitcoinj.utils.Fiat;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.bitcoinj.wallet.KeyChain.KeyPurpose;
 import org.slf4j.Logger;
@@ -131,7 +129,6 @@ import org.hopestarter.wallet_test.R;
  */
 public final class SendCoinsFragment extends Fragment
 {
-	private static final int PERMISSION_REQUEST = 0;
 	private AbstractBindServiceActivity activity;
 	private WalletApplication application;
 	private Configuration config;
@@ -181,12 +178,16 @@ public final class SendCoinsFragment extends Fragment
 	private Transaction dryrunTransaction;
 	private Exception dryrunException;
 
+	private ExchangeRate exchangeRate;
+
 	private static final int ID_RATE_LOADER = 0;
 	private static final int ID_RECEIVING_ADDRESS_LOADER = 1;
 
 	private static final int REQUEST_CODE_SCAN = 0;
 	private static final int REQUEST_CODE_ENABLE_BLUETOOTH_FOR_PAYMENT_REQUEST = 1;
 	private static final int REQUEST_CODE_ENABLE_BLUETOOTH_FOR_DIRECT_PAYMENT = 2;
+
+	private static final int PERMISSION_REQUEST = 0;
 
 	private static final Logger log = LoggerFactory.getLogger(SendCoinsFragment.class);
 
@@ -333,8 +334,11 @@ public final class SendCoinsFragment extends Fragment
 				data.moveToFirst();
 				final ExchangeRate exchangeRate = ExchangeRatesProvider.getExchangeRate(data);
 
+
 				if (state == null || state.compareTo(State.INPUT) <= 0)
 					amountCalculatorLink.setExchangeRate(exchangeRate.rate);
+
+				SendCoinsFragment.this.exchangeRate = exchangeRate;
 			}
 		}
 
@@ -1280,7 +1284,12 @@ public final class SendCoinsFragment extends Fragment
 				{
 					hintView.setTextColor(getResources().getColor(R.color.fg_insignificant));
 					hintView.setVisibility(View.VISIBLE);
-					hintView.setText(Html.fromHtml(getString(R.string.send_coins_fragment_hint_fee, btcFormat.format(dryrunTransaction.getFee()))));
+
+					Fiat fiatFee = exchangeRate.rate.coinToFiat(dryrunTransaction.getFee());
+					MonetaryFormat localFormat = MonetaryFormat.FIAT.noCode();
+					String fiatFeeFormated = fiatFee.currencyCode + " " + localFormat.format(fiatFee);
+
+					hintView.setText(Html.fromHtml(getString(R.string.send_coins_fragment_hint_fee, fiatFeeFormated)));
 				}
 				else if (paymentIntent.mayEditAddress() && validatedAddress != null && wallet.isPubKeyHashMine(validatedAddress.address.getHash160()))
 				{

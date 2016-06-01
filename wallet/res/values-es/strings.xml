@@ -66,7 +66,7 @@
   <string name="send_coins_fragment_receiving_address_complex">dirección\ncompleja</string>
   <string name="send_coins_fragment_pending">(%s esperando confirmación)</string>
   <string name="send_coins_fragment_amount_label">Cantidad a pagar</string>
-  <string name="send_coins_fragment_hint_fee">Una pequeña comisión de red de %s será pagada.</string>
+  <string name="send_coins_fragment_hint_fee"><![CDATA[ Una pequeña comisión de red de <b>%s</b> será pagada. ]]></string>
   <string name="send_coins_fragment_hint_dusty_send">La cantidad es demasiado baja para enviar.</string>
   <string name="send_coins_fragment_hint_insufficient_money">Bitcoins insuficientes. Te faltan %s.</string>
   <string name="send_coins_fragment_hint_empty_wallet_failed">La cantidad de pequeños pagos en tu cartera no es suficiente para poder enviarlos.</string>

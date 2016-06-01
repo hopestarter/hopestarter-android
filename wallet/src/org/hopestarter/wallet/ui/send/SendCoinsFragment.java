@@ -20,6 +20,7 @@ package org.hopestarter.wallet.ui.send;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,7 +48,9 @@ import android.os.Process;
 import android.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -1277,7 +1280,7 @@ public final class SendCoinsFragment extends Fragment
 				{
 					hintView.setTextColor(getResources().getColor(R.color.fg_insignificant));
 					hintView.setVisibility(View.VISIBLE);
-					hintView.setText(getString(R.string.send_coins_fragment_hint_fee, btcFormat.format(dryrunTransaction.getFee())));
+					hintView.setText(Html.fromHtml(getString(R.string.send_coins_fragment_hint_fee, btcFormat.format(dryrunTransaction.getFee()))));
 				}
 				else if (paymentIntent.mayEditAddress() && validatedAddress != null && wallet.isPubKeyHashMine(validatedAddress.address.getHash160()))
 				{

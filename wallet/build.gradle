@@ -42,8 +42,20 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
 
+    productFlavors {
+        dev {
+            minSdkVersion 21
+            versionName "1.0-test"
+        }
+        prod {
+            minSdkVersion 16
+            versionName "1.0"
+        }
+    }
+
     defaultConfig {
         multiDexEnabled true
+        versionCode 1
     }
 
     lintOptions {

@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.hopestarter.wallet_test"
-    android:installLocation="internalOnly"
-    android:versionCode="1"
-    android:versionName="1.0-test">
+    android:installLocation="internalOnly">
     
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

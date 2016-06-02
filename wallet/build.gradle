@@ -35,7 +35,7 @@ dependencies {
 }
 
 ext {
-    archivesBaseName = 'bitcoin-wallet'
+    archivesBaseName = 'hopestarter'
 }
 
 android {

@@ -27,9 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Region;
@@ -43,9 +40,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
-import org.hopestarter.wallet.server_api.AuthenticationFailed;
-import org.hopestarter.wallet.server_api.BucketInfo;
-import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
@@ -56,9 +50,7 @@ import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CreateAccountActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
 
@@ -264,8 +256,22 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                         if (token != null) {
                             if (profilePicture != null && !profilePicture.isEmpty()) {
                                 saveUserInformation(token, null, null, null, null);
+
                                 serverApi.updateAuthHeaderValue();
-                                new ProfilePictureUpdater(CreateAccountActivity.this, serverApi, profilePicture).invoke();
+                                UploadImageResponse uploadInfo = serverApi.requestImageUpload();
+
+                                AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
+                                Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
+                                amazonClient.setRegion(region);
+
+                                mTransferUtility = new TransferUtility(amazonClient, thisActivity);
+
+                                new ProfilePictureUploader()
+                                        .setBucketInfo(uploadInfo.getBucket())
+                                        .setProfilePictureUri(profilePicture)
+                                        .setServerApiInstance(serverApi)
+                                        .setTransferUtility(mTransferUtility)
+                                        .upload();
                             }
 
                             return new AccountCreationResult(token);

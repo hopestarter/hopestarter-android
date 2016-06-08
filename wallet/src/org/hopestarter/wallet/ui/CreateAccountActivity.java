@@ -43,7 +43,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.BucketInfo;
+import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
@@ -259,73 +261,11 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
                     if (respCode == 200 || respCode == 302) {
                         String token = serverApi.getToken(imei, "demopassword");
-
                         if (token != null) {
                             if (profilePicture != null && !profilePicture.isEmpty()) {
                                 saveUserInformation(token, null, null, null, null);
                                 serverApi.updateAuthHeaderValue();
-
-                                UploadImageResponse uploadInfo = serverApi.requestImageUpload();
-
-                                AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
-                                Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
-                                amazonClient.setRegion(region);
-                                mTransferUtility = new TransferUtility(amazonClient, thisActivity);
-
-                                BucketInfo bucket = uploadInfo.getBucket();
-
-                                File pictureFile = new File(Uri.parse(profilePicture).getPath());
-
-                                StringBuilder uriBuilder = new StringBuilder();
-
-                                StringBuilder keyBuilder = new StringBuilder();
-
-                                keyBuilder.append(bucket.getPrefix()).append(pictureFile.getName());
-
-                                uriBuilder.append("s3://")
-                                        .append(bucket.getName()).append("/")
-                                        .append(keyBuilder.toString());
-
-                                Uri s3PictureUri = Uri.parse(uriBuilder.toString());
-
-                                final AtomicBoolean taskFinished = new AtomicBoolean(false);
-
-                                TransferObserver observer = mTransferUtility.upload(bucket.getName(), keyBuilder.toString(), pictureFile);
-                                observer.setTransferListener(new TransferListener() {
-                                    @Override
-                                    public void onStateChanged(int id, TransferState state) {
-                                        if (state.equals(TransferState.FAILED) ||
-                                                state.equals(TransferState.CANCELED) ||
-                                                state.equals(TransferState.COMPLETED)) {
-                                            synchronized (taskFinished) {
-                                                taskFinished.set(true);
-                                                taskFinished.notify();
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-
-                                    }
-
-                                    @Override
-                                    public void onError(int id, Exception ex) {
-                                        log.error("An error has occurred while uploading picture to S3", ex);
-                                    }
-                                });
-
-                                synchronized (taskFinished) {
-                                    while (!taskFinished.get()) {
-                                        taskFinished.wait();
-                                    }
-                                }
-
-                                observer.cleanTransferListener();
-                                TransferState transferState = observer.getState();
-                                if (transferState == TransferState.COMPLETED) {
-                                    serverApi.setUserInfo(null, null, s3PictureUri.toString());
-                                }
+                                new ProfilePictureUpdater(CreateAccountActivity.this, serverApi, profilePicture).invoke();
                             }
 
                             return new AccountCreationResult(token);

@@ -107,12 +107,10 @@ public class ServerApi {
         }
     }
 
-    public UserInfo setUserInfo(String firstName, String lastName, String pictureUri) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+    public UserInfo setUserInfo(UserInfo info) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
         if (mAuthHeaderValue.isEmpty()) {
             throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
         }
-
-        UserInfo info = new UserInfo(firstName, lastName, pictureUri);
 
         Call<UserInfo> call = mApiImpl.setUserInfo(mAuthHeaderValue, info);
         Response<UserInfo> response = call.execute();

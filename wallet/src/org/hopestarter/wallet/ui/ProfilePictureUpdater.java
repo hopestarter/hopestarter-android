@@ -20,6 +20,7 @@ import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.server_api.UploadImageResponse;
+import org.hopestarter.wallet.server_api.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +105,10 @@ public class ProfilePictureUpdater {
         observer.cleanTransferListener();
         TransferState transferState = observer.getState();
         if (transferState == TransferState.COMPLETED) {
-            mServerApi.setUserInfo(null, null, s3PictureUri.toString());
+            UserInfo info = new UserInfo.Builder()
+                    .setProfilePicture(s3PictureUri.toString())
+                    .create();
+            mServerApi.setUserInfo(info);
         }
     }
 }

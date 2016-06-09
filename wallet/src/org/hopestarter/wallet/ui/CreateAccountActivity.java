@@ -39,12 +39,17 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import org.bitcoinj.core.Address;
+import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.AuthenticationFailed;
+import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.server_api.UploadImageResponse;
+import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
@@ -249,31 +254,19 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                     StagingApi stagingApi = new StagingApi();
                     ServerApi serverApi = new ServerApi(thisActivity);
 
+                    // FIXME: Replace the demopassword string with something else before official release
                     int respCode = stagingApi.signUp(imei, "demopassword", firstName, lastName, ethnicity);
 
                     if (respCode == 200 || respCode == 302) {
                         String token = serverApi.getToken(imei, "demopassword");
                         if (token != null) {
+                            saveUserInformation(token, null, null, null, null);
+
                             if (profilePicture != null && !profilePicture.isEmpty()) {
-                                saveUserInformation(token, null, null, null, null);
-
-                                serverApi.updateAuthHeaderValue();
-                                UploadImageResponse uploadInfo = serverApi.requestImageUpload();
-
-                                AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
-                                Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
-                                amazonClient.setRegion(region);
-
-                                mTransferUtility = new TransferUtility(amazonClient, thisActivity);
-
-                                new ProfilePictureUploader()
-                                        .setBucketInfo(uploadInfo.getBucket())
-                                        .setProfilePictureUri(profilePicture)
-                                        .setServerApiInstance(serverApi)
-                                        .setTransferUtility(mTransferUtility)
-                                        .upload();
+                                uploadProfilePicture(serverApi, token);
                             }
 
+                            sendBitcoinAddress(serverApi);
                             return new AccountCreationResult(token);
                         } else {
                             String errorMsg = getString(R.string.account_creation_error_no_token);
@@ -288,6 +281,30 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 } catch (Exception e) {
                     return new AccountCreationResult(e);
                 }
+            }
+
+            private void sendBitcoinAddress(ServerApi serverApi) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+                Address receiveAddress = ((WalletApplication)getApplication()).getWallet().currentReceiveAddress();
+                UserInfo info = new UserInfo.Builder().setBitcoinAddress(receiveAddress.toString()).create();
+                serverApi.setUserInfo(info);
+            }
+
+            private void uploadProfilePicture(ServerApi serverApi, String token) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, InterruptedException {
+                serverApi.updateAuthHeaderValue();
+                UploadImageResponse uploadInfo = serverApi.requestImageUpload();
+
+                AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
+                Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
+                amazonClient.setRegion(region);
+
+                mTransferUtility = new TransferUtility(amazonClient, thisActivity);
+
+                new ProfilePictureUploader()
+                        .setBucketInfo(uploadInfo.getBucket())
+                        .setProfilePictureUri(profilePicture)
+                        .setServerApiInstance(serverApi)
+                        .setTransferUtility(mTransferUtility)
+                        .upload();
             }
 
             @Override

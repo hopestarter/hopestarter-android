@@ -15,7 +15,7 @@ public class UserInfo {
     @SerializedName("picture")
     private String mPicture;
 
-    @SerializedName("bitcoinAddress")
+    @SerializedName("bitcoin")
     private String mBitcoinAddress;
 
     public String getFirstName() {

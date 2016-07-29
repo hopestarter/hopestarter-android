@@ -2,6 +2,7 @@ package org.hopestarter.wallet.server_api;
 
 import org.hopestarter.wallet.Constants;
 
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -10,8 +11,10 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 
 /**
  * Created by Adrian on 11/02/2016.
@@ -32,6 +35,10 @@ public interface IServerApi {
 
     @POST("api/collector/uploadimage/")
     Call<UploadImageResponse> requestImageUpload(@Header("Authorization") String authHeaderValue);
+
+    @Multipart
+    @PUT("api/user/profile/picture/") // FIXME: Get this address right
+    Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue, @Part MultipartBody.Part picture);
 
     @POST("api/collector/mark/")
     Call<ResponseBody> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);

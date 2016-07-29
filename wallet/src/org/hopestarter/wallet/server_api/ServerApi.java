@@ -9,11 +9,15 @@ import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -71,7 +75,7 @@ public class ServerApi {
     public String getToken(String username, String password) throws IOException, AuthenticationFailed, UnexpectedServerResponseException {
         Call<TokenResponse> call = mApiImpl.getToken("password", username, password, "set-location update-profile");
         Response<TokenResponse> response = call.execute();
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             TokenResponse tokenResp = response.body();
             return tokenResp.getAccessToken();
         } else {
@@ -93,7 +97,7 @@ public class ServerApi {
 
         Call<UserInfo> call = mApiImpl.getUserInfo(mAuthHeaderValue);
         Response<UserInfo> response = call.execute();
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             return response.body();
         } else {
             switch (response.code()) {
@@ -114,7 +118,7 @@ public class ServerApi {
 
         Call<UserInfo> call = mApiImpl.setUserInfo(mAuthHeaderValue, info);
         Response<UserInfo> response = call.execute();
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             return response.body();
         } else {
             switch (response.code()) {
@@ -136,7 +140,7 @@ public class ServerApi {
         Call<UploadImageResponse> call = mApiImpl.requestImageUpload(mAuthHeaderValue);
         Response<UploadImageResponse> response = call.execute();
 
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             return response.body();
         } else {
             switch (response.code()) {
@@ -150,6 +154,36 @@ public class ServerApi {
         }
     }
 
+    public void uploadProfileImage(File profilePicture) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), profilePicture);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part filePart =
+                MultipartBody.Part.createFormData("picture", profilePicture.getName(), requestFile);
+
+        Call<ResponseBody> call = mApiImpl.uploadProfilePicture(mAuthHeaderValue, filePart);
+        Response<ResponseBody> response = call.execute();
+
+        if (response.isSuccessful()) {
+            return; // I might need to change response/result type in the future. If not, change logic for a negative evaluation
+        } else {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+
+    }
+
     public void uploadLocationMark(OutboundLocationMark locationMark) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
         if (mAuthHeaderValue.isEmpty()) {
             throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
@@ -158,7 +192,7 @@ public class ServerApi {
         Call<ResponseBody> call = mApiImpl.uploadLocationMark(mAuthHeaderValue, locationMark);
         Response<ResponseBody> response = call.execute();
 
-        if (!response.isSuccess()) {
+        if (!response.isSuccessful()) {
             switch (response.code()) {
                 case 401:
                     throw new AuthenticationFailed();

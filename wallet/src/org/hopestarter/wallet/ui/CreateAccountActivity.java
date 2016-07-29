@@ -55,7 +55,9 @@ import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 public class CreateAccountActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
 
@@ -254,7 +256,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                     StagingApi stagingApi = new StagingApi();
                     ServerApi serverApi = new ServerApi(thisActivity);
 
-                    // FIXME: Replace the demopassword string with something else before official release
+                    // FIXME: Replace mock authentication before official release
                     int respCode = stagingApi.signUp(imei, "demopassword", firstName, lastName, ethnicity);
 
                     if (respCode == 200 || respCode == 302) {
@@ -263,7 +265,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                             saveUserInformation(token, null, null, null, null);
 
                             if (profilePicture != null && !profilePicture.isEmpty()) {
-                                uploadProfilePicture(serverApi, token);
+                                uploadProfilePicture(serverApi);
                             }
 
                             sendBitcoinAddress(serverApi);
@@ -289,22 +291,9 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 serverApi.setUserInfo(info);
             }
 
-            private void uploadProfilePicture(ServerApi serverApi, String token) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, InterruptedException {
+            private void uploadProfilePicture(ServerApi serverApi) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, InterruptedException {
                 serverApi.updateAuthHeaderValue();
-                UploadImageResponse uploadInfo = serverApi.requestImageUpload();
-
-                AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
-                Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
-                amazonClient.setRegion(region);
-
-                mTransferUtility = new TransferUtility(amazonClient, thisActivity);
-
-                new ProfilePictureUploader()
-                        .setBucketInfo(uploadInfo.getBucket())
-                        .setProfilePictureUri(profilePicture)
-                        .setServerApiInstance(serverApi)
-                        .setTransferUtility(mTransferUtility)
-                        .upload();
+                serverApi.uploadProfileImage(new File(URI.create(profilePicture)));
             }
 
             @Override

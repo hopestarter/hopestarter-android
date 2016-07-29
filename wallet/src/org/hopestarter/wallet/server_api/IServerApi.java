@@ -37,7 +37,7 @@ public interface IServerApi {
     Call<UploadImageResponse> requestImageUpload(@Header("Authorization") String authHeaderValue);
 
     @Multipart
-    @PUT("api/user/profile/picture/") // FIXME: Get this address right
+    @PUT("api/user/profile/picture")
     Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue, @Part MultipartBody.Part picture);
 
     @POST("api/collector/mark/")

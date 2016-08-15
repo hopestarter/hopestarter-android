@@ -15,6 +15,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 /**
  * Created by Adrian on 11/02/2016.
@@ -39,6 +40,10 @@ public interface IServerApi {
     @Multipart
     @PUT("api/user/profile/picture")
     Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue, @Part MultipartBody.Part picture);
+
+    @Multipart
+    @PUT("api/collector/image/{markid}")
+    Call<ResponseBody> uploadPictureForMark(@Header("Authorization") String authHeaderValue, @Path("markid") String markId, @Part MultipartBody.Part picture);
 
     @POST("api/collector/mark/")
     Call<ResponseBody> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);

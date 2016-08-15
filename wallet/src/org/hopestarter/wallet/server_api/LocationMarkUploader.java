@@ -51,75 +51,7 @@ public class LocationMarkUploader extends AsyncTask<OutboundLocationMark, Intege
                 URI pictureUri = null;
 
                 if (inputLocationMark.getPictures() != null && inputLocationMark.getPictures().size() != 0) {
-                    UploadImageResponse uploadInfo = serverApi.requestImageUpload();
-
-                    AmazonS3 amazonClient = new AmazonS3Client(uploadInfo.getCredentials());
-
-                    Region region = Region.getRegion(Regions.fromName(uploadInfo.getBucket().getRegion()));
-                    amazonClient.setRegion(region);
-
-                    TransferUtility transferUtility = new TransferUtility(amazonClient, mContext);
-
-                    BucketInfo bucket = uploadInfo.getBucket();
-
-                    File pictureFile = new File(inputLocationMark.getPictures().get(0).getPath());
-
-                    StringBuilder uriBuilder = new StringBuilder();
-
-                    StringBuilder keyBuilder = new StringBuilder();
-
-                    UUID fileUUID = UUID.randomUUID();
-
-                    keyBuilder.append(bucket.getPrefix()).append(fileUUID.toString()).append(pictureFile.getName());
-
-                    uriBuilder.append("s3://")
-                            .append(bucket.getName()).append("/")
-                            .append(keyBuilder.toString());
-
-                    URI s3PictureUri = URI.create(uriBuilder.toString());
-
-                    final AtomicBoolean taskFinished = new AtomicBoolean(false);
-
-                    TransferObserver observer = transferUtility.upload(bucket.getName(), keyBuilder.toString(), pictureFile);
-                    TransferListener listener = new TransferListener() {
-                        @Override
-                        public void onStateChanged(int id, TransferState state) {
-                            if (state.equals(TransferState.FAILED) ||
-                                    state.equals(TransferState.CANCELED) ||
-                                    state.equals(TransferState.COMPLETED)) {
-                                synchronized (taskFinished) {
-                                    taskFinished.set(true);
-                                    taskFinished.notify();
-                                }
-                                log.debug("picture upload finished");
-                            }
-                        }
-
-                        @Override
-                        public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-
-                        }
-
-                        @Override
-                        public void onError(int id, Exception ex) {
-                            log.error("An error has occurred while uploading picture to S3", ex);
-                        }
-                    };
-                    observer.setTransferListener(listener);
-
-                    synchronized (taskFinished) {
-                        while (!taskFinished.get()) {
-                            taskFinished.wait();
-                        }
-                    }
-
-                    observer.cleanTransferListener();
-
-                    TransferState transferState = observer.getState();
-
-                    if (transferState == TransferState.COMPLETED) {
-                        pictureUri = s3PictureUri;
-                    }
+                    // TODO: Image upload for location mark
                 }
 
                 ArrayList<URI> pictures = null;

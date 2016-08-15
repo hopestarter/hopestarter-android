@@ -12,8 +12,8 @@ public class UserInfo {
     @SerializedName("surname")
     private String mLastName;
 
-    @SerializedName("picture")
-    private String mPicture;
+    @SerializedName("photo")
+    private PhotoResource mPicture;
 
     @SerializedName("bitcoin")
     private String mBitcoinAddress;
@@ -26,7 +26,7 @@ public class UserInfo {
         return mLastName;
     }
 
-    public String getPictureUri() {
+    public PhotoResource getPictureResources() {
         return mPicture;
     }
 
@@ -35,14 +35,14 @@ public class UserInfo {
     public UserInfo(Builder builder) {
         mFirstName = builder.firstName;
         mLastName = builder.lastName;
-        mPicture = builder.profilePictureUri;
+        mPicture = builder.profilePictureResources;
         mBitcoinAddress = builder.bitcoinReceivingAddress;
     }
 
     public static class Builder {
         private String firstName;
         private String lastName;
-        private String profilePictureUri;
+        private PhotoResource profilePictureResources;
         private String bitcoinReceivingAddress;
 
         public Builder setFirstName(String firstName) {
@@ -55,8 +55,8 @@ public class UserInfo {
             return this;
         }
 
-        public Builder setProfilePicture(String profilePictureUri) {
-            this.profilePictureUri = profilePictureUri;
+        public Builder setProfilePicture(PhotoResource photoResource) {
+            this.profilePictureResources = photoResource;
             return this;
         }
 

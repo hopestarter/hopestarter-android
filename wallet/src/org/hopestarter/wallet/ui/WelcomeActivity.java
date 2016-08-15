@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 
@@ -81,12 +80,16 @@ public class WelcomeActivity extends Activity {
                             UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE
                     );
 
-                    String profilePictureUri = downloadProfilePicture(info.getPictureUri());
+                    String pictureUri = info.getPictureResources().getMedium();
+                    String localPictureUri = null;
+                    if (pictureUri != null && !pictureUri.isEmpty()) {
+                        localPictureUri = downloadProfilePicture(info.getPictureResources().getMedium());
+                    }
 
                     prefs.edit()
                             .putString(UserInfoPrefs.FIRST_NAME, info.getFirstName())
                             .putString(UserInfoPrefs.LAST_NAME, info.getLastName())
-                            .putString(UserInfoPrefs.PROFILE_PIC, profilePictureUri)
+                            .putString(UserInfoPrefs.PROFILE_PIC, localPictureUri)
                             .commit();
 
                     return null;

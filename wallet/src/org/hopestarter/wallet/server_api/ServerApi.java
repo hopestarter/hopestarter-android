@@ -181,7 +181,35 @@ public class ServerApi {
                     throw new UnexpectedServerResponseException(response.code());
             }
         }
+    }
 
+    public void uploadPictureForMark(File picture, String markId) throws NoTokenException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, IOException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), picture);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part filePart =
+                MultipartBody.Part.createFormData("picture", picture.getName(), requestFile);
+
+        Call<ResponseBody> call = mApiImpl.uploadPictureForMark(mAuthHeaderValue, markId, filePart);
+        Response<ResponseBody> response = call.execute();
+
+        if (response.isSuccessful()) {
+            return; // I might need to change response/result type in the future. If not, change logic for a negative evaluation
+        } else {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
     }
 
     public void uploadLocationMark(OutboundLocationMark locationMark) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {

@@ -27,13 +27,17 @@ public class OutboundLocationMarkSerializer implements JsonSerializer<OutboundLo
         JsonObject jsonMain = new JsonObject();
 
         JsonArray jsonPictures = new JsonArray();
-        for(URI uri : src.getPictures()) {
-            JsonObject pictureObject = new JsonObject();
-            pictureObject.add("url", context.serialize(uri));
-            jsonPictures.add(pictureObject);
+
+        if (src.getPictures() != null) {
+            for(URI uri : src.getPictures()) {
+                JsonObject pictureObject = new JsonObject();
+                pictureObject.add("url", context.serialize(uri));
+                jsonPictures.add(pictureObject);
+            }
+
+            jsonMain.add("picture", jsonPictures);
         }
 
-        jsonMain.add("picture", jsonPictures);
         jsonMain.add("point", jsonPoint);
         jsonMain.addProperty("created", createISODateString);
         jsonMain.add("text", jsonText);

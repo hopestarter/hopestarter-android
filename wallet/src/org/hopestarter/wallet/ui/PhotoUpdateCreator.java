@@ -116,17 +116,23 @@ public class PhotoUpdateCreator {
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             locationRequest.setInterval(5000);
 
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, new LocationListener() {
-                private boolean used;
-                @Override
-                public void onLocationChanged(Location location) {
-                    if (!used) { // Location service runs in another thread, this avoids this callback to run more than once
-                        sendLocationUpdate(location, data);
-                        used = true;
-                        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); // Don't need the callback anymore
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            if (location == null) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, new LocationListener() {
+                    private boolean used;
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        if (!used) { // Location service runs in another thread, this avoids this callback to run more than once
+                            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); // Don't need the callback anymore
+                            used = true;
+                            sendLocationUpdate(location, data);
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                sendLocationUpdate(location, data);
+            }
         } catch(SecurityException e) {
             // Permissions have changed while uploading location
         }

@@ -58,6 +58,7 @@ public class ServerApi {
                 .addConverterFactory(new UserInfoRequestConverterFactory())
                 .addConverterFactory(new UploadImageResponseConverterFactory())
                 .addConverterFactory(new OutboundLocationMarkConverterFactory())
+                .addConverterFactory(new LocationMarkConverterFactory())
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
@@ -183,7 +184,7 @@ public class ServerApi {
         }
     }
 
-    public void uploadPictureForMark(File picture, String markId) throws NoTokenException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, IOException {
+    public void uploadPictureForMark(File picture, long markId) throws NoTokenException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, IOException {
         if (mAuthHeaderValue.isEmpty()) {
             throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
         }
@@ -212,15 +213,17 @@ public class ServerApi {
         }
     }
 
-    public void uploadLocationMark(OutboundLocationMark locationMark) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
+    public LocationMark uploadLocationMark(OutboundLocationMark locationMark) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
         if (mAuthHeaderValue.isEmpty()) {
             throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
         }
 
-        Call<ResponseBody> call = mApiImpl.uploadLocationMark(mAuthHeaderValue, locationMark);
-        Response<ResponseBody> response = call.execute();
+        Call<LocationMark> call = mApiImpl.uploadLocationMark(mAuthHeaderValue, locationMark);
+        Response<LocationMark> response = call.execute();
 
-        if (!response.isSuccessful()) {
+        if (response.isSuccessful()) {
+            return response.body();
+        } else {
             switch (response.code()) {
                 case 401:
                     throw new AuthenticationFailed();

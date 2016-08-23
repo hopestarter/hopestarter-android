@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Adrian on 15/08/2016.
  */
-public class PhotoResource implements Parcelable {
+public class PhotoResources implements Parcelable {
     @SerializedName("large")
     private String mLarge;
 
@@ -50,25 +50,25 @@ public class PhotoResource implements Parcelable {
         dest.writeString(this.mThumbnail);
     }
 
-    public PhotoResource() {
+    public PhotoResources() {
     }
 
-    protected PhotoResource(Parcel in) {
+    protected PhotoResources(Parcel in) {
         this.mLarge = in.readString();
         this.mMedium = in.readString();
         this.mSmall = in.readString();
         this.mThumbnail = in.readString();
     }
 
-    public static final Parcelable.Creator<PhotoResource> CREATOR = new Parcelable.Creator<PhotoResource>() {
+    public static final Parcelable.Creator<PhotoResources> CREATOR = new Parcelable.Creator<PhotoResources>() {
         @Override
-        public PhotoResource createFromParcel(Parcel source) {
-            return new PhotoResource(source);
+        public PhotoResources createFromParcel(Parcel source) {
+            return new PhotoResources(source);
         }
 
         @Override
-        public PhotoResource[] newArray(int size) {
-            return new PhotoResource[size];
+        public PhotoResources[] newArray(int size) {
+            return new PhotoResources[size];
         }
     };
 }

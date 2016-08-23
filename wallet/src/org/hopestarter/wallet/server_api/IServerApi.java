@@ -42,9 +42,9 @@ public interface IServerApi {
     Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue, @Part MultipartBody.Part picture);
 
     @Multipart
-    @PUT("api/collector/image/{markid}")
-    Call<ResponseBody> uploadPictureForMark(@Header("Authorization") String authHeaderValue, @Path("markid") String markId, @Part MultipartBody.Part picture);
+    @PUT("api/collector/image/{markid}/")
+    Call<ResponseBody> uploadPictureForMark(@Header("Authorization") String authHeaderValue, @Path("markid") Long markId, @Part MultipartBody.Part picture);
 
     @POST("api/collector/mark/")
-    Call<ResponseBody> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);
+    Call<LocationMark> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);
 }

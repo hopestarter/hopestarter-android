@@ -3,6 +3,7 @@ package org.hopestarter.wallet.server_api;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -28,7 +29,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by Adrian on 16/04/2016.
  */
 public class LocationMarkUploader extends AsyncTask<OutboundLocationMark, Integer, Exception> {
-    private static final Logger log = LoggerFactory.getLogger(LocationMarkUploader.class);
+    private static final Logger log = LoggerFactory.getLogger("LocationMarkUpl");
+    private static final String TAG = "LocationMarkUpl";
 
     public interface UploaderListener {
         // If this method is called and ex == null everything went fine
@@ -48,28 +50,24 @@ public class LocationMarkUploader extends AsyncTask<OutboundLocationMark, Intege
 
         for(OutboundLocationMark inputLocationMark : params) {
             try {
-                URI pictureUri = null;
-
-                if (inputLocationMark.getPictures() != null && inputLocationMark.getPictures().size() != 0) {
-                    // TODO: Image upload for location mark
-                }
-
-                ArrayList<URI> pictures = null;
-
-                if (pictureUri != null) {
-                    pictures = new ArrayList<>();
-                    pictures.add(pictureUri);
-                }
-
                 OutboundLocationMark locationMark = new OutboundLocationMark(
                         inputLocationMark.getCreated(),
                         inputLocationMark.getPoint(),
-                        pictures,
+                        null,
                         inputLocationMark.getText()
                 );
+                Log.i(TAG, "Sending location mark...");
+                LocationMark result = serverApi.uploadLocationMark(locationMark);
+                Log.i(TAG, "Location mark sent!");
 
-                serverApi.uploadLocationMark(locationMark);
+                if (inputLocationMark.getPictures() != null && inputLocationMark.getPictures().size() != 0) {
+                    Log.i(TAG, "Sending location mark picture...");
+                    File pictureFile = new File(inputLocationMark.getPictures().get(0).getPath());
+                    serverApi.uploadPictureForMark(pictureFile, result.getMarkId());
+                    Log.i(TAG, "Location mark picture sent!");
+                }
             } catch (Exception e) {
+                Log.e(TAG, "error sending location mark", e);
                 return e;
             }
         }

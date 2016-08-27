@@ -263,6 +263,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                         String token = serverApi.getToken(imei, "demopassword");
                         if (token != null) {
                             saveUserInformation(token, null, null, null, null);
+                            serverApi.updateAuthHeaderValue();
 
                             if (profilePicture != null && !profilePicture.isEmpty()) {
                                 uploadProfilePicture(serverApi);
@@ -292,7 +293,6 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             }
 
             private void uploadProfilePicture(ServerApi serverApi) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, InterruptedException {
-                serverApi.updateAuthHeaderValue();
                 serverApi.uploadProfileImage(new File(URI.create(profilePicture)));
             }
 

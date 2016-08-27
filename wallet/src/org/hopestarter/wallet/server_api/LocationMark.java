@@ -22,6 +22,9 @@ public class LocationMark implements Parcelable {
         @SerializedName("modified")
         private String mModifiedDate;
 
+        @SerializedName("user")
+        private User mUser;
+
         public PhotoResources getPhotoResources() {
             return mPhotoResources;
         }
@@ -38,6 +41,13 @@ public class LocationMark implements Parcelable {
             return mModifiedDate;
         }
 
+        public User getUser() {
+            return mUser;
+        }
+
+        public Properties() {
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -49,9 +59,7 @@ public class LocationMark implements Parcelable {
             dest.writeString(this.mText);
             dest.writeString(this.mCreatedDate);
             dest.writeString(this.mModifiedDate);
-        }
-
-        public Properties() {
+            dest.writeParcelable(this.mUser, flags);
         }
 
         protected Properties(Parcel in) {
@@ -59,6 +67,7 @@ public class LocationMark implements Parcelable {
             this.mText = in.readString();
             this.mCreatedDate = in.readString();
             this.mModifiedDate = in.readString();
+            this.mUser = in.readParcelable(User.class.getClassLoader());
         }
 
         public static final Creator<Properties> CREATOR = new Creator<Properties>() {

@@ -16,6 +16,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Adrian on 11/02/2016.
@@ -47,4 +48,10 @@ public interface IServerApi {
 
     @POST("api/collector/mark/")
     Call<LocationMark> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);
+
+    @GET("api/collector/marks/")
+    Call<CollectorMarkResponse> getWorldLocationMarks(@Header("Authorization") String authHeaderValue, @Query("page_size") int size, @Query("page") int pageNum);
+
+    @GET("api/user/mark/")
+    Call<CollectorMarkResponse> getOwnLocationMarks(@Header("Authorization") String authHeaderValue, @Query("page_size") int size, @Query("page") int pageNum);
 }

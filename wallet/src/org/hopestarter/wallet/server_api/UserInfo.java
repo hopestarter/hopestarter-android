@@ -1,11 +1,11 @@
 package org.hopestarter.wallet.server_api;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Adrian on 18/02/2016.
- */
-public class UserInfo {
+public class UserInfo implements Parcelable {
     @SerializedName("name")
     private String mFirstName;
 
@@ -69,4 +69,36 @@ public class UserInfo {
             return new UserInfo(this);
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mFirstName);
+        dest.writeString(this.mLastName);
+        dest.writeParcelable(this.mPicture, flags);
+        dest.writeString(this.mBitcoinAddress);
+    }
+
+    protected UserInfo(Parcel in) {
+        this.mFirstName = in.readString();
+        this.mLastName = in.readString();
+        this.mPicture = in.readParcelable(PhotoResources.class.getClassLoader());
+        this.mBitcoinAddress = in.readString();
+    }
+
+    public static final Parcelable.Creator<UserInfo> CREATOR = new Parcelable.Creator<UserInfo>() {
+        @Override
+        public UserInfo createFromParcel(Parcel source) {
+            return new UserInfo(source);
+        }
+
+        @Override
+        public UserInfo[] newArray(int size) {
+            return new UserInfo[size];
+        }
+    };
 }

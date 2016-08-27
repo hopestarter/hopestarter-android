@@ -59,6 +59,7 @@ public class ServerApi {
                 .addConverterFactory(new UploadImageResponseConverterFactory())
                 .addConverterFactory(new OutboundLocationMarkConverterFactory())
                 .addConverterFactory(new LocationMarkConverterFactory())
+                .addConverterFactory(new CollectorMarkResponse.ConverterFactory())
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
@@ -235,4 +236,51 @@ public class ServerApi {
         }
     }
 
+    public CollectorMarkResponse getWorldLocationMarks(int page, int pageSize) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, ResourceNotFoundException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        Call<CollectorMarkResponse> call = mApiImpl.getWorldLocationMarks(mAuthHeaderValue, pageSize, page);
+        Response<CollectorMarkResponse> response = call.execute();
+
+        if (response.isSuccessful()) {
+            return response.body();
+        } else {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                case 404:
+                    throw new ResourceNotFoundException(call.request().url().toString());
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+    }
+
+    public CollectorMarkResponse getOwnLocationMarks(int page, int pageSize) throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException, ResourceNotFoundException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        Call<CollectorMarkResponse> call = mApiImpl.getOwnLocationMarks(mAuthHeaderValue, pageSize, page);
+        Response<CollectorMarkResponse> response = call.execute();
+
+        if (response.isSuccessful()) {
+            return response.body();
+        } else {
+            switch (response.code()) {
+                case 401:
+                    throw new AuthenticationFailed();
+                case 403:
+                    throw new ForbiddenResourceException();
+                case 404:
+                    throw new ResourceNotFoundException(call.request().url().toString());
+                default:
+                    throw new UnexpectedServerResponseException(response.code());
+            }
+        }
+    }
 }

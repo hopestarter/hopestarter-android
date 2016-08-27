@@ -7,25 +7,55 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import org.hopestarter.wallet.data.UserInfoPrefs;
+import org.hopestarter.wallet.server_api.AuthenticationFailed;
+import org.hopestarter.wallet.server_api.CollectorMarkResponse;
+import org.hopestarter.wallet.server_api.ForbiddenResourceException;
+import org.hopestarter.wallet.server_api.ISODateFormatFactory;
+import org.hopestarter.wallet.server_api.LocationMark;
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
+import org.hopestarter.wallet.server_api.NoTokenException;
+import org.hopestarter.wallet.server_api.ResourceNotFoundException;
+import org.hopestarter.wallet.server_api.ServerApi;
+import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
+import org.hopestarter.wallet.server_api.User;
+import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorldUpdatesFragment extends Fragment {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+public class WorldUpdatesFragment extends Fragment implements UpdatesFragment.OnRequestDataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationMarkUploader.UploaderListener {
     private static final String TAG = WorldUpdatesFragment.class.getName();
     private static final Logger log = LoggerFactory.getLogger(WorldUpdatesFragment.class);
     private static final int POST_UPDATE_REQ_CODE = 0;
+    private static final int PHOTO_UPDATE_DATA_REQUEST = 0;
+    private static final int PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION = 1;
+
+    private GoogleApiClient mGoogleApiClient;
+    private PhotoUpdateCreator mPhotoUpdateCreator;
     private UpdatesFragment mUpdatesFragment;
     private Button mPostPictureUpdate;
     private String mFirstName;
@@ -33,6 +63,68 @@ public class WorldUpdatesFragment extends Fragment {
     private String mFullName;
     private String mEthnicity;
     private Uri mProfilePicture;
+    private int mPage;
+    private int mPageSize;
+
+    private LocationMarksFetcher.OnPostExecuteListener mOnPostFetch = new LocationMarksFetcher.OnPostExecuteListener() {
+        @Override
+        public void onPostExecute(FetchResult<CollectorMarkResponse> result) {
+            if (result.isSuccessful()) {
+                CollectorMarkResponse response = result.getResult();
+
+                ArrayList<UpdateInfo> updates = new ArrayList<>();
+
+                List<LocationMark> locationMarks = response.getResults().getLocationMarks();
+                for(LocationMark mark : locationMarks) {
+                    User user = mark.getProperties().getUser();
+                    UserInfo userInfo = user.getUserInfo();
+                    String userName = userInfo.getFirstName() + " " + userInfo.getLastName();
+                    String ethnicity = user.getEthnicities().get(0);
+                    String message = mark.getProperties().getText();
+                    String location = "unknown";
+
+                    int updateViews = 0;
+
+                    DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime();
+                    DateTime updateDate = dateTimeFormatter.parseDateTime(mark.getProperties().getCreatedDate());
+                    long updateDateMillis = updateDate.getMillis();
+
+                    Uri pictureUri = null;
+                    if (mark.getProperties().getPhotoResources().getMedium() != null) {
+                        pictureUri = Uri.parse(mark.getProperties().getPhotoResources().getLarge());
+                    }
+
+                    Uri profilePictureUri = null;
+                    if (userInfo.getPictureResources().getThumbnail() != null) {
+                        profilePictureUri = Uri.parse(userInfo.getPictureResources().getThumbnail());
+                    }
+
+                    UpdateInfo update = new UpdateInfo.Builder()
+                            .setUserName(userName)
+                            .setUpdateViews(updateViews)
+                            .setEthnicity(ethnicity)
+                            .setUpdateDateMillis(updateDateMillis)
+                            .setMessage(message)
+                            .setPictureUri(pictureUri)
+                            .setProfilePictureUri(profilePictureUri)
+                            .setLocation(location)
+                            .build();
+
+                    updates.add(update);
+                }
+                //mUpdatesFragment.clear();
+                mUpdatesFragment.addAll(updates);
+
+                if (response.getNext() != null) {
+                    mUpdatesFragment.askForData(true);
+                }
+            } else {
+                Throwable t = result.getException();
+                Log.e(TAG, "Couldn't fetch location marks", t);
+            }
+        }
+    };
+    private boolean mPostingEnabled;
 
     public WorldUpdatesFragment() {
         // Required empty public constructor
@@ -62,6 +154,24 @@ public class WorldUpdatesFragment extends Fragment {
                 )
         );
         mFullName = mFirstName + " " + mLastName;
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -69,58 +179,34 @@ public class WorldUpdatesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_worldupdates, container, false);
         mUpdatesFragment = UpdatesFragment.newInstance();
-
+        mUpdatesFragment.setOnRequestDataListener(this);
         mPostPictureUpdate = (Button)rootView.findViewById(R.id.post_photo_update);
 
         mPostPictureUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchCreateNewUpdateActivity();
+                if (mPostingEnabled) {
+                    mPhotoUpdateCreator.create();
+                }
             }
         });
 
         getChildFragmentManager().beginTransaction()
                 .add(R.id.updates_fragment_container, mUpdatesFragment).commit();
 
-        feedFakeData();
+        mPhotoUpdateCreator = new PhotoUpdateCreator(this, mGoogleApiClient, PHOTO_UPDATE_DATA_REQUEST, PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION);
+        mPhotoUpdateCreator.setUploadListener(this);
+        mPage = 1;
+        mPageSize = 20;
+
+        feedData();
         return rootView;
     }
 
-    private void feedFakeData() {
-        Uri path = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image);
-        Uri path2 = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image2);
-
-        UpdateInfo info = new UpdateInfo.Builder()
-                .setUserName("Muhammad Erbil")
-                .setEthnicity("Syrian")
-                .setLocation("Samothrace, Greece")
-                .setUpdateDateMillis(System.currentTimeMillis() - 4 * 60 * 1000)
-                .setPictureUri(path)
-                .setMessage("The island we landed on was called Samothrace. We were so thankful to be there. We thought we'd reached safety.")
-                .setUpdateViews(344)
-                .build();
-
-        UpdateInfo info2 = new UpdateInfo.Builder()
-                .setUserName("Muhammad Erbil")
-                .setEthnicity("Syrian")
-                .setLocation("Samothrace, Greece")
-                .setUpdateDateMillis(System.currentTimeMillis() - 16 * 60 * 1000)
-                .setPictureUri(path2)
-                .setMessage("Syrian refugees are freezing to death as snow covers the region.")
-                .setUpdateViews(688)
-                .build();
-
-        UpdateInfo info3 = new UpdateInfo.Builder()
-                .setUserName("Dawud Wasamet")
-                .setEthnicity("Iraqi")
-                .setLocation("hegyeshalom, Hungary")
-                .setUpdateDateMillis(System.currentTimeMillis() - 6 * 60 * 60 * 1000)
-                .setPictureUri(path2)
-                .setMessage("Syrian refugees are freezing to death as snow covers the region.")
-                .setUpdateViews(230)
-                .build();
-
-        mUpdatesFragment.addAll(new UpdateInfo[] {info, info2, info3});
+    private void feedData() {
+        LocationMarksFetcher fetcher = new LocationMarksFetcher(getActivity());
+        fetcher.setListener(mOnPostFetch);
+        fetcher.fetch(mPage, mPageSize);
     }
 
     private void launchCreateNewUpdateActivity() {
@@ -129,39 +215,26 @@ public class WorldUpdatesFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int reqCode, int resCode, Intent data) {
+    public void onActivityResult(int reqCode, int resCode, final Intent data) {
         switch(reqCode) {
             case POST_UPDATE_REQ_CODE:
                 if (resCode == Activity.RESULT_OK) {
-                    final ProgressDialog dialog = ProgressDialog.show(getActivity(), "Uploading update", "Please wait..", true, false);
-                    final UpdateInfo update = new UpdateInfo.Builder()
-                            .setUserName(mFullName)
-                            .setPictureUri(data.getData())
-                            .setProfilePictureUri(mProfilePicture)
-                            .setMessage(data.getStringExtra(CreateNewUpdateActivity.EXTRA_RESULT_MESSAGE))
-                            .setUpdateDateMillis(System.currentTimeMillis())
-                            .setEthnicity(mEthnicity)
-                            .setLocation("Unknown")
-                            .build();
-
-                    LocationMarkUploader uploader = new LocationMarkUploader(getActivity());
-                    uploader.setListener(new LocationMarkUploader.UploaderListener() {
-                        @Override
-                        public void onUploadCompleted(Exception ex) {
-                            dialog.dismiss();
-                            if (ex == null) {
-                                mUpdatesFragment.add(update);
-                            } else {
-                                log.error("Couldn't upload location marker", ex);
-                                AlertDialog errorDialog = new AlertDialog.Builder(getActivity())
-                                        .setIcon(R.drawable.ic_error_24dp)
-                                        .setTitle("A problem just happened")
-                                        .setMessage("Couldn't send update to server")
-                                        .create();
-                                errorDialog.show();
+                    if (!mGoogleApiClient.isConnected()) {
+                        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(@Nullable Bundle bundle) {
+                                mPhotoUpdateCreator.onActivityResult(data);
+                                mGoogleApiClient.unregisterConnectionCallbacks(this);
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onConnectionSuspended(int i) {
+
+                            }
+                        });
+                    } else {
+                        mPhotoUpdateCreator.onActivityResult(data);
+                    }
                 }
                 break;
             default:
@@ -169,5 +242,101 @@ public class WorldUpdatesFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @Nullable String[] permissions, @Nullable int[] grantResult) {
+        switch(requestCode) {
+            case PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION:
+                mPhotoUpdateCreator.onRequestPermissionsResult(permissions, grantResult);
+                break;
+        }
+    }
 
+    @Override
+    public void onRequestData() {
+        mPage++;
+        feedData();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mPostingEnabled = true;
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPostingEnabled = false;
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mPostingEnabled = false;
+        Log.e(TAG, "Error connecting to google api: " + connectionResult.getErrorMessage());
+    }
+
+    @Override
+    public void onUploadCompleted(Exception ex) {
+        if (ex == null) {
+            mPage = 1;
+            mUpdatesFragment.clear();
+            feedData();
+        }
+    }
+
+    public static class FetchResult<T> {
+        private T mResult;
+        private Throwable mThrowable;
+
+        public FetchResult(T result) {
+            mResult = result;
+        }
+
+        public FetchResult(Throwable throwable) {
+            mThrowable = throwable;
+        }
+
+        public boolean isSuccessful() { return mThrowable == null; }
+        public T getResult() { return mResult; }
+        public Throwable getException() { return mThrowable; }
+    }
+
+    public static class LocationMarksFetcher extends AsyncTask<Integer, Void, FetchResult<CollectorMarkResponse>> {
+        public interface OnPostExecuteListener {
+            void onPostExecute(FetchResult<CollectorMarkResponse> response);
+        }
+
+        private ServerApi mServerApi;
+        private OnPostExecuteListener mListener;
+
+        public LocationMarksFetcher(Context context) {
+            mServerApi = new ServerApi(context);
+        }
+
+        public void setListener(OnPostExecuteListener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        protected FetchResult<CollectorMarkResponse> doInBackground(Integer... params) {
+            int page = params[0];
+            int pageSize = params[1];
+
+            try {
+                CollectorMarkResponse response = mServerApi.getWorldLocationMarks(page, pageSize);
+                return new FetchResult<CollectorMarkResponse>(response);
+            } catch (Exception e) {
+                return new FetchResult<CollectorMarkResponse>(e);
+            }
+        }
+
+        @Override
+        public void onPostExecute(FetchResult<CollectorMarkResponse> response) {
+            if (mListener != null) {
+                mListener.onPostExecute(response);
+            }
+        }
+
+        public void fetch(int page, int pageSize) {
+            execute(page, pageSize);
+        }
+    }
 }

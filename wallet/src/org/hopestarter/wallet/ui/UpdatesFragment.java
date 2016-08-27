@@ -32,10 +32,16 @@ import java.util.List;
 
 
 public class UpdatesFragment extends Fragment {
+    public interface OnRequestDataListener {
+        void onRequestData();
+    }
 
     private static final String TAG = UpdatesFragment.class.getName();
     private static final Logger log = LoggerFactory.getLogger(UpdatesFragment.class);
     private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private boolean mLoading;
+    private OnRequestDataListener mRequestDataListener;
     private ProfileUpdatesAdapter mAdapter = new ProfileUpdatesAdapter();
 
     private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
@@ -71,7 +77,11 @@ public class UpdatesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLoading = true;
+    }
 
+    public void setOnRequestDataListener(OnRequestDataListener listener) {
+        mRequestDataListener = listener;
     }
 
     @Override
@@ -80,14 +90,46 @@ public class UpdatesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_updates, container, false);
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setAdapter(mAdapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new UpdateItemDecoration(getActivity()));
         mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 10);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy > 0) //check for scroll down
+                {
+                    long visibleItemCount = mLayoutManager.getChildCount();
+                    int totalItemCount = mLayoutManager.getItemCount();
+                    int pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (!mLoading)
+                    {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        {
+                            mLoading = true;
+                            if (mRequestDataListener != null) {
+                                mRequestDataListener.onRequestData();
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        if (mRecyclerView != null) {
+            mRecyclerView.clearOnScrollListeners();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -112,6 +154,10 @@ public class UpdatesFragment extends Fragment {
             int margin = Double.valueOf(Math.floor(10 * density)).intValue();
             outRect.set(margin, margin, margin, 0);
         }
+    }
+
+    public void askForData(boolean ask) {
+        mLoading = !ask;
     }
 
     public void add(UpdateInfo item) {
@@ -222,6 +268,8 @@ public class UpdatesFragment extends Fragment {
                         .centerCrop()
                         .listener(mImageLoaderListener)
                         .into(holder.attachedImageView);
+            } else {
+                Glide.clear(holder.attachedImageView);
             }
 
             String additionalInfo = String.format(

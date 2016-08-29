@@ -23,18 +23,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import org.hopestarter.wallet.data.UserInfoPrefs;
-import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.CollectorMarkResponse;
-import org.hopestarter.wallet.server_api.ForbiddenResourceException;
-import org.hopestarter.wallet.server_api.ISODateFormatFactory;
 import org.hopestarter.wallet.server_api.LocationMark;
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
-import org.hopestarter.wallet.server_api.NoTokenException;
-import org.hopestarter.wallet.server_api.ResourceNotFoundException;
-import org.hopestarter.wallet.server_api.ServerApi;
-import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.server_api.User;
 import org.hopestarter.wallet.server_api.UserInfo;
+import org.hopestarter.wallet.ui.LocationMarksFetcher.Author;
+import org.hopestarter.wallet.util.FetchResult;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
 import org.joda.time.DateTime;
@@ -43,7 +38,6 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,7 +198,7 @@ public class WorldUpdatesFragment extends Fragment implements UpdatesFragment.On
     }
 
     private void feedData() {
-        LocationMarksFetcher fetcher = new LocationMarksFetcher(getActivity());
+        LocationMarksFetcher fetcher = new LocationMarksFetcher(getActivity(), Author.ALL_USERS);
         fetcher.setListener(mOnPostFetch);
         fetcher.fetch(mPage, mPageSize);
     }
@@ -279,64 +273,6 @@ public class WorldUpdatesFragment extends Fragment implements UpdatesFragment.On
             mPage = 1;
             mUpdatesFragment.clear();
             feedData();
-        }
-    }
-
-    public static class FetchResult<T> {
-        private T mResult;
-        private Throwable mThrowable;
-
-        public FetchResult(T result) {
-            mResult = result;
-        }
-
-        public FetchResult(Throwable throwable) {
-            mThrowable = throwable;
-        }
-
-        public boolean isSuccessful() { return mThrowable == null; }
-        public T getResult() { return mResult; }
-        public Throwable getException() { return mThrowable; }
-    }
-
-    public static class LocationMarksFetcher extends AsyncTask<Integer, Void, FetchResult<CollectorMarkResponse>> {
-        public interface OnPostExecuteListener {
-            void onPostExecute(FetchResult<CollectorMarkResponse> response);
-        }
-
-        private ServerApi mServerApi;
-        private OnPostExecuteListener mListener;
-
-        public LocationMarksFetcher(Context context) {
-            mServerApi = new ServerApi(context);
-        }
-
-        public void setListener(OnPostExecuteListener listener) {
-            mListener = listener;
-        }
-
-        @Override
-        protected FetchResult<CollectorMarkResponse> doInBackground(Integer... params) {
-            int page = params[0];
-            int pageSize = params[1];
-
-            try {
-                CollectorMarkResponse response = mServerApi.getWorldLocationMarks(page, pageSize);
-                return new FetchResult<CollectorMarkResponse>(response);
-            } catch (Exception e) {
-                return new FetchResult<CollectorMarkResponse>(e);
-            }
-        }
-
-        @Override
-        public void onPostExecute(FetchResult<CollectorMarkResponse> response) {
-            if (mListener != null) {
-                mListener.onPostExecute(response);
-            }
-        }
-
-        public void fetch(int page, int pageSize) {
-            execute(page, pageSize);
         }
     }
 }

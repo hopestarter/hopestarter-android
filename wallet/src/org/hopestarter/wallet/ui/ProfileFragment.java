@@ -37,10 +37,10 @@ import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.CollectorMarkResponse;
 import org.hopestarter.wallet.server_api.LocationMark;
-import org.hopestarter.wallet.server_api.ServerApi;
-import org.hopestarter.wallet.server_api.User;
-import org.hopestarter.wallet.server_api.UserInfo;
+import org.hopestarter.wallet.server_api.LocationMarkUploader;
+import org.hopestarter.wallet.util.FetchResult;
 import org.hopestarter.wallet.util.ResourceUtils;
+import org.hopestarter.wallet.ui.LocationMarksFetcher.Author;
 import org.hopestarter.wallet_test.R;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ProfileFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ProfileFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, UpdatesFragment.OnRequestDataListener, LocationMarkUploader.UploaderListener {
     private static final String TAG = ProfileFragment.class.getName();
     private static final Logger log = LoggerFactory.getLogger(ProfileFragment.class);
 
@@ -63,6 +63,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
 
     // Permission request codes
     private static final int PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION = 0;
+    public static final int POSTS_PER_PAGE = 20;
 
     private UpdatesFragment mUpdatesFragment;
     private TextView mNumUpdates;
@@ -96,7 +97,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
         }
     };
 
-    private OwnLocationMarksFetcher.OnPostExecuteListener mOnPostFetch = new OwnLocationMarksFetcher.OnPostExecuteListener() {
+    private LocationMarksFetcher.OnPostExecuteListener mOnPostFetch = new LocationMarksFetcher.OnPostExecuteListener() {
         @Override
         public void onPostExecute(FetchResult<CollectorMarkResponse> result) {
             if (result.isSuccessful()) {
@@ -196,6 +197,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
         mNumUpdates = (TextView)rootView.findViewById(R.id.profile_updates);
 
         mUpdatesFragment = UpdatesFragment.newInstance();
+        mUpdatesFragment.setOnRequestDataListener(this);
 
         mPostBtn = (Button)rootView.findViewById(R.id.post_photo_update);
         mPostBtn.setOnClickListener(new View.OnClickListener() {
@@ -296,6 +298,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
         });
 
         mPhotoUpdateCreator = new PhotoUpdateCreator(this, mGoogleApiClient, PHOTO_UPDATE_DATA_REQUEST, PHOTO_UPDATE_PERMISSION_REQUEST_LOCATION);
+        mPhotoUpdateCreator.setUploadListener(this);
 
         feedData();
         updateNumberOfUpdates();
@@ -305,12 +308,12 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
     private void feedData() {
         feedProfileData();
         mPage = 1;
-        mPageSize = 20;
+        mPageSize = POSTS_PER_PAGE;
         feedUpdates();
     }
 
     private void feedUpdates() {
-        OwnLocationMarksFetcher fetcher = new OwnLocationMarksFetcher(getActivity());
+        LocationMarksFetcher fetcher = new LocationMarksFetcher(getActivity(), Author.CUR_USER);
         fetcher.setListener(mOnPostFetch);
         fetcher.fetch(mPage, mPageSize);
     }
@@ -419,61 +422,16 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
 
     }
 
-    public static class FetchResult<T> {
-        private T mResult;
-        private Throwable mThrowable;
-
-        public FetchResult(T result) {
-            mResult = result;
-        }
-
-        public FetchResult(Throwable throwable) {
-            mThrowable = throwable;
-        }
-
-        public boolean isSuccessful() { return mThrowable == null; }
-        public T getResult() { return mResult; }
-        public Throwable getException() { return mThrowable; }
+    @Override
+    public void onRequestData() {
+        mPage++;
+        feedUpdates();
     }
 
-    public static class OwnLocationMarksFetcher extends AsyncTask<Integer, Void, FetchResult<CollectorMarkResponse>> {
-        public interface OnPostExecuteListener {
-            void onPostExecute(FetchResult<CollectorMarkResponse> response);
-        }
-
-        private ServerApi mServerApi;
-        private OnPostExecuteListener mListener;
-
-        public OwnLocationMarksFetcher(Context context) {
-            mServerApi = new ServerApi(context);
-        }
-
-        public void setListener(OnPostExecuteListener listener) {
-            mListener = listener;
-        }
-
-        @Override
-        protected FetchResult<CollectorMarkResponse> doInBackground(Integer... params) {
-            int page = params[0];
-            int pageSize = params[1];
-
-            try {
-                CollectorMarkResponse response = mServerApi.getOwnLocationMarks(page, pageSize);
-                return new FetchResult<>(response);
-            } catch (Exception e) {
-                return new FetchResult<>(e);
-            }
-        }
-
-        @Override
-        public void onPostExecute(FetchResult<CollectorMarkResponse> response) {
-            if (mListener != null) {
-                mListener.onPostExecute(response);
-            }
-        }
-
-        public void fetch(int page, int pageSize) {
-            execute(page, pageSize);
-        }
+    @Override
+    public void onUploadCompleted(Exception ex) {
+        mUpdatesFragment.clear();
+        mPage = 1;
+        feedUpdates();
     }
 }

@@ -249,7 +249,7 @@ public class UpdatesFragment extends Fragment {
             holder.userNameView.setText(data.getUserName());
             holder.messageView.setText(data.getMessage());
 
-            RequestManager glide = Glide.with(getActivity());
+            RequestManager glide = Glide.with(UpdatesFragment.this);
 
             if (data.getProfilePictureUri() != null) {
                 glide.load(data.getProfilePictureUri())

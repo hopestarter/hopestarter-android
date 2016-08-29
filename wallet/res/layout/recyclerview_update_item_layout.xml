@@ -50,6 +50,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:scaleType="centerCrop"
         android:layout_below="@id/additional_info"
         android:layout_marginTop="10dp"
         android:id="@+id/attached_picture"/>

@@ -306,6 +306,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     private void feedData() {
+        feedFakeData();
         feedProfileData();
         mPage = 1;
         mPageSize = POSTS_PER_PAGE;
@@ -337,31 +338,6 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     private void feedFakeData() {
-        Uri path = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image);
-        Uri path2 = Uri.parse("android.resource://org.hopestarter.wallet_test/" + R.drawable.test_image2);
-
-        UpdateInfo info = new UpdateInfo.Builder()
-                .setUserName("Muhammad Erbil")
-                .setEthnicity("Syrian")
-                .setLocation("Samothrace, Greece")
-                .setUpdateDateMillis(System.currentTimeMillis() - 4 * 60 * 1000)
-                .setPictureUri(path)
-                .setMessage("The island we landed on was called Samothrace. We were so thankful to be there. We thought we'd reached safety.")
-                .setUpdateViews(344)
-                .build();
-
-        UpdateInfo info2 = new UpdateInfo.Builder()
-                .setUserName("Muhammad Erbil")
-                .setEthnicity("Syrian")
-                .setLocation("Samothrace, Greece")
-                .setUpdateDateMillis(System.currentTimeMillis() - 16 * 60 * 1000)
-                .setPictureUri(path2)
-                .setMessage("Syrian refugees are freezing to death as snow covers the region.")
-                .setUpdateViews(688)
-                .build();
-
-        mUpdatesFragment.addAll(new UpdateInfo[]{info, info2});
-
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
         mProfileDonations.setText(currencyFormat.format(46.30));
     }

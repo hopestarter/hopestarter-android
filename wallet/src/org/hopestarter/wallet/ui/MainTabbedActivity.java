@@ -1,7 +1,10 @@
 package org.hopestarter.wallet.ui;
 
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +16,15 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import org.hopestarter.wallet.WalletApplication;
+import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
 
@@ -24,11 +34,27 @@ public class MainTabbedActivity extends AbstractWalletActivity implements Wallet
     private ViewPager mViewPager;
     private Toolbar mToolbar;
     private Handler mHandler = new Handler();
+    private TabLayout mTabLayout;
+    private ImageView mTipPointer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_tabbed);
+        final ViewGroup rootLayout = (ViewGroup)getLayoutInflater().inflate(R.layout.activity_main_tabbed, null);
+        final ViewTreeObserver vto = rootLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    rootLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                setPointerPosition();
+            }
+        });
+
+        setContentView(rootLayout);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setNavigationIcon(null);
@@ -61,10 +87,44 @@ public class MainTabbedActivity extends AbstractWalletActivity implements Wallet
             public void onPageScrollStateChanged(int state) {}
         });
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        mTipPointer = (ImageView)findViewById(R.id.tip_pointer);
+
+        SharedPreferences preferences = getSharedPreferences(UserInfoPrefs.PREF_FILE, MODE_PRIVATE);
+        if (preferences.getBoolean(UserInfoPrefs.FIRST_TIME, true)) {
+            final RelativeLayout oneTimeStartupTip = (RelativeLayout)findViewById(R.id.onetime_startup_tip);
+            final RelativeLayout tipWrapper = (RelativeLayout)findViewById(R.id.tip_wrapper);
+            tipWrapper.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    oneTimeStartupTip.setVisibility(View.GONE);
+                    mTabLayout.getTabAt(2).select();
+                }
+            });
+            oneTimeStartupTip.setVisibility(View.VISIBLE);
+            Button tipCloseBtn = (Button)findViewById(R.id.onetime_tip_close_btn);
+            tipCloseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    oneTimeStartupTip.setVisibility(View.GONE);
+                }
+            });
+            preferences.edit()
+                    .putBoolean(UserInfoPrefs.FIRST_TIME, false)
+                    .apply();
+        }
 
         setSupportActionBar(mToolbar);
+    }
+
+    private void setPointerPosition() {
+        View tabView = ((ViewGroup)mTabLayout.getChildAt(0)).getChildAt(2);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mTipPointer.getLayoutParams();
+        params.setMargins(tabView.getLeft() + (tabView.getWidth() / 2) - (mTipPointer.getWidth() / 2), params.topMargin, params.rightMargin, params.bottomMargin);
+        mTipPointer.setLayoutParams(params);
+        mTipPointer.requestLayout();
     }
 
     @Override

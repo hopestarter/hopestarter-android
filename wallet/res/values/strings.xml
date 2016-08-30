@@ -356,5 +356,6 @@ A small network fee of <b>%s</b> will be paid.
     <string name="change_transaction_fee_text">Change transaction fee</string>
     <string name="send_receive_fragment_send_button_label">Send Bitcoins</string>
     <string name="send_receive_fragment_request_button_label">Request Bitcoins</string>
+    <string name="onetime_startup_tip_message">Tap here to see Photo Updates, post your own and share your story with donors worldwide.</string>
 
 </resources>

@@ -10,4 +10,5 @@ public class UserInfoPrefs {
     public static final String LAST_NAME = "LAST_NAME";
     public static final String ETHNICITY = "ETHNICITY";
     public static final String PROFILE_PIC = "PROFILE_PIC";
+    public static final String FIRST_TIME = "FIRST_TIME";
 }

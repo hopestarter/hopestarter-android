@@ -4,7 +4,10 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -40,12 +43,14 @@ import java.util.Date;
 public class PhotoUpdateCreator {
     private static final Logger log = LoggerFactory.getLogger(PhotoUpdateCreator.class);
     private static final String REQUEST_DIALOG_TAG = "requestdialog";
+    public static final int LOCATION_REQUEST_TIMEOUT = 10000;
     private final ProgressDialog mProgressDialog;
     private Fragment mFragment;
     private int mReqCode;
     private int mPermissionReqCode;
     private LocationMarkUploader.UploaderListener mListener;
     private GoogleApiClient mGoogleApiClient;
+    private Handler mHandler;
 
     public PhotoUpdateCreator(Fragment fragment, GoogleApiClient googleApiClient, int dataReqCode, int permissionReqCode) {
         mFragment = fragment;
@@ -58,6 +63,8 @@ public class PhotoUpdateCreator {
         mProgressDialog.setMessage("Please wait...");
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
+
+        mHandler = new Handler();
     }
 
     public void setUploadListener(LocationMarkUploader.UploaderListener listener) {
@@ -110,32 +117,52 @@ public class PhotoUpdateCreator {
 
     public void onActivityResult(final Intent data) {
         try {
-            mProgressDialog.show();
+            LocationManager manager = (LocationManager) mFragment.getActivity().getSystemService(Context.LOCATION_SERVICE );
+            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                new AlertDialog.Builder(mFragment.getActivity())
+                        .setTitle("Enable GPS")
+                        .setMessage("Please enable GPS for Hopestarter to send updates")
+                        .setPositiveButton(android.R.string.ok, null)
+                        .create()
+                        .show();
+                return;
+            }
 
-            LocationRequest locationRequest = new LocationRequest();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(5000);
+            mProgressDialog.show();
 
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
             if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, new LocationListener() {
-                    private boolean used;
+                AsyncLocationRequest locationRequest = new AsyncLocationRequest(mGoogleApiClient);
+                locationRequest.setTimeout(LOCATION_REQUEST_TIMEOUT);
+                locationRequest.setLocationRequestListener(new AsyncLocationRequest.LocationRequestListener() {
                     @Override
-                    public void onLocationChanged(Location location) {
-                        if (!used) { // Location service runs in another thread, this avoids this callback to run more than once
-                            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); // Don't need the callback anymore
-                            used = true;
-                            sendLocationUpdate(location, data);
-                        }
+                    public void onLocationFound(Location location) {
+                        sendLocationUpdate(location, data);
+                    }
+
+                    @Override
+                    public void onLocationRequestTimeout() {
+                        PhotoUpdateCreator.this.onLocationRequestTimeout();
                     }
                 });
+                locationRequest.request();
             } else {
                 sendLocationUpdate(location, data);
             }
         } catch(SecurityException e) {
             // Permissions have changed while uploading location
         }
+    }
+
+    private void onLocationRequestTimeout() {
+        mProgressDialog.dismiss();
+        new AlertDialog.Builder(mFragment.getActivity())
+                .setTitle("Couldn't retrieve GPS location")
+                .setMessage("Please check your GPS signal and make sure you are at least connected to GSM or Wifi is enabled, then try again.")
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+                .show();
     }
 
     private void sendLocationUpdate(Location location, Intent data) {

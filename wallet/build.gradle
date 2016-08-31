@@ -45,7 +45,7 @@ android {
 
     productFlavors {
         dev {
-            minSdkVersion 21
+            minSdkVersion 19
             targetSdkVersion 23
             versionName "1.0-test"
         }

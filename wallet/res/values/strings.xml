@@ -357,5 +357,9 @@ A small network fee of <b>%s</b> will be paid.
     <string name="send_receive_fragment_send_button_label">Send Bitcoins</string>
     <string name="send_receive_fragment_request_button_label">Request Bitcoins</string>
     <string name="onetime_startup_tip_message">Tap here to see Photo Updates, post your own and share your story with donors worldwide.</string>
+    <string name="post_update_waiting_dialog_title">Uploading update</string>
+    <string name="post_update_waiting_dialog_message">Please wait. Uploading the picture may take a while, depending on network conditions.</string>
+    <string name="enable_gps_dialog_title">Enable GPS</string>
+    <string name="enable_gps_dialog_message">Please enable GPS for Hopestarter to send updates</string>
 
 </resources>

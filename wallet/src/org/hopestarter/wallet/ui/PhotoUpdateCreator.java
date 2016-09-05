@@ -8,8 +8,6 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
@@ -19,10 +17,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
@@ -59,8 +54,8 @@ public class PhotoUpdateCreator {
         mGoogleApiClient = googleApiClient;
 
         mProgressDialog = new ProgressDialog(fragment.getActivity());
-        mProgressDialog.setTitle("Uploading update");
-        mProgressDialog.setMessage("Please wait...");
+        mProgressDialog.setTitle(fragment.getActivity().getString(R.string.post_update_waiting_dialog_title));
+        mProgressDialog.setMessage(fragment.getActivity().getString(R.string.post_update_waiting_dialog_message));
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
 
@@ -75,7 +70,7 @@ public class PhotoUpdateCreator {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermissions();
         } else {
-            launchCreateNewUpdateActivity();
+            launchCreateActivityIfGPSEnabled();
         }
     }
 
@@ -84,7 +79,7 @@ public class PhotoUpdateCreator {
         int locationPermission = mFragment.getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (locationPermission == PackageManager.PERMISSION_GRANTED) {
-            launchCreateNewUpdateActivity();
+            launchCreateActivityIfGPSEnabled();
         } else {
             PermissionRequestDialog requestDialog = new PermissionRequestDialog();
 
@@ -104,6 +99,15 @@ public class PhotoUpdateCreator {
         mFragment.requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, mPermissionReqCode);
     }
 
+    private void launchCreateActivityIfGPSEnabled() {
+        if (!isGPSActive()) {
+            showEnableGPSDialog();
+            return;
+        }
+
+        launchCreateNewUpdateActivity();
+    }
+
     private void launchCreateNewUpdateActivity() {
         Intent activityIntent = new Intent(mFragment.getActivity(), CreateNewUpdateActivity.class);
         mFragment.startActivityForResult(activityIntent, mReqCode);
@@ -111,20 +115,28 @@ public class PhotoUpdateCreator {
 
     public void onRequestPermissionsResult(String[] permissions, int[] grantResult) {
         if (grantResult[0] == PackageManager.PERMISSION_GRANTED) {
-            launchCreateNewUpdateActivity();
+            launchCreateActivityIfGPSEnabled();
         }
+    }
+
+    private boolean isGPSActive() {
+        LocationManager manager = (LocationManager) mFragment.getActivity().getSystemService(Context.LOCATION_SERVICE);
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private void showEnableGPSDialog() {
+        new AlertDialog.Builder(mFragment.getActivity())
+                .setTitle(R.string.enable_gps_dialog_title)
+                .setMessage(R.string.enable_gps_dialog_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+                .show();
     }
 
     public void onActivityResult(final Intent data) {
         try {
-            LocationManager manager = (LocationManager) mFragment.getActivity().getSystemService(Context.LOCATION_SERVICE );
-            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                new AlertDialog.Builder(mFragment.getActivity())
-                        .setTitle("Enable GPS")
-                        .setMessage("Please enable GPS for Hopestarter to send updates")
-                        .setPositiveButton(android.R.string.ok, null)
-                        .create()
-                        .show();
+            if (!isGPSActive()) {
+                showEnableGPSDialog();
                 return;
             }
 

@@ -77,7 +77,7 @@ public class WorldUpdatesFragment extends Fragment implements UpdatesFragment.On
                     String message = mark.getProperties().getText();
                     String location = "unknown";
 
-                    int updateViews = 0;
+                    int updateViews = 386;
 
                     DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime();
                     DateTime updateDate = dateTimeFormatter.parseDateTime(mark.getProperties().getCreatedDate());

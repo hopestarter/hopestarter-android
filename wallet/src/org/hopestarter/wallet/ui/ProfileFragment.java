@@ -107,7 +107,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
                 List<LocationMark> locationMarks = response.getResults().getLocationMarks();
                 for(LocationMark mark : locationMarks) {
                     String message = mark.getProperties().getText();
-                    String location = "unknown";
+                    String location = "Athens, Greece";
 
                     int updateViews = 386;
 

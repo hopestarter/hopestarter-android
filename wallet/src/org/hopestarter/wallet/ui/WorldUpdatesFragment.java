@@ -75,7 +75,7 @@ public class WorldUpdatesFragment extends Fragment implements UpdatesFragment.On
                     String userName = userInfo.getFirstName() + " " + userInfo.getLastName();
                     String ethnicity = user.getEthnicities().get(0);
                     String message = mark.getProperties().getText();
-                    String location = "unknown";
+                    String location = "Athens, Greece";
 
                     int updateViews = 386;
 

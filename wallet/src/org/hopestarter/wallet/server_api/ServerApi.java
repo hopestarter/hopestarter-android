@@ -2,8 +2,6 @@ package org.hopestarter.wallet.server_api;
 
 import android.content.Context;
 
-import com.amazonaws.mobileconnectors.s3.transfermanager.Upload;
-
 import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.slf4j.Logger;
@@ -56,7 +54,6 @@ public class ServerApi {
                 .addConverterFactory(new TokenResponseConverterFactory())
                 .addConverterFactory(new UserInfoResponseConverterFactory())
                 .addConverterFactory(new UserInfoRequestConverterFactory())
-                .addConverterFactory(new UploadImageResponseConverterFactory())
                 .addConverterFactory(new OutboundLocationMarkConverterFactory())
                 .addConverterFactory(new LocationMarkConverterFactory())
                 .addConverterFactory(new CollectorMarkResponse.ConverterFactory())
@@ -120,28 +117,6 @@ public class ServerApi {
 
         Call<UserInfo> call = mApiImpl.setUserInfo(mAuthHeaderValue, info);
         Response<UserInfo> response = call.execute();
-        if (response.isSuccessful()) {
-            return response.body();
-        } else {
-            switch (response.code()) {
-                case 401:
-                    throw new AuthenticationFailed();
-                case 403:
-                    throw new ForbiddenResourceException();
-                default:
-                    throw new UnexpectedServerResponseException(response.code());
-            }
-        }
-    }
-
-    public UploadImageResponse requestImageUpload() throws NoTokenException, IOException, AuthenticationFailed, ForbiddenResourceException, UnexpectedServerResponseException {
-        if (mAuthHeaderValue.isEmpty()) {
-            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
-        }
-
-        Call<UploadImageResponse> call = mApiImpl.requestImageUpload(mAuthHeaderValue);
-        Response<UploadImageResponse> response = call.execute();
-
         if (response.isSuccessful()) {
             return response.body();
         } else {

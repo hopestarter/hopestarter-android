@@ -9,7 +9,6 @@ import org.hopestarter.wallet.server_api.OutboundLocationMarkConverterFactory;
 import org.hopestarter.wallet.server_api.Point;
 import org.hopestarter.wallet.server_api.TokenResponse;
 import org.hopestarter.wallet.server_api.TokenResponseConverterFactory;
-import org.hopestarter.wallet.server_api.UploadImageResponseConverterFactory;
 import org.hopestarter.wallet.server_api.UserInfoRequestConverterFactory;
 import org.hopestarter.wallet.server_api.UserInfoResponseConverterFactory;
 import org.junit.Assert;
@@ -17,9 +16,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 
 import okhttp3.MediaType;
@@ -29,7 +25,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.http.Part;
 
 /**
  * Created by Adrian on 29/08/2016.
@@ -42,7 +37,6 @@ public class LocationMarksGenerator {
                 .addConverterFactory(new TokenResponseConverterFactory())
                 .addConverterFactory(new UserInfoResponseConverterFactory())
                 .addConverterFactory(new UserInfoRequestConverterFactory())
-                .addConverterFactory(new UploadImageResponseConverterFactory())
                 .addConverterFactory(new OutboundLocationMarkConverterFactory())
                 .addConverterFactory(new LocationMarkConverterFactory())
                 .addConverterFactory(new CollectorMarkResponse.ConverterFactory())

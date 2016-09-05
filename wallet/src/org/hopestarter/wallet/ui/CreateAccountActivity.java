@@ -27,12 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -48,7 +42,6 @@ import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
-import org.hopestarter.wallet.server_api.UploadImageResponse;
 import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet_test.R;
@@ -71,9 +64,6 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
     private EditText mLastNameView;
     private EditText mEthnicityView;
     private Uri mProfilePicture;
-
-    private TransferUtility mTransferUtility;
-
 
     private RequestListener<? super Uri, GlideDrawable> mImageLoaderListener = new RequestListener<Uri, GlideDrawable>() {
         @Override
@@ -200,9 +190,6 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
     @Override
     public void onDestroy() {
-        if (mTransferUtility != null) {
-            mTransferUtility.cancelAllWithType(TransferType.ANY);
-        }
         super.onDestroy();
     }
 

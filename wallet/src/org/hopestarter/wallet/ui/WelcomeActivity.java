@@ -199,8 +199,9 @@ public class WelcomeActivity extends Activity {
         switch(reqCode) {
             case ACCOUNT_CREATION_REQ_CODE:
                 if (resCode == RESULT_OK) {
-                    startMainActivity();
-                    finish();
+                    if (accountExists()) {
+                        updateUserInfo();
+                    }
                 }
         }
     }

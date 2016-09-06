@@ -338,7 +338,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
 
     }
 
-    private class AccountCreationResult {
+    private static class AccountCreationResult {
         public AccountCreationResult(String token) {
             this.token = token;
         }

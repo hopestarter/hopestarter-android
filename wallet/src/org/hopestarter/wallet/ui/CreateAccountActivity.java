@@ -41,6 +41,7 @@ import org.hopestarter.wallet.server_api.ForbiddenResourceException;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.server_api.StagingApi;
+import org.hopestarter.wallet.server_api.TokenResponse;
 import org.hopestarter.wallet.server_api.UnexpectedServerResponseException;
 import org.hopestarter.wallet.server_api.UserInfo;
 import org.hopestarter.wallet.util.ResourceUtils;
@@ -240,16 +241,16 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                 profilePicture = params[4];
 
                 try {
-                    StagingApi stagingApi = new StagingApi();
-                    ServerApi serverApi = new ServerApi(thisActivity);
+                    StagingApi stagingApi = ((WalletApplication)getApplication()).getStagingApi();
+                    ServerApi serverApi = ((WalletApplication)getApplication()).getServerApi();
 
                     // FIXME: Replace mock authentication before official release
                     int respCode = stagingApi.signUp(imei, "demopassword", firstName, lastName, ethnicity);
 
                     if (respCode == 200 || respCode == 302) {
-                        String token = serverApi.getToken(imei, "demopassword");
-                        if (token != null) {
-                            saveUserInformation(token, null, null, null, null);
+                        TokenResponse tokenResp = serverApi.getToken(imei, "demopassword");
+                        if (tokenResp != null) {
+                            saveUserInformation(tokenResp.getAccessToken(), tokenResp.getRefreshToken(), null, null, null, null);
                             serverApi.updateAuthHeaderValue();
 
                             if (profilePicture != null && !profilePicture.isEmpty()) {
@@ -257,7 +258,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                             }
 
                             sendBitcoinAddress(serverApi);
-                            return new AccountCreationResult(token);
+                            return new AccountCreationResult(tokenResp);
                         } else {
                             String errorMsg = getString(R.string.account_creation_error_no_token);
                             return new AccountCreationResult(new NoTokenException(errorMsg));
@@ -287,7 +288,8 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             protected void onPostExecute(AccountCreationResult result) {
                 progressDialog.dismiss();
                 if (result.token != null) {
-                    saveUserInformation(result.token, firstName, lastName, ethnicity, null);
+                    TokenResponse token = result.token;
+                    saveUserInformation(token.getAccessToken(), token.getRefreshToken(), firstName, lastName, ethnicity, null);
                     setResult(RESULT_OK);
                     finish();
 
@@ -319,13 +321,14 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
     }
 
     private void clearUserInformation() {
-        saveUserInformation(null, null, null, null, null);
+        saveUserInformation(null, null, null, null, null, null);
     }
 
-    private void saveUserInformation(String token, String firstName, String lastName, String ethnicity, String profilePicture) {
+    private void saveUserInformation(String token, String refreshToken, String firstName, String lastName, String ethnicity, String profilePicture) {
         SharedPreferences prefs = getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
         boolean success = prefs.edit()
                 .putString(UserInfoPrefs.TOKEN, token)
+                .putString(UserInfoPrefs.REFRESH_TOKEN, refreshToken)
                 .putString(UserInfoPrefs.FIRST_NAME, firstName)
                 .putString(UserInfoPrefs.LAST_NAME, lastName)
                 .putString(UserInfoPrefs.ETHNICITY, ethnicity)
@@ -335,11 +338,10 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         if (!success) {
             log.error("user information couldn't be saved");
         }
-
     }
 
     private static class AccountCreationResult {
-        public AccountCreationResult(String token) {
+        public AccountCreationResult(TokenResponse token) {
             this.token = token;
         }
 
@@ -347,7 +349,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             this.error = error;
         }
 
-        public String token;
+        public TokenResponse token;
         public Exception error;
     }
 }

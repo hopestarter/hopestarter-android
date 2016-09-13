@@ -5,14 +5,12 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.hopestarter.wallet.WalletApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-/**
- * Created by Adrian on 16/04/2016.
- */
 public class LocationMarkUploader extends AsyncTask<OutboundLocationMark, Integer, Exception> {
     private static final Logger log = LoggerFactory.getLogger("LocationMarkUpl");
     private static final String TAG = "LocationMarkUpl";
@@ -31,7 +29,7 @@ public class LocationMarkUploader extends AsyncTask<OutboundLocationMark, Intege
 
     @Override
     protected Exception doInBackground(OutboundLocationMark... params) {
-        ServerApi serverApi = new ServerApi(mContext);
+        ServerApi serverApi = ((WalletApplication)mContext.getApplication()).getServerApi();
 
         for(OutboundLocationMark inputLocationMark : params) {
             try {

@@ -27,7 +27,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by Adrian on 29/08/2016.
+ * Fills a server instance with location marks
  */
 public class LocationMarksGenerator {
     @Test
@@ -42,7 +42,7 @@ public class LocationMarksGenerator {
                 .addConverterFactory(new CollectorMarkResponse.ConverterFactory())
                 .build().create(IServerApi.class);
 
-        Call<TokenResponse> loginCall = api.getToken("password", "864587024232887", "demopassword", "set-location update-profile");
+        Call<TokenResponse> loginCall = api.getToken("password", "864587024232887", "demopassword", null, "set-location update-profile");
         Response<TokenResponse> loginResponse = loginCall.execute();
         Assert.assertTrue(loginResponse.isSuccessful());
         String token = loginResponse.body().getAccessToken();

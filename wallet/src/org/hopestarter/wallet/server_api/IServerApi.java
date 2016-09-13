@@ -19,7 +19,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
- * Created by Adrian on 11/02/2016.
+ * Server api interface definition for Retrofit
  */
 public interface IServerApi {
     @FormUrlEncoded()
@@ -27,28 +27,35 @@ public interface IServerApi {
     @POST("api/o/token/")
     Call<TokenResponse> getToken(@Field("grant_type") String grantType,
             @Field("username") String username, @Field("password") String password,
-            @Field("scope") String scope);
+            @Field("refresh_token") String refreshToken, @Field("scope") String scope);
 
     @GET("api/user/profile/")
     Call<UserInfo> getUserInfo(@Header("Authorization") String authHeaderValue);
 
     @PUT("api/user/profile/")
-    Call<UserInfo> setUserInfo(@Header("Authorization") String authHeaderValue, @Body UserInfo userInfo);
+    Call<UserInfo> setUserInfo(@Header("Authorization") String authHeaderValue,
+            @Body UserInfo userInfo);
 
     @Multipart
     @PUT("api/user/profile/picture")
-    Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue, @Part MultipartBody.Part picture);
+    Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue,
+            @Part MultipartBody.Part picture);
 
     @Multipart
     @PUT("api/collector/image/{markid}/")
-    Call<ResponseBody> uploadPictureForMark(@Header("Authorization") String authHeaderValue, @Path("markid") Long markId, @Part MultipartBody.Part picture);
+    Call<ResponseBody> uploadPictureForMark(
+            @Header("Authorization") String authHeaderValue, @Path("markid") Long markId,
+            @Part MultipartBody.Part picture);
 
     @POST("api/collector/mark/")
-    Call<LocationMark> uploadLocationMark(@Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);
+    Call<LocationMark> uploadLocationMark(
+            @Header("Authorization") String authHeaderValue, @Body OutboundLocationMark locationMark);
 
     @GET("api/collector/marks/")
-    Call<CollectorMarkResponse> getWorldLocationMarks(@Header("Authorization") String authHeaderValue, @Query("page_size") int size, @Query("page") int pageNum);
+    Call<CollectorMarkResponse> getWorldLocationMarks(@Header("Authorization") String authHeaderValue,
+            @Query("page_size") int size, @Query("page") int pageNum);
 
     @GET("api/user/mark/")
-    Call<CollectorMarkResponse> getOwnLocationMarks(@Header("Authorization") String authHeaderValue, @Query("page_size") int size, @Query("page") int pageNum);
+    Call<CollectorMarkResponse> getOwnLocationMarks(@Header("Authorization") String authHeaderValue,
+            @Query("page_size") int size, @Query("page") int pageNum);
 }

@@ -1,8 +1,10 @@
 package org.hopestarter.wallet.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.server_api.CollectorMarkResponse;
 import org.hopestarter.wallet.server_api.ServerApi;
 import org.hopestarter.wallet.util.FetchResult;
@@ -25,8 +27,8 @@ public class LocationMarksFetcher extends AsyncTask<Integer, Void, FetchResult<C
     private Author mAuthor;
     private OnPostExecuteListener mListener;
 
-    public LocationMarksFetcher(Context context, Author author) {
-        mServerApi = new ServerApi(context);
+    public LocationMarksFetcher(Activity context, Author author) {
+        mServerApi = ((WalletApplication)context.getApplication()).getServerApi();
         mAuthor = author;
     }
 

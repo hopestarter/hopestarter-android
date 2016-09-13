@@ -1,6 +1,8 @@
 package org.hopestarter.wallet.server_api;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.data.UserInfoPrefs;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -22,9 +25,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by Adrian on 11/02/2016.
+ * Server api client
  */
 public class ServerApi {
+    private static final String TAG = ServerApi.class.getSimpleName();
     private final Retrofit mApiRetrofit;
     private final IServerApi mApiImpl;
     private final Context mContext;
@@ -33,19 +37,69 @@ public class ServerApi {
     public ServerApi(Context context) {
         mContext = context;
         Interceptor interceptor = new Interceptor() {
-            private final Logger log = LoggerFactory.getLogger(ServerApi.class);
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
-                log.debug("Requesting " + request.method() + " " + request.url().toString());
                 okhttp3.Response response = chain.proceed(request);
-                log.debug("Response code " + Integer.toString(response.code()) + " from " +request.url().toString());
-                return response;
+
+                String lastPathSeg = request.url().pathSegments().get(request.url().pathSegments().size() - 1);
+                if (response.code() == 403 && !lastPathSeg.equals("token")) {
+                    synchronized (this) {
+                        okhttp3.Response newResponse;
+                        SharedPreferences prefs = mContext.getSharedPreferences(UserInfoPrefs.PREF_FILE, Context.MODE_PRIVATE);
+                        String authHeaderValue = request.header("Authorization");
+                        boolean tokenInvalid = false;
+                        int tokenStartPos = authHeaderValue.indexOf(" ") + 1;
+                        if (tokenStartPos >= authHeaderValue.length()) {
+                            tokenInvalid = true;
+                        } else {
+                            String currentToken = prefs.getString(UserInfoPrefs.TOKEN, "");
+                            String requestToken = authHeaderValue.substring(tokenStartPos);
+                            if (currentToken.equals(requestToken)) {
+                                tokenInvalid = true;
+                            }
+                        }
+
+                        if (tokenInvalid) {
+                            Log.d(TAG, "Refreshing token...");
+                            String refToken = prefs.getString(UserInfoPrefs.REFRESH_TOKEN, "");
+                            if (!refToken.isEmpty()) {
+                                Call<TokenResponse> tokenCall = mApiImpl.getToken("refresh_token", null, null, refToken, null);
+                                Response<TokenResponse> tokenResponse = tokenCall.execute();
+                                if (tokenResponse.isSuccessful()) {
+                                    TokenResponse parsedTokenResp = tokenResponse.body();
+                                    prefs.edit().putString(UserInfoPrefs.TOKEN, parsedTokenResp.getAccessToken())
+                                            .putString(UserInfoPrefs.REFRESH_TOKEN, parsedTokenResp.getRefreshToken())
+                                            .commit();
+                                    updateAuthHeaderValue();
+
+                                    Log.d(TAG, "Token refreshed, trying again last request...");
+                                    Request newRequest = request.newBuilder().header("Authorization", mAuthHeaderValue).build();
+                                    newResponse = chain.proceed(newRequest);
+                                } else {
+                                    newResponse = response;
+                                }
+                            } else {
+                                newResponse = response;
+                            }
+                        } else {
+                            Log.d(TAG, "Token was refreshed while we did last request, retrying...");
+                            updateAuthHeaderValue();
+                            Request newRequest = request.newBuilder().header("Authorization", mAuthHeaderValue).build();
+                            newResponse = chain.proceed(newRequest);
+                        }
+
+                        response.body().close();
+                        return newResponse;
+                    }
+                } else {
+                    return response;
+                }
             }
         };
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(interceptor)
+                .addInterceptor(interceptor)
                 .build();
 
         mApiRetrofit = new Retrofit.Builder()
@@ -71,12 +125,11 @@ public class ServerApi {
                 .getString(UserInfoPrefs.TOKEN, "");
     }
 
-    public String getToken(String username, String password) throws IOException, AuthenticationFailed, UnexpectedServerResponseException {
-        Call<TokenResponse> call = mApiImpl.getToken("password", username, password, "set-location update-profile");
+    public TokenResponse getToken(String username, String password) throws IOException, AuthenticationFailed, UnexpectedServerResponseException {
+        Call<TokenResponse> call = mApiImpl.getToken("password", username, password, null, "set-location update-profile");
         Response<TokenResponse> response = call.execute();
         if (response.isSuccessful()) {
-            TokenResponse tokenResp = response.body();
-            return tokenResp.getAccessToken();
+            return response.body();
         } else {
             switch (response.code()) {
                 case 401:

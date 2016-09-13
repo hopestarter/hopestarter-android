@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.ForbiddenResourceException;
@@ -72,7 +73,7 @@ public class WelcomeActivity extends Activity {
         AsyncTask<Void, Void, Exception> updateUserInfo = new AsyncTask<Void, Void, Exception>() {
             @Override
             protected Exception doInBackground(Void... params) {
-                ServerApi serverApi = new ServerApi(context);
+                ServerApi serverApi = ((WalletApplication)getApplication()).getServerApi();
                 try {
                     UserInfo info = serverApi.getUserInfo();
 

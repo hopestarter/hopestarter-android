@@ -43,6 +43,8 @@ import org.bitcoinj.store.WalletProtobufSerializer;
 import org.bitcoinj.utils.Threading;
 import org.bitcoinj.wallet.Protos;
 import org.bitcoinj.wallet.WalletFiles;
+import org.hopestarter.wallet.server_api.ServerApi;
+import org.hopestarter.wallet.server_api.StagingApi;
 import org.hopestarter.wallet_test.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +64,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import retrofit2.Retrofit;
 
 import org.hopestarter.wallet.service.BlockchainService;
 import org.hopestarter.wallet.service.BlockchainServiceImpl;
@@ -78,18 +75,18 @@ import org.hopestarter.wallet.util.Io;
  */
 public class WalletApplication extends Application
 {
-	private Configuration config;
-	private ActivityManager activityManager;
+	private Configuration mConfig;
+	private ActivityManager mActivityManager;
 
-	private Intent blockchainServiceIntent;
-	private Intent blockchainServiceCancelCoinsReceivedIntent;
-	private Intent blockchainServiceResetBlockchainIntent;
+	private Intent mBlockchainServiceIntent;
+	private Intent mBlockchainServiceCancelCoinsReceivedIntent;
+	private Intent mBlockchainServiceResetBlockchainIntent;
 
-	private File walletFile;
-	private Wallet wallet;
-	private PackageInfo packageInfo;
-	private Retrofit stagingRetrofit;
-	private Retrofit apiRetrofit;
+	private File mWalletFile;
+	private Wallet mWallet;
+	private PackageInfo mPackageInfo;
+	private StagingApi mStagingApi;
+	private ServerApi mServerApi;
 
 	public static final String ACTION_WALLET_REFERENCE_CHANGED = WalletApplication.class.getPackage().getName() + ".wallet_reference_changed";
 
@@ -113,7 +110,7 @@ public class WalletApplication extends Application
 
 		super.onCreate();
 
-		packageInfo = packageInfoFromContext(this);
+		mPackageInfo = packageInfoFromContext(this);
 
 		CrashReporter.init(getCacheDir());
 
@@ -123,37 +120,42 @@ public class WalletApplication extends Application
 			public void uncaughtException(final Thread thread, final Throwable throwable)
 			{
 				log.info("bitcoinj uncaught exception", throwable);
-				CrashReporter.saveBackgroundTrace(throwable, packageInfo);
+				CrashReporter.saveBackgroundTrace(throwable, mPackageInfo);
 			}
 		};
 
 		initMnemonicCode();
 
-		initRetrofit();
+		initServerApi();
 
-		config = new Configuration(PreferenceManager.getDefaultSharedPreferences(this), getResources());
-		activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		mConfig = new Configuration(PreferenceManager.getDefaultSharedPreferences(this), getResources());
+		mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
-		blockchainServiceIntent = new Intent(this, BlockchainServiceImpl.class);
-		blockchainServiceCancelCoinsReceivedIntent = new Intent(BlockchainService.ACTION_CANCEL_COINS_RECEIVED, null, this,
+		mBlockchainServiceIntent = new Intent(this, BlockchainServiceImpl.class);
+		mBlockchainServiceCancelCoinsReceivedIntent = new Intent(BlockchainService.ACTION_CANCEL_COINS_RECEIVED, null, this,
 				BlockchainServiceImpl.class);
-		blockchainServiceResetBlockchainIntent = new Intent(BlockchainService.ACTION_RESET_BLOCKCHAIN, null, this, BlockchainServiceImpl.class);
+		mBlockchainServiceResetBlockchainIntent = new Intent(BlockchainService.ACTION_RESET_BLOCKCHAIN, null, this, BlockchainServiceImpl.class);
 
-		walletFile = getFileStreamPath(Constants.Files.WALLET_FILENAME_PROTOBUF);
+		mWalletFile = getFileStreamPath(Constants.Files.WALLET_FILENAME_PROTOBUF);
 
 		loadWalletFromProtobuf();
 
-		if (config.versionCodeCrossed(packageInfo.versionCode, VERSION_CODE_SHOW_BACKUP_REMINDER) && !wallet.getImportedKeys().isEmpty())
+		if (mConfig.versionCodeCrossed(mPackageInfo.versionCode, VERSION_CODE_SHOW_BACKUP_REMINDER) && !mWallet.getImportedKeys().isEmpty())
 		{
 			log.info("showing backup reminder once, because of imported keys being present");
-			config.armBackupReminder();
+			mConfig.armBackupReminder();
 		}
 
-		config.updateLastVersionCode(packageInfo.versionCode);
+		mConfig.updateLastVersionCode(mPackageInfo.versionCode);
 
 		afterLoadWallet();
 
 		cleanupFiles();
+	}
+
+	private void initServerApi() {
+		mServerApi = new ServerApi(this);
+		mStagingApi = new StagingApi();
 	}
 
 	@Override
@@ -162,41 +164,12 @@ public class WalletApplication extends Application
 		MultiDex.install(this);
 	}
 
-	private void initRetrofit() {
-		initApiRetrofit();
-	}
-
-	private void initApiRetrofit() {
-		Interceptor interceptor = new Interceptor() {
-			private final Logger log = LoggerFactory.getLogger("OkHttpInterceptor");
-			@Override
-			public Response intercept(Chain chain) throws IOException {
-				Request request = chain.request();
-				log.debug("Requesting " + request.method() + " " + request.url().toString());
-				Response response = chain.proceed(request);
-				log.debug("Response code " + Integer.toString(response.code()) + " from " +request.url().toString());
-				return response;
-			}
-		};
-
-		OkHttpClient client = new OkHttpClient.Builder()
-				.addNetworkInterceptor(interceptor)
-				.build();
-
-		apiRetrofit = new Retrofit.Builder()
-				.client(client)
-				.baseUrl(Constants.API_BASE_URL)
-				.build();
-	}
-
-	public Retrofit getApiRetrofit() { return apiRetrofit; }
-
 	private void afterLoadWallet()
 	{
-		wallet.autosaveToFile(walletFile, 10, TimeUnit.SECONDS, new WalletAutosaveEventListener());
+		mWallet.autosaveToFile(mWalletFile, 10, TimeUnit.SECONDS, new WalletAutosaveEventListener());
 
 		// clean up spam
-		wallet.cleanup();
+		mWallet.cleanup();
 
 		migrateBackup();
 	}
@@ -266,6 +239,14 @@ public class WalletApplication extends Application
 		}
 	}
 
+	public StagingApi getStagingApi() {
+		return mStagingApi;
+	}
+
+	public ServerApi getServerApi() {
+		return mServerApi;
+	}
+
 	private static final class WalletAutosaveEventListener implements WalletFiles.Listener
 	{
 		@Override
@@ -284,17 +265,17 @@ public class WalletApplication extends Application
 
 	public Configuration getConfiguration()
 	{
-		return config;
+		return mConfig;
 	}
 
 	public Wallet getWallet()
 	{
-		return wallet;
+		return mWallet;
 	}
 
 	private void loadWalletFromProtobuf()
 	{
-		if (walletFile.exists())
+		if (mWalletFile.exists())
 		{
 			final long start = System.currentTimeMillis();
 
@@ -302,14 +283,14 @@ public class WalletApplication extends Application
 
 			try
 			{
-				walletStream = new FileInputStream(walletFile);
+				walletStream = new FileInputStream(mWalletFile);
 
-				wallet = new WalletProtobufSerializer().readWallet(walletStream);
+				mWallet = new WalletProtobufSerializer().readWallet(walletStream);
 
-				if (!wallet.getParams().equals(Constants.NETWORK_PARAMETERS))
-					throw new UnreadableWalletException("bad wallet network parameters: " + wallet.getParams().getId());
+				if (!mWallet.getParams().equals(Constants.NETWORK_PARAMETERS))
+					throw new UnreadableWalletException("bad wallet network parameters: " + mWallet.getParams().getId());
 
-				log.info("wallet loaded from: '" + walletFile + "', took " + (System.currentTimeMillis() - start) + "ms");
+				log.info("wallet loaded from: '" + mWalletFile + "', took " + (System.currentTimeMillis() - start) + "ms");
 			}
 			catch (final FileNotFoundException x)
 			{
@@ -317,7 +298,7 @@ public class WalletApplication extends Application
 
 				Toast.makeText(WalletApplication.this, x.getClass().getName(), Toast.LENGTH_LONG).show();
 
-				wallet = restoreWalletFromBackup();
+				mWallet = restoreWalletFromBackup();
 			}
 			catch (final UnreadableWalletException x)
 			{
@@ -325,7 +306,7 @@ public class WalletApplication extends Application
 
 				Toast.makeText(WalletApplication.this, x.getClass().getName(), Toast.LENGTH_LONG).show();
 
-				wallet = restoreWalletFromBackup();
+				mWallet = restoreWalletFromBackup();
 			}
 			finally
 			{
@@ -342,23 +323,23 @@ public class WalletApplication extends Application
 				}
 			}
 
-			if (!wallet.isConsistent())
+			if (!mWallet.isConsistent())
 			{
-				Toast.makeText(this, "inconsistent wallet: " + walletFile, Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "inconsistent wallet: " + mWalletFile, Toast.LENGTH_LONG).show();
 
-				wallet = restoreWalletFromBackup();
+				mWallet = restoreWalletFromBackup();
 			}
 
-			if (!wallet.getParams().equals(Constants.NETWORK_PARAMETERS))
-				throw new Error("bad wallet network parameters: " + wallet.getParams().getId());
+			if (!mWallet.getParams().equals(Constants.NETWORK_PARAMETERS))
+				throw new Error("bad wallet network parameters: " + mWallet.getParams().getId());
 		}
 		else
 		{
-			wallet = new Wallet(Constants.NETWORK_PARAMETERS);
+			mWallet = new Wallet(Constants.NETWORK_PARAMETERS);
 
 			backupWallet();
 
-			config.armBackupReminder();
+			mConfig.armBackupReminder();
 
 			log.info("new wallet created");
 		}
@@ -410,7 +391,7 @@ public class WalletApplication extends Application
 	{
 		try
 		{
-			protobufSerializeWallet(wallet);
+			protobufSerializeWallet(mWallet);
 		}
 		catch (final IOException x)
 		{
@@ -422,18 +403,18 @@ public class WalletApplication extends Application
 	{
 		final long start = System.currentTimeMillis();
 
-		wallet.saveToFile(walletFile);
+		wallet.saveToFile(mWalletFile);
 
 		// make wallets world accessible in test mode
 		if (Constants.TEST)
-			Io.chmod(walletFile, 0777);
+			Io.chmod(mWalletFile, 0777);
 
-		log.debug("wallet saved to: '" + walletFile + "', took " + (System.currentTimeMillis() - start) + "ms");
+		log.debug("wallet saved to: '" + mWalletFile + "', took " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	public void backupWallet()
 	{
-		final Protos.Wallet.Builder builder = new WalletProtobufSerializer().walletToProto(wallet).toBuilder();
+		final Protos.Wallet.Builder builder = new WalletProtobufSerializer().walletToProto(mWallet).toBuilder();
 
 		// strip redundant
 		builder.clearTransaction();
@@ -494,29 +475,29 @@ public class WalletApplication extends Application
 	public void startBlockchainService(final boolean cancelCoinsReceived)
 	{
 		if (cancelCoinsReceived)
-			startService(blockchainServiceCancelCoinsReceivedIntent);
+			startService(mBlockchainServiceCancelCoinsReceivedIntent);
 		else
-			startService(blockchainServiceIntent);
+			startService(mBlockchainServiceIntent);
 	}
 
 	public void stopBlockchainService()
 	{
-		stopService(blockchainServiceIntent);
+		stopService(mBlockchainServiceIntent);
 	}
 
 	public void resetBlockchain()
 	{
 		// implicitly stops blockchain service
-		startService(blockchainServiceResetBlockchainIntent);
+		startService(mBlockchainServiceResetBlockchainIntent);
 	}
 
 	public void replaceWallet(final Wallet newWallet)
 	{
 		resetBlockchain();
-		wallet.shutdownAutosaveAndWait();
+		mWallet.shutdownAutosaveAndWait();
 
-		wallet = newWallet;
-		config.maybeIncrementBestChainHeightEver(newWallet.getLastBlockSeenHeight());
+		mWallet = newWallet;
+		mConfig.maybeIncrementBestChainHeightEver(newWallet.getLastBlockSeenHeight());
 		afterLoadWallet();
 
 		final Intent broadcast = new Intent(ACTION_WALLET_REFERENCE_CHANGED);
@@ -526,9 +507,9 @@ public class WalletApplication extends Application
 
 	public void processDirectTransaction(final Transaction tx) throws VerificationException
 	{
-		if (wallet.isTransactionRelevant(tx))
+		if (mWallet.isTransactionRelevant(tx))
 		{
-			wallet.receivePending(tx, null);
+			mWallet.receivePending(tx, null);
 			broadcastTransaction(tx);
 		}
 	}
@@ -554,7 +535,7 @@ public class WalletApplication extends Application
 
 	public PackageInfo packageInfo()
 	{
-		return packageInfo;
+		return mPackageInfo;
 	}
 
 	public final String applicationPackageFlavor()
@@ -582,7 +563,7 @@ public class WalletApplication extends Application
 
 	public int maxConnectedPeers()
 	{
-		final int memoryClass = activityManager.getMemoryClass();
+		final int memoryClass = mActivityManager.getMemoryClass();
 		if (memoryClass <= Constants.MEMORY_CLASS_LOWEND)
 			return 4;
 		else

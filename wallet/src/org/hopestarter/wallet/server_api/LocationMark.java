@@ -25,6 +25,12 @@ public class LocationMark implements Parcelable {
         @SerializedName("user")
         private User mUser;
 
+        @SerializedName("city")
+        private String mCity;
+
+        @SerializedName("country")
+        private String mCountry;
+
         public PhotoResources getPhotoResources() {
             return mPhotoResources;
         }
@@ -45,6 +51,10 @@ public class LocationMark implements Parcelable {
             return mUser;
         }
 
+        public String getCity() { return mCity; }
+
+        public String getCountry() { return mCountry; }
+
         public Properties() {
         }
 
@@ -59,6 +69,8 @@ public class LocationMark implements Parcelable {
             dest.writeString(this.mText);
             dest.writeString(this.mCreatedDate);
             dest.writeString(this.mModifiedDate);
+            dest.writeString(this.mCity);
+            dest.writeString(this.mCountry);
             dest.writeParcelable(this.mUser, flags);
         }
 
@@ -67,6 +79,8 @@ public class LocationMark implements Parcelable {
             this.mText = in.readString();
             this.mCreatedDate = in.readString();
             this.mModifiedDate = in.readString();
+            this.mCity = in.readString();
+            this.mCountry = in.readString();
             this.mUser = in.readParcelable(User.class.getClassLoader());
         }
 

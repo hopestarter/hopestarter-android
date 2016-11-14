@@ -178,7 +178,7 @@ public class PhotoUpdateCreator {
     }
 
     private void sendLocationUpdate(Location location, Intent data) {
-        Point point = new Point("point", new float[]{(float)location.getLatitude(), (float)location.getLongitude()});
+        Point point = new Point("point", new float[]{(float)location.getLongitude(), (float)location.getLatitude()});
 
         log.debug("Geolocation coordinates are " + point.toString());
 

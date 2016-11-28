@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0.00 mBTC"
+            tools:text="0.00 mBTC"
             android:textSize="48sp"
             android:textColor="@color/white"
             android:id="@+id/mbtc_donations"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/mbtc_donations"
-            android:text="$0.00"
+            tools:text="$0.00"
             android:textAllCaps="true"
             android:textSize="24sp"
             android:fontFamily="sans-serif-medium"
@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$0.00"
+                    tools:text="$0.00"
                     android:textStyle="bold"
                     android:id="@+id/world_donations"
                     android:textColor="@color/black"

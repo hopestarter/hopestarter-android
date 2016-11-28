@@ -379,5 +379,7 @@ A small network fee of <b>%s</b> will be paid.
     <string name="progress_dialog_title_connecting">Connecting ...</string>
     <string name="confirm_picture_activity_button_retake">Retake</string>
     <string name="confirm_picture_activity_button_add_this_photo">Add this photo</string>
+    <string name="help_menu_option">Help</string>
+    <string name="about_menu_option">About</string>
 
 </resources>

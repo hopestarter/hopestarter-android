@@ -291,10 +291,10 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
                     ClipboardManager clipboardManager = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData data = ClipData.newPlainText("address", receiveAddress);
                     clipboardManager.setPrimaryClip(data);
-                    Toast.makeText(getActivity(), "Address copied to the clipboard", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.toast_bitcoin_address_copy_clipboard, Toast.LENGTH_SHORT).show();
 
                     AlertDialog addressDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("Bitcoin address")
+                            .setTitle(R.string.dialog_title_bitcoin_address)
                             .setMessage(receiveAddress)
                             .create();
                     addressDialog.show();

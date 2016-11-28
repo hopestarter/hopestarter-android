@@ -170,8 +170,8 @@ public class PhotoUpdateCreator {
     private void onLocationRequestTimeout() {
         mProgressDialog.dismiss();
         new AlertDialog.Builder(mFragment.getActivity())
-                .setTitle("Couldn't retrieve GPS location")
-                .setMessage("Please check your GPS signal and make sure you are at least connected to GSM or Wifi is enabled, then try again.")
+                .setTitle(R.string.dialog_title_error_gps_location_retrieval)
+                .setMessage(R.string.error_msg_gps_location_retrieval)
                 .setPositiveButton(android.R.string.ok, null)
                 .create()
                 .show();
@@ -209,8 +209,8 @@ public class PhotoUpdateCreator {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new AlertDialog.Builder(getActivity())
-                    .setTitle("Information")
-                    .setMessage("Please allow Hopestarter to access your location for it to be associated with your status update")
+                    .setTitle(R.string.dialog_title_information)
+                    .setMessage(R.string.dialog_permission_request_message)
                     .setPositiveButton(android.R.string.ok, mPositiveButtonListener)
                     .create();
 

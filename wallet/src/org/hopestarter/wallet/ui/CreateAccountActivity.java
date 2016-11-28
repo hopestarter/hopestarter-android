@@ -85,7 +85,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
         setContentView(R.layout.activity_create_account);
 
         Toolbar tb = (Toolbar)findViewById(R.id.toolbar);
-        tb.setTitle("Create an account");
+        tb.setTitle(R.string.activity_title_create_account);
         tb.setNavigationIcon(R.drawable.close_icon);
         setSupportActionBar(tb);
 
@@ -106,14 +106,13 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
             @Override
             public void onClick(View v) {
                 Intent activityIntent = new Intent(CreateAccountActivity.this, PictureSelectActivity.class);
-                activityIntent.putExtra(PictureSelectActivity.EXTRA_TITLE, "Add a profile picture");
+                activityIntent.putExtra(PictureSelectActivity.EXTRA_TITLE, getString(R.string.activity_title_add_profile_picture));
                 startActivityForResult(activityIntent, PROFILE_PIC_REQ_CODE);
             }
         };
 
         mImageView.setOnClickListener(addPicClickListener);
         addPicView.setOnClickListener(addPicClickListener);
-
 
     }
 
@@ -148,9 +147,9 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                     createAccount();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
-                            .setTitle("Error")
+                            .setTitle(R.string.dialog_title_error)
                             .setIcon(R.drawable.ic_error_24dp)
-                            .setMessage("Cannot create a new account without the required system permission.")
+                            .setMessage(R.string.error_msg_read_phone_state_permission_missing)
                             .create();
                     dialog.show();
                 }
@@ -304,7 +303,7 @@ public class CreateAccountActivity extends AppCompatActivity implements OnReques
                         }
 
                         AlertDialog dialog = new AlertDialog.Builder(thisActivity)
-                                .setTitle("Error")
+                                .setTitle(getString(R.string.dialog_title_error))
                                 .setMessage(errorMsg)
                                 .setIcon(R.drawable.ic_error_24dp)
                                 .create();

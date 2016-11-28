@@ -363,5 +363,13 @@ A small network fee of <b>%s</b> will be paid.
     <string name="enable_gps_dialog_message">Please enable GPS for Hopestarter to send updates</string>
     <string name="toast_flash_setting">Flash set to %s</string>
     <string name="activity_title_confirm_picture">Confirm picture</string>
+    <string name="activity_title_create_account">Create an account</string>
+    <string name="activity_title_add_profile_picture">Add a profile picture</string>
+    <string name="dialog_title_error">Error</string>
+    <string name="error_msg_read_phone_state_permission_missing">Cannot create a new account without the required system permission.</string>
+    <string name="dialog_title_error_gps_location_retrieval">Couldn\'t retrieve GPS location</string>
+    <string name="error_msg_gps_location_retrieval">Please check your GPS signal and make sure you are at least connected to GSM or Wifi is enabled, then try again.</string>
+    <string name="dialog_title_information">Information</string>
+    <string name="dialog_permission_request_message">Please allow Hopestarter to access your location for it to be associated with your status update</string>
 
 </resources>

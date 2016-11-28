@@ -361,5 +361,6 @@ A small network fee of <b>%s</b> will be paid.
     <string name="post_update_waiting_dialog_message">Please wait. Uploading the picture may take a while, depending on network conditions.</string>
     <string name="enable_gps_dialog_title">Enable GPS</string>
     <string name="enable_gps_dialog_message">Please enable GPS for Hopestarter to send updates</string>
+    <string name="toast_flash_setting">Flash set to %s</string>
 
 </resources>

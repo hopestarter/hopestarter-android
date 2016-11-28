@@ -164,7 +164,8 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback {
     private void changeFlashMode(String flashMode) {
         Camera.Parameters params = mCamera.getParameters();
         params.setFlashMode(flashMode);
-        Toast.makeText(getActivity(), "Flash set to " + flashMode, Toast.LENGTH_LONG).show();
+        String toastText = String.format(getString(R.string.toast_flash_setting), flashMode);
+        Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
         mCamera.setParameters(params);
     }
 

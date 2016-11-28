@@ -371,5 +371,8 @@ A small network fee of <b>%s</b> will be paid.
     <string name="error_msg_gps_location_retrieval">Please check your GPS signal and make sure you are at least connected to GSM or Wifi is enabled, then try again.</string>
     <string name="dialog_title_information">Information</string>
     <string name="dialog_permission_request_message">Please allow Hopestarter to access your location for it to be associated with your status update</string>
+    <string name="activity_title_select_picture">Select a picture</string>
+    <string name="picture_select_tab_name_gallery">Gallery</string>
+    <string name="picture_select_tab_name_take_photo">Take a Photo</string>
 
 </resources>

@@ -40,7 +40,7 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
         }
 
         if (mTitle == null) {
-            mTitle = "Select a picture";
+            mTitle = getString(R.string.activity_title_select_picture);
         }
 
         tb.setTitle(mTitle);
@@ -56,8 +56,8 @@ public class PictureSelectActivity extends AppCompatActivity implements CameraFr
     private void setupTabs() {
         FragmentTabHost tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
         tabHost.setup(this, getSupportFragmentManager(), R.id.content_layout);
-        tabHost.addTab(tabHost.newTabSpec(GALLERY_FRAGMENT_SPEC).setIndicator("Gallery"), GalleryFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec(TAKE_PHOTO_SPEC).setIndicator("Take a Photo"), CameraFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(GALLERY_FRAGMENT_SPEC).setIndicator(getString(R.string.picture_select_tab_name_gallery)), GalleryFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAKE_PHOTO_SPEC).setIndicator(getString(R.string.picture_select_tab_name_take_photo)), CameraFragment.class, null);
     }
 
     @Override

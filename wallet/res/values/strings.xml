@@ -362,5 +362,6 @@ A small network fee of <b>%s</b> will be paid.
     <string name="enable_gps_dialog_title">Enable GPS</string>
     <string name="enable_gps_dialog_message">Please enable GPS for Hopestarter to send updates</string>
     <string name="toast_flash_setting">Flash set to %s</string>
+    <string name="activity_title_confirm_picture">Confirm picture</string>
 
 </resources>

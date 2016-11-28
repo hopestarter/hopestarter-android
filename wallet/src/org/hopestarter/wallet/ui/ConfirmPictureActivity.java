@@ -61,7 +61,7 @@ public class ConfirmPictureActivity extends AppCompatActivity {
         }
 
         if (mTitle == null) {
-            mTitle = "Confirm picture";
+            mTitle = getString(R.string.activity_title_confirm_picture);
         }
 
         Toolbar topToolbar = (Toolbar)findViewById(R.id.toolbar);

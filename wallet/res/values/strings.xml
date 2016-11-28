@@ -382,5 +382,6 @@ A small network fee of <b>%s</b> will be paid.
     <string name="help_menu_option">Help</string>
     <string name="about_menu_option">About</string>
     <string name="done_menu_option">Done</string>
+    <string name="profile_field_label_updates">updates</string>
 
 </resources>

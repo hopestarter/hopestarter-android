@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="0"
+                        tools:text="0"
                         android:fontFamily="sans-serif-light"
                         android:textSize="24sp"
                         android:textColor="@color/black" />
@@ -91,7 +91,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
-                        android:text="updates"
+                        android:text="@string/profile_field_label_updates"
                         android:layout_below="@+id/profile_updates"
                         android:layout_centerHorizontal="true"
                         android:fontFamily="sans-serif"
@@ -113,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:text="$0.00"
+                        tools:text="$0.00"
                         android:fontFamily="sans-serif-light"
                         android:textSize="24sp"
                         android:textColor="@color/black" />

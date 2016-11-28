@@ -65,7 +65,7 @@ public class WelcomeActivity extends Activity {
         mBtn.setEnabled(false);
 
         final ProgressDialog progressDialog = ProgressDialog.show(
-                this, "Connecting ...", getString(R.string.please_wait_message), true, false
+                this, getString(R.string.progress_dialog_title_connecting), getString(R.string.please_wait_message), true, false
         );
 
         final Context context = this;

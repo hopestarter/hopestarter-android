@@ -57,7 +57,7 @@
                 android:textAllCaps="true"
                 android:fontFamily="sans-serif-medium"
                 android:id="@+id/retake_btn"
-                android:text="Retake"/>
+                android:text="@string/confirm_picture_activity_button_retake"/>
             <View
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
@@ -73,7 +73,7 @@
                 android:textAllCaps="true"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/turquoise"
-                android:text="Add this photo"/>
+                android:text="@string/confirm_picture_activity_button_add_this_photo"/>
         </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>

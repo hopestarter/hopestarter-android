@@ -376,5 +376,8 @@ A small network fee of <b>%s</b> will be paid.
     <string name="picture_select_tab_name_take_photo">Take a Photo</string>
     <string name="toast_bitcoin_address_copy_clipboard">Address copied to the clipboard</string>
     <string name="dialog_title_bitcoin_address">Bitcoin address</string>
+    <string name="progress_dialog_title_connecting">Connecting ...</string>
+    <string name="confirm_picture_activity_button_retake">Retake</string>
+    <string name="confirm_picture_activity_button_add_this_photo">Add this photo</string>
 
 </resources>

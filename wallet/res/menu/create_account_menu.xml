@@ -5,6 +5,6 @@
 
     <item
         android:id="@+id/done"
-        android:title="Done"
+        android:title="@string/done_menu_option"
         app:showAsAction="always" />
 </menu>

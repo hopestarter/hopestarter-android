@@ -133,7 +133,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Where to spend your bitcoins?"
+                        android:text="@string/onboard_link_3"
                         android:textStyle="bold"
                         android:id="@+id/onboarding_link_3_text"
                         android:textColor="@color/black"

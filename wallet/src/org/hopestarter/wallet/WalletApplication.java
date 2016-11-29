@@ -32,6 +32,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.VerificationException;
 import org.bitcoinj.core.VersionMessage;
@@ -93,9 +96,10 @@ public class WalletApplication extends Application
 	public static final int VERSION_CODE_SHOW_BACKUP_REMINDER = 205;
 
 	private static final Logger log = LoggerFactory.getLogger(WalletApplication.class);
+    private Tracker mTracker;
 
 
-	@Override
+    @Override
 	public void onCreate()
 	{
 		new LinuxSecureRandom(); // init proper random number generator
@@ -594,5 +598,19 @@ public class WalletApplication extends Application
 		// workaround for no inexact set() before KitKat
 		final long now = System.currentTimeMillis();
 		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval, AlarmManager.INTERVAL_DAY, alarmIntent);
+	}
+
+	/**
+	 * Gets the default {@link Tracker} for this {@link Application}.
+	 * @return tracker
+	 */
+	synchronized public Tracker getDefaultTracker() {
+		if (mTracker == null) {
+			GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+			// To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+			mTracker = analytics.newTracker(R.xml.global_tracker);
+            mTracker.enableAutoActivityTracking(true);
+		}
+		return mTracker;
 	}
 }

@@ -383,5 +383,8 @@ A small network fee of <b>%s</b> will be paid.
     <string name="about_menu_option">About</string>
     <string name="done_menu_option">Done</string>
     <string name="profile_field_label_updates">updates</string>
+    <string name="title_send_via_email">Send via email</string>
+    <string name="onboard_link_1">How does the app work?</string>
+    <string name="onboard_link_2">What is Bitcoin?</string>
 
 </resources>

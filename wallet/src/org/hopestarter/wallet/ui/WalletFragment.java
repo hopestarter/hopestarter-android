@@ -1,6 +1,7 @@
 package org.hopestarter.wallet.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -37,9 +40,7 @@ public class WalletFragment extends Fragment {
     private static final String TAG = WalletFragment.class.getName();
 
     private OnFragmentInteractionListener mListener;
-    private TextView mDonatedWorldwideView;
     private TextView mBalanceView;
-    private TextView mRefugeeCountView;
     private WalletApplication mApplication;
     private Wallet mWallet;
     private Coin mBalance;
@@ -86,40 +87,39 @@ public class WalletFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_wallet, container, false);
-        mDonatedWorldwideView = (TextView)rootView.findViewById(R.id.world_donations);
-        startDonationsUpdater();
-        mRefugeeCountView = (TextView)rootView.findViewById(R.id.refugees);
-        mRefugeeCountView.setText(getString(R.string.donated_so_far_worldwide, 833));
         mBalanceView = (TextView)rootView.findViewById(R.id.mbtc_donations);
         mLocalCurrencyBalance = (TextView)rootView.findViewById(R.id.currency_donations);
-        return rootView;
-    }
 
-    private void startDonationsUpdater() {
-        GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
-        calendar.set(2016, 0, 1, 0, 0, 0);
-        final long sD = calendar.getTimeInMillis();
-        final double r = 0.025; // $/min
-
-        final NumberFormat currencyFormater = NumberFormat.getCurrencyInstance(Locale.US);
-
-        Runnable update = new Runnable() {
+        LinearLayout onboardingLink1 = (LinearLayout) rootView.findViewById(R.id.onboarding_link_1);
+        onboardingLink1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                double lastValue = getLastDonationValue(sD, System.currentTimeMillis(), r);
-                mDonatedWorldwideView.setText(currencyFormater.format(lastValue));
-                mDonatedWorldwideView.postDelayed(this, 1000);
+            public void onClick(View v) {
+                Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
+                openWebView.setData(Uri.parse("http://help.hopestarter.org/how-to"));
+                startActivity(openWebView);
             }
-        };
+        });
 
-        mDonatedWorldwideView.post(update);
+        LinearLayout onboardingLink2 = (LinearLayout) rootView.findViewById(R.id.onboarding_link_2);
+        onboardingLink2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
+                openWebView.setData(Uri.parse("http://help.hopestarter.org/bitcoin"));
+                startActivity(openWebView);
+            }
+        });
 
-    }
-
-    private double getLastDonationValue(long start, long now, double r) {
-        long d = now - start;
-        double min = Long.valueOf(d).doubleValue()/(1000 * 60);
-        return min * r;
+        LinearLayout onboardingLink3 = (LinearLayout) rootView.findViewById(R.id.onboarding_link_3);
+        onboardingLink3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
+                openWebView.setData(Uri.parse("http://help.hopestarter.org/merchants"));
+                startActivity(openWebView);
+            }
+        });
+        return rootView;
     }
 
     @Override

@@ -39,42 +39,108 @@
             android:fontFamily="sans-serif-medium"
             android:textColor="#91A0A3"
             android:id="@+id/currency_donations"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/white"
+            android:orientation="vertical"
+            android:id="@+id/bottom_anchored_layout"
+            android:showDividers="middle"
+            android:divider="@drawable/linear_layout_spacer"
             android:layout_alignParentBottom="true">
-            <FrameLayout
-                android:layout_width="5dp"
-                android:layout_height="match_parent"
-                android:background="@color/turquoise" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="$0.00"
-                    android:textStyle="bold"
-                    android:id="@+id/world_donations"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/donated_so_far_worldwide"
-                    android:textColor="@color/grey"
-                    android:id="@+id/refugees"
-                    android:textSize="16sp"/>
-
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                android:clickable="true"
+                android:id="@+id/onboarding_link_1"
+                >
+                <FrameLayout
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/turquoise" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/onboard_link_1"
+                        android:textStyle="bold"
+                        android:id="@+id/onboarding_link_1_text"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"/>
+                </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                android:clickable="true"
+                android:id="@+id/onboarding_link_2"
+                >
+                <FrameLayout
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/turquoise" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/onboard_link_2"
+                        android:textStyle="bold"
+                        android:id="@+id/onboarding_link_2_text"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                android:id="@+id/onboarding_link_3"
+                android:clickable="true"
+                >
+                <FrameLayout
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/turquoise" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Where to spend your bitcoins?"
+                        android:textStyle="bold"
+                        android:id="@+id/onboarding_link_3_text"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

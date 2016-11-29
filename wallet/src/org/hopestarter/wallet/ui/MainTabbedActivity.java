@@ -1,11 +1,15 @@
 package org.hopestarter.wallet.ui;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,11 +26,15 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import org.hopestarter.wallet.WalletApplication;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
+
+import java.util.List;
+import java.util.Stack;
 
 public class MainTabbedActivity extends AbstractWalletActivity implements WalletFragment.OnFragmentInteractionListener{
 
@@ -157,8 +165,64 @@ public class MainTabbedActivity extends AbstractWalletActivity implements Wallet
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        switch(item.getItemId()) {
+            case R.id.about:
+                openAboutWebpage();
+                return true;
+            case R.id.help:
+                sendSupportRequestEmail();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendSupportRequestEmail() {
+        try {
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("message/rfc822");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+            emailIntent.putExtra(Intent.EXTRA_TEXT   , "body of email");
+
+            startActivity(createEmailOnlyChooserIntent(emailIntent, getString(R.string.title_send_via_email)));
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(this, "No email application found on this device.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public Intent createEmailOnlyChooserIntent(Intent source,
+                                               CharSequence chooserTitle) {
+        Stack<Intent> intents = new Stack<Intent>();
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto",
+                "info@domain.com", null));
+        List<ResolveInfo> activities = getPackageManager()
+                .queryIntentActivities(i, 0);
+
+        for(ResolveInfo ri : activities) {
+            Intent target = new Intent(source);
+            target.setPackage(ri.activityInfo.packageName);
+            intents.add(target);
+        }
+
+        if(!intents.isEmpty()) {
+            Intent chooserIntent = Intent.createChooser(intents.remove(0),
+                    chooserTitle);
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                    intents.toArray(new Parcelable[intents.size()]));
+
+            return chooserIntent;
+        } else {
+            return Intent.createChooser(source, chooserTitle);
+        }
+    }
+
+    private void openAboutWebpage() {
+        try {
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://help.hopestarter.org/about"));
+            startActivity(webIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No web browser application found on this device.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

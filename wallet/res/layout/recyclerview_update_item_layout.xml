@@ -8,7 +8,6 @@
     <com.makeramen.roundedimageview.RoundedImageView
         android:layout_width="38dp"
         android:layout_height="38dp"
-        android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
@@ -21,7 +20,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
 
@@ -29,19 +27,16 @@
         android:textStyle="bold"
         android:fontFamily="sans-serif"
         android:textColor="@color/turquoise"
-        android:layout_toRightOf="@id/user_profile_picture"
         android:layout_toEndOf="@id/user_profile_picture"
         android:id="@+id/user_name" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:textSize="12sp"
         android:fontFamily="sans-serif"
         android:textColor="@color/grey"
-        android:layout_toRightOf="@id/user_profile_picture"
         android:layout_toEndOf="@id/user_profile_picture"
         android:layout_below="@id/user_name"
         android:id="@+id/additional_info"
@@ -55,7 +50,7 @@
         android:layout_marginTop="10dp"
         android:id="@+id/attached_picture"/>
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -63,18 +58,23 @@
         android:layout_marginStart="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
-        android:textSize="13sp"
-        android:textColor="@color/black"
-        android:id="@+id/message"
-        android:layout_below="@id/attached_picture"/>
+        android:id="@+id/msg_frame"
+        android:layout_below="@id/attached_picture">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:id="@+id/message"/>
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/view_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/update_view_count"
-        android:layout_below="@id/message"
-        android:layout_marginLeft="10dp"
+        android:layout_below="@id/msg_frame"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"

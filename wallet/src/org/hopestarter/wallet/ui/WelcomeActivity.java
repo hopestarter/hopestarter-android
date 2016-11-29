@@ -8,10 +8,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.getsentry.raven.android.Raven;
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.google.gson.Gson;
 
 import org.hopestarter.wallet.WalletApplication;
+import org.hopestarter.wallet.data.AppConfig;
 import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.AuthenticationFailed;
 import org.hopestarter.wallet.server_api.ForbiddenResourceException;
@@ -31,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -39,7 +48,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class WelcomeActivity extends Activity {
-
+    private static final String TAG = WelcomeActivity.class.getSimpleName();
     private static final int ACCOUNT_CREATION_REQ_CODE = 0;
     private static final Logger log = LoggerFactory.getLogger(WelcomeActivity.class);
     private Button mBtn;
@@ -48,16 +57,32 @@ public class WelcomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        mBtn = (Button)findViewById(R.id.create_account_btn);
-        mBtn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(WelcomeActivity.this, CreateAccountActivity.class), ACCOUNT_CREATION_REQ_CODE);
-            }
-        });
+        if (initRaven()){
+            mBtn = (Button)findViewById(R.id.create_account_btn);
+            mBtn.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivityForResult(new Intent(WelcomeActivity.this, CreateAccountActivity.class), ACCOUNT_CREATION_REQ_CODE);
+                }
+            });
 
-        if (accountExists()) {
-            updateUserInfo();
+            if (accountExists()) {
+                updateUserInfo();
+            }
+        } else {
+            Toast.makeText(this, "A problem was detected. Please stay tuned for app updates.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+    private boolean initRaven() {
+        try {
+            AppConfig appConfig = AppConfig.getAppConfig(this);
+            Raven.init(this.getApplicationContext(), appConfig.getSentryClientKey());
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't read raven/sentry client key", e);
+            return false;
         }
     }
 

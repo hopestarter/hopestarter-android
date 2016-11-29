@@ -386,5 +386,6 @@ A small network fee of <b>%s</b> will be paid.
     <string name="title_send_via_email">Send via email</string>
     <string name="onboard_link_1">How does the app work?</string>
     <string name="onboard_link_2">What is Bitcoin?</string>
+    <string name="onboard_link_3">Where to spend your bitcoins?</string>
 
 </resources>

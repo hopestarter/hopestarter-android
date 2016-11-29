@@ -96,6 +96,7 @@ public class WalletFragment extends Fragment {
             public void onClick(View v) {
                 Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
                 openWebView.setData(Uri.parse("http://help.hopestarter.org/how-to"));
+                openWebView.putExtra(WebViewActivity.EXTRA_WEBVIEW_TITLE, getString(R.string.onboard_link_1));
                 startActivity(openWebView);
             }
         });
@@ -106,6 +107,7 @@ public class WalletFragment extends Fragment {
             public void onClick(View v) {
                 Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
                 openWebView.setData(Uri.parse("http://help.hopestarter.org/bitcoin"));
+                openWebView.putExtra(WebViewActivity.EXTRA_WEBVIEW_TITLE, getString(R.string.onboard_link_2));
                 startActivity(openWebView);
             }
         });
@@ -116,6 +118,7 @@ public class WalletFragment extends Fragment {
             public void onClick(View v) {
                 Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
                 openWebView.setData(Uri.parse("http://help.hopestarter.org/merchants"));
+                openWebView.putExtra(WebViewActivity.EXTRA_WEBVIEW_TITLE, getString(R.string.onboard_link_3));
                 startActivity(openWebView);
             }
         });
@@ -169,7 +172,6 @@ public class WalletFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<Coin> loader, Coin balance) {
             mBalance = balance;
-
             updateViews();
         }
 

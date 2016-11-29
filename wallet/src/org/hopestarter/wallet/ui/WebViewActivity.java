@@ -16,6 +16,7 @@ import org.hopestarter.wallet_test.R;
  * Created by Adrian on 29/11/2016.
  */
 public class WebViewActivity extends AppCompatActivity {
+    public static final String EXTRA_WEBVIEW_TITLE = "EXTRA_WEBVIEW_TITLE";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +31,14 @@ public class WebViewActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         Intent callingIntent = getIntent();
+        String webViewTitle = callingIntent.getStringExtra(EXTRA_WEBVIEW_TITLE);
+
+        if (webViewTitle == null) {
+            webViewTitle = "";
+        }
+
+        ab.setTitle(webViewTitle);
+
         Uri uri = callingIntent.getData();
         WebView wv = (WebView) findViewById(R.id.webview);
         wv.loadUrl(uri.toString());

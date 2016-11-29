@@ -10,3 +10,4 @@ local.properties
 .idea/
 bin/
 gen/
+wallet/assets/config.json

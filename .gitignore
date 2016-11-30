@@ -11,3 +11,4 @@ local.properties
 bin/
 gen/
 wallet/assets/config.json
+*.iml

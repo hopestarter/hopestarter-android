@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-import org.hopestarter.wallet_test.R;
+import org.hopestarter.wallet.R;
 
 /**
  * Created by Adrian on 29/11/2016.

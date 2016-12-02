@@ -106,6 +106,8 @@ public class WalletApplication extends Application
 
 		initLogging();
 
+		getDefaultTracker();
+
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().permitDiskReads().permitDiskWrites().penaltyLog().build());
 
 		Threading.throwOnLockCycles();

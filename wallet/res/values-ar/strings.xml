@@ -1,13 +1,47 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 
+    <string name="send_coins_activity_title">إرسال Bitcoins</string>
+    <string name="send_coins_fragment_receiving_address_label">دفع ل</string>
+    <string name="send_coins_fragment_amount_label">المبلغ لدفع</string>
+    <string name="send_coins_fragment_button_send">إرسال</string>
+    <string name="send_coins_options_fee_category_economic">اقتصادي</string>
+    <string name="send_coins_options_fee_category_normal">عادي</string>
+    <string name="send_coins_options_fee_category_priority">أفضلية</string>
+    <string name="request_coins_activity_title">طلب Bitcoins</string>
+    <string name="request_coins_fragment_amount_label">المبلغ المطلوب (اختياري)</string>
+    <string name="request_coins_fragment_accept_bluetooth_payment">قبول الدفع عن طريق البلوتوث للتجهيز أكثر موثوقية</string>
+    <string name="request_coins_options_local_app_title">طلب من التطبيق المحلي</string>
+    <string name="about_title">حول</string>
+    <string name="button_help">مساعدة</string>
     <string name="create_an_account">انشئ حساب</string>
+    <string name="donations_label">التبرعات</string>
+    <string name="views">عدد المشاهدات</string>
+    <string name="received_donations">التبرعات الواردة</string>
     <string name="ethnicity_text_field">العرق</string>
     <string name="last_name_field">الكنية</string>
     <string name="first_name_field">الاسم الاول</string>
     <string name="add_profile_picture">إضافة صورة للملف الشخصي</string>
     <string name="create_account_instructions">في ملء التفاصيل الشخصية الخاصة بك</string>
+    <string name="title_fragment_wallet">محفظة</string>
+    <string name="title_profile_fragment">الملف الشخصي</string>
+    <string name="title_activity_create_new_update">اكتب رسالة</string>
+    <string name="post_menu_item">بريد</string>
+    <string name="post_a_photo_update_title">الرد على تحديث الصورة</string>
+    <string name="title_world_fragment">تحديثات العالم</string>
+    <string name="title_sendrequest_fragment">إرسال أو طلب</string>
+    <string name="change_transaction_fee_text">رسوم المعاملات التغيير</string>
+    <string name="send_receive_fragment_send_button_label">إرسال Bitcoins</string>
+    <string name="send_receive_fragment_request_button_label">طلب Bitcoins</string>
     <string name="activity_title_create_account">انشئ حساب</string>
     <string name="activity_title_add_profile_picture">إضافة صورة للملف الشخصي</string>
+    <string name="picture_select_tab_name_gallery">صالة عرض</string>
+    <string name="confirm_picture_activity_button_retake">استعادة</string>
+    <string name="confirm_picture_activity_button_add_this_photo">إضافة هذه الصورة</string>
+    <string name="help_menu_option">مساعدة</string>
+    <string name="about_menu_option">حول</string>
     <string name="done_menu_option">فعله</string>
-    </resources>
+    <string name="profile_field_label_updates">التحديثات</string>
+    <string name="onboard_link_3">حيث لقضاء bitcoins الخاصة بك؟</string>
+
+</resources>

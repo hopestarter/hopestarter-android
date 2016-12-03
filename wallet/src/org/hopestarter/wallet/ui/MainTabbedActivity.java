@@ -180,9 +180,9 @@ public class MainTabbedActivity extends AbstractWalletActivity implements Wallet
         try {
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.setType("message/rfc822");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
-            emailIntent.putExtra(Intent.EXTRA_TEXT   , "body of email");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"support@hopestarter.org"});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Support request");
+            emailIntent.putExtra(Intent.EXTRA_TEXT   , "Hi, I'm \nMy question is:");
 
             startActivity(createEmailOnlyChooserIntent(emailIntent, getString(R.string.title_send_via_email)));
         } catch (ActivityNotFoundException e){
@@ -229,7 +229,6 @@ public class MainTabbedActivity extends AbstractWalletActivity implements Wallet
     public void onFragmentInteraction(Uri uri) {
 
     }
-
 
     public class SectionsPagerAdapter extends IconFragmentPagerAdapter {
 

@@ -23,6 +23,9 @@ public class User implements Parcelable {
     @SerializedName("username")
     private String mUsername;
 
+    @SerializedName("stats")
+    private Stats mStats;
+
     public ArrayList<String> getEthnicities() {
         return mEthnicities;
     }
@@ -39,6 +42,10 @@ public class User implements Parcelable {
         return mUsername;
     }
 
+    public Stats getStats() {
+        return mStats;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -50,6 +57,7 @@ public class User implements Parcelable {
         dest.writeString(this.mUserMarksUri);
         dest.writeParcelable(this.mUserInfo, flags);
         dest.writeString(this.mUsername);
+        dest.writeParcelable(this.mStats, flags);
     }
 
     public User() {
@@ -60,6 +68,7 @@ public class User implements Parcelable {
         this.mUserMarksUri = in.readString();
         this.mUserInfo = in.readParcelable(UserInfo.class.getClassLoader());
         this.mUsername = in.readString();
+        this.mStats = in.readParcelable(Stats.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {

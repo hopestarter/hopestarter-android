@@ -6,12 +6,9 @@ import android.util.Log;
 
 import org.hopestarter.wallet.Constants;
 import org.hopestarter.wallet.data.UserInfoPrefs;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -21,6 +18,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -111,6 +109,7 @@ public class ServerApi {
                 .addConverterFactory(new OutboundLocationMarkConverterFactory())
                 .addConverterFactory(new LocationMarkConverterFactory())
                 .addConverterFactory(new CollectorMarkResponse.ConverterFactory())
+                .addConverterFactory(new UserResponseConverterFactory())
                 .build();
 
         mApiImpl = mApiRetrofit.create(IServerApi.class);
@@ -310,5 +309,13 @@ public class ServerApi {
                     throw new UnexpectedServerResponseException(response.code());
             }
         }
+    }
+
+    public void getUserAsync(Callback<User> callback) throws NoTokenException {
+        if (mAuthHeaderValue.isEmpty()) {
+            throw new NoTokenException("No token has been retrieved before. Try authenticating with the server first.");
+        }
+
+        mApiImpl.getUser(mAuthHeaderValue).enqueue(callback);
     }
 }

@@ -36,6 +36,9 @@ public interface IServerApi {
     Call<UserInfo> setUserInfo(@Header("Authorization") String authHeaderValue,
             @Body UserInfo userInfo);
 
+    @GET("api/user/")
+    Call<User> getUser(@Header("Authorization") String authHeaderValue);
+
     @Multipart
     @PUT("api/user/profile/picture")
     Call<ResponseBody> uploadProfilePicture(@Header("Authorization") String authHeaderValue,

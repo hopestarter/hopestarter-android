@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +38,9 @@ import org.hopestarter.wallet.data.UserInfoPrefs;
 import org.hopestarter.wallet.server_api.CollectorMarkResponse;
 import org.hopestarter.wallet.server_api.LocationMark;
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
+import org.hopestarter.wallet.server_api.NoTokenException;
+import org.hopestarter.wallet.server_api.ServerApi;
+import org.hopestarter.wallet.server_api.User;
 import org.hopestarter.wallet.util.FetchResult;
 import org.hopestarter.wallet.util.ResourceUtils;
 import org.hopestarter.wallet.ui.LocationMarksFetcher.Author;
@@ -52,6 +56,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, UpdatesFragment.OnRequestDataListener, LocationMarkUploader.UploaderListener {
     private static final String TAG = ProfileFragment.class.getName();
@@ -79,6 +87,7 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
     private RoundedImageView mProfilePictureView;
     private PhotoUpdateCreator mPhotoUpdateCreator;
     private GoogleApiClient mGoogleApiClient;
+    private ServerApi mServerApi;
     private boolean mPostingEnabled;
     private int mPage;
     private int mPageSize;
@@ -187,6 +196,8 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
                 )
         );
 
+        mServerApi = new ServerApi(getActivity());
+
         if (profilePictureSource.getScheme() == null || profilePictureSource.getScheme().isEmpty()) {
             mProfilePicture = Uri.fromFile(new File(profilePictureSource.getPath()));
         } else {
@@ -221,7 +232,6 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
 
         mUserNameView = (TextView)rootView.findViewById(R.id.profile_full_name);
         mUserEthnicityView = (TextView)rootView.findViewById(R.id.profile_ethnicity);
-        mProfileDonations = (TextView)rootView.findViewById(R.id.profile_received_donations);
         mProfilePictureView = (RoundedImageView)rootView.findViewById(R.id.profile_image_view);
 
         mProfileLayout = (RelativeLayout)rootView.findViewById(R.id.profile_layout);
@@ -308,12 +318,10 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
         mPhotoUpdateCreator.setUploadListener(this);
 
         feedData();
-        updateNumberOfUpdates();
         return rootView;
     }
 
     private void feedData() {
-        feedFakeData();
         feedProfileData();
         mPage = 1;
         mPageSize = POSTS_PER_PAGE;
@@ -330,6 +338,22 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
         mUserNameView.setText(mFullName);
         mUserEthnicityView.setText(mEthnicity);
         Glide.with(this).load(mProfilePicture).centerCrop().listener(mImageLoaderListener).into(mProfilePictureView);
+        try {
+            mServerApi.getUserAsync(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    User userData = response.body();
+                    mNumUpdates.setText(String.format("%d", userData.getStats().getNumberOfPosts()));
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.e(TAG, "Error retrieving user data.", t);
+                }
+            });
+        } catch (NoTokenException e) {
+            Log.e(TAG, "Token not available in local db, when trying to obtain user data from server.", e);
+        }
     }
 
     @Override
@@ -342,11 +366,6 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
     public void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
-    }
-
-    private void feedFakeData() {
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
-        mProfileDonations.setText(currencyFormat.format(46.30));
     }
 
     private void updateNumberOfUpdates() {

@@ -58,6 +58,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.util.concurrent.TimeUnit;
 
 import ch.qos.logback.classic.Level;
@@ -153,6 +154,7 @@ public class WalletApplication extends Application
 		}
 
 		mConfig.updateLastVersionCode(mPackageInfo.versionCode);
+		mConfig.setExchangeCurrencyCode("EUR");
 
 		afterLoadWallet();
 

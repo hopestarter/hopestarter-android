@@ -34,6 +34,7 @@ import org.hopestarter.wallet.ui.view.IconFragmentPagerAdapter;
 import org.hopestarter.wallet_test.R;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 public class MainTabbedActivity extends AbstractWalletActivity implements WalletFragment.OnFragmentInteractionListener{
@@ -218,7 +219,8 @@ public class MainTabbedActivity extends AbstractWalletActivity implements Wallet
 
     private void openAboutWebpage() {
         try {
-            Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://help.hopestarter.org/about"));
+            String aboutUrl = String.format("http://help.hopestarter.org/%s/about", Locale.getDefault().getLanguage());
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(aboutUrl));
             startActivity(webIntent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "No web browser application found on this device.", Toast.LENGTH_LONG).show();

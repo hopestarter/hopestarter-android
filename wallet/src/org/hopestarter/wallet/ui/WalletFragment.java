@@ -90,12 +90,16 @@ public class WalletFragment extends Fragment {
         mBalanceView = (TextView)rootView.findViewById(R.id.mbtc_donations);
         mLocalCurrencyBalance = (TextView)rootView.findViewById(R.id.currency_donations);
 
+        final String onboardingLink1Url = String.format("http://help.hopestarter.org/%s/how-to", Locale.getDefault().getLanguage());
+        final String onboardingLink2Url = String.format("http://help.hopestarter.org/%s/bitcoin", Locale.getDefault().getLanguage());
+        final String onboardingLink3Url = String.format("http://help.hopestarter.org/%s/merchants", Locale.getDefault().getLanguage());
+
         LinearLayout onboardingLink1 = (LinearLayout) rootView.findViewById(R.id.onboarding_link_1);
         onboardingLink1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
-                openWebView.setData(Uri.parse("http://help.hopestarter.org/how-to"));
+                openWebView.setData(Uri.parse(onboardingLink1Url));
                 openWebView.putExtra(WebViewActivity.EXTRA_WEBVIEW_TITLE, getString(R.string.onboard_link_1));
                 startActivity(openWebView);
             }
@@ -106,7 +110,7 @@ public class WalletFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
-                openWebView.setData(Uri.parse("http://help.hopestarter.org/bitcoin"));
+                openWebView.setData(Uri.parse(onboardingLink2Url));
                 openWebView.putExtra(WebViewActivity.EXTRA_WEBVIEW_TITLE, getString(R.string.onboard_link_2));
                 startActivity(openWebView);
             }
@@ -117,7 +121,7 @@ public class WalletFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent openWebView = new Intent(getActivity(), WebViewActivity.class);
-                openWebView.setData(Uri.parse("http://help.hopestarter.org/merchants"));
+                openWebView.setData(Uri.parse(onboardingLink3Url));
                 openWebView.putExtra(WebViewActivity.EXTRA_WEBVIEW_TITLE, getString(R.string.onboard_link_3));
                 startActivity(openWebView);
             }

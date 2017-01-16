@@ -40,6 +40,7 @@ import org.hopestarter.wallet.server_api.LocationMark;
 import org.hopestarter.wallet.server_api.LocationMarkUploader;
 import org.hopestarter.wallet.server_api.NoTokenException;
 import org.hopestarter.wallet.server_api.ServerApi;
+import org.hopestarter.wallet.server_api.Stats;
 import org.hopestarter.wallet.server_api.User;
 import org.hopestarter.wallet.util.FetchResult;
 import org.hopestarter.wallet.util.ResourceUtils;
@@ -343,7 +344,12 @@ public class ProfileFragment extends Fragment implements GoogleApiClient.Connect
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     User userData = response.body();
-                    mNumUpdates.setText(String.format("%d", userData.getStats().getNumberOfPosts()));
+                    Stats stats = userData.getStats();
+                    int posts = 0;
+                    if (stats != null) {
+                        posts = stats.getNumberOfPosts();
+                    }
+                    mNumUpdates.setText(String.format("%d", posts));
                 }
 
                 @Override
